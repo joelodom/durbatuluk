@@ -87,3 +87,38 @@ TEST(crypto_tests, test_digital_signature_bad)
   RSA_free(rsa);
   delete[] sigret;
 }
+
+TEST(crypto_tests, test_encrypt_decrypt_session_key)
+{
+  int i; // for checking return values
+
+  RSA* rsa = RSA_generate_key(2048, 65537, nullptr, nullptr);
+  ASSERT_TRUE(rsa != nullptr);
+
+  i = RSA_check_key(rsa);
+  ASSERT_EQ(i, 1) << "RSA_check_key failed";
+
+  int rsa_size = RSA_size(rsa);
+  EXPECT_EQ(rsa_size, 256) << "this may be okay";
+
+  std::string session_key("One ring to rule them all, one ring to find them");
+  ASSERT_LT(session_key.size(), (size_t)(RSA_size(rsa) - 41))
+    << "required condition for RSA_PKCS1_OAEP_PADDING";
+
+  unsigned char* ciphertext = new unsigned char[rsa_size];
+  i = RSA_public_encrypt(session_key.size(),
+    (unsigned char *)session_key.c_str(),
+    ciphertext, rsa, RSA_PKCS1_OAEP_PADDING);
+  ASSERT_EQ(i, rsa_size) << "RSA_public_encrypt failed";
+
+  unsigned char* plaintext = new unsigned char[rsa_size];
+  i = RSA_private_decrypt(rsa_size, ciphertext,
+     plaintext, rsa, RSA_PKCS1_OAEP_PADDING);
+  EXPECT_EQ((size_t)i, session_key.size()) << "RSA_private_decrypt failed";
+
+  EXPECT_STREQ((const char*)plaintext, session_key.c_str());
+
+  RSA_free(rsa);
+  delete[] ciphertext;
+  delete[] plaintext;
+}
