@@ -21,7 +21,7 @@
 
 #include "gtest/gtest.h"
 
-TEST(durbatuluk_tests, test_gtest)
+TEST(crypto_tests, test_gtest)
 {
   EXPECT_TRUE(true) << "law of non-contradiction failed";
 }
