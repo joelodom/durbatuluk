@@ -1,4 +1,4 @@
-#summary Licenses, etc.
+#summary Licenses, etc. as copied from legal.txt in source code
 
 Durbatuluk is Copyright (c) 2012 Joel Odom
 
