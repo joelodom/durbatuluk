@@ -22,6 +22,7 @@
 #include "gtest/gtest.h"
 #include <openssl/rsa.h>
 #include <openssl/engine.h>
+#include "openssl_aes.h"
 
 TEST(crypto_tests, test_gtest)
 {
@@ -121,4 +122,57 @@ TEST(crypto_tests, test_encrypt_decrypt_session_key)
   RSA_free(rsa);
   delete[] ciphertext;
   delete[] plaintext;
+}
+
+TEST(crypto_tests, DISABLED_test_aes_sample) // thanks Saju Pillai
+{
+  int i; // for etc.
+
+  // "opaque" encryption, decryption ctx structures that libcrypto uses to
+  // record status of enc/dec operations
+
+  EVP_CIPHER_CTX en, de;
+
+  // 8 bytes to salt the key_data during key generation. This is an example of
+  // compiled in salt. We just read the bit pattern created by these two 4 byte
+  // integers on the stack as 64 bits of contigous salt material -
+  // ofcourse this only works if sizeof(int) >= 4
+
+  unsigned int salt[] = {12345, 54321};
+  const char *key_data = "joel key";
+  int key_data_len = strlen(key_data);
+  const char *input[] = {"a", "abcd", "this is a test", "this is a bigger test",
+    "\nWho are you ?\nI am the 'Doctor'.\n'Doctor' who ?\nPrecisely!",
+    NULL};
+
+  /* gen key and iv. init the cipher ctx object */
+  i = aes_init((unsigned char *)key_data, key_data_len,
+    (unsigned char *)&salt, &en, &de);
+  ASSERT_EQ(i, 0) << "couldn't initialize AES cipher";
+
+  /* encrypt and decrypt each input string and compare with the original */
+  for (i = 0; input[i]; i++)
+  {
+    int len;
+
+    // The enc/dec functions deal with binary data and not C strings. strlen()
+    // will return length of the string without counting the '\0' string marker.
+    // We always pass in the marker byte to the encrypt/decrypt functions so
+    // that after decryption we end up with a legal C string
+
+    unsigned char *ciphertext
+      = aes_encrypt(&en, (unsigned char *)input[i], &len);
+    ASSERT_TRUE(ciphertext != nullptr);
+
+    char *plaintext = (char *)aes_decrypt(&de, ciphertext, &len);
+    ASSERT_TRUE(plaintext != nullptr);
+
+    EXPECT_STREQ(plaintext, input[i]);
+
+    free(ciphertext);
+    free(plaintext);
+  }
+
+  EVP_CIPHER_CTX_cleanup(&en);
+  EVP_CIPHER_CTX_cleanup(&de);
 }
