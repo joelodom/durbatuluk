@@ -11,6 +11,7 @@ OBJS = gtest.o
 
 SRCS = durbatuluk.cc
 SRCS += durbatuluk_tests.cc
+SRCS += crypto_tests.cc
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(INCLUDES) -lpthread -Wall $(SRCS) -o durbatuluk
