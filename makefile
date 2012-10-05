@@ -13,8 +13,12 @@ SRCS = durbatuluk.cc
 SRCS += durbatuluk_tests.cc
 SRCS += crypto_tests.cc
 
+LIBS = -lpthread
+LIBS += -lcrypto
+LIBS += -lssl
+
 all: $(OBJS)
-	$(CC) $(OBJS) $(INCLUDES) -lpthread -Wall $(SRCS) -o durbatuluk
+	$(CC) $(OBJS) $(INCLUDES) -Wall -std=c++0x $(SRCS) -o durbatuluk $(LIBS)
 
 gtest.o:
 	$(CC) $(INCLUDES) -c ${GTEST_DIR}/src/gtest-all.cc -o gtest.o

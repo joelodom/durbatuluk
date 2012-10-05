@@ -20,8 +20,70 @@
 // SOFTWARE.
 
 #include "gtest/gtest.h"
+#include <openssl/rsa.h>
+#include <openssl/engine.h>
 
 TEST(crypto_tests, test_gtest)
 {
   EXPECT_TRUE(true) << "law of non-contradiction failed";
+}
+
+TEST(crypto_tests, test_digital_signature_good)
+{
+  int i; // for checking return values
+
+  RSA* rsa = RSA_generate_key(2048, 65537, nullptr, nullptr);
+  ASSERT_TRUE(rsa != nullptr);
+
+  i = RSA_check_key(rsa);
+  ASSERT_EQ(i, 1) << "RSA_check_key failed";
+
+  int rsa_size = RSA_size(rsa);
+  EXPECT_EQ(rsa_size, 256) << "this may be okay";
+
+  std::string message("One ring to rule them all, one ring to find them");
+  unsigned char* sigret = new unsigned char[rsa_size];
+  unsigned int siglen;
+
+  i = RSA_sign(NID_sha1, (const unsigned char*)message.c_str(),
+    message.size(), sigret, &siglen, rsa);
+  ASSERT_EQ(i, 1) << "RSA_sign failed";
+
+  i = RSA_verify(NID_sha1, (const unsigned char*)message.c_str(),
+    message.size(), sigret, siglen, rsa);
+  EXPECT_EQ(i, 1) << "RSA_verify failed";
+
+  RSA_free(rsa);
+  delete[] sigret;
+}
+
+TEST(crypto_tests, test_digital_signature_bad)
+{
+  int i; // for checking return values
+
+  RSA* rsa = RSA_generate_key(2048, 65537, nullptr, nullptr);
+  ASSERT_TRUE(rsa != nullptr);
+
+  i = RSA_check_key(rsa);
+  ASSERT_EQ(i, 1) << "RSA_check_key failed";
+
+  int rsa_size = RSA_size(rsa);
+  EXPECT_EQ(rsa_size, 256) << "this may be okay";
+
+  std::string message("One ring to rule them all, one ring to find them");
+  unsigned char* sigret = new unsigned char[rsa_size];
+  unsigned int siglen;
+
+  i = RSA_sign(NID_sha1, (const unsigned char*)message.c_str(),
+    message.size(), sigret, &siglen, rsa);
+  ASSERT_EQ(i, 1) << "RSA_sign failed";
+
+  message.append("One ring to bring them all and in the darkness bind them");
+
+  i = RSA_verify(NID_sha1, (const unsigned char*)message.c_str(),
+    message.size(), sigret, siglen, rsa);
+  EXPECT_NE(i, 1) << "RSA_verify should have failed";
+
+  RSA_free(rsa);
+  delete[] sigret;
 }
