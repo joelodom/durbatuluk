@@ -1,5 +1,7 @@
 #summary Durbatuluk overview
 
+http://durbatuluk.googlecode.com/svn/trunk/images/500px-One_Ring_inscription.svg.png
+
 _Ash nazg durbatulûk, ash nazg gimbatul,_
 
 _Ash nazg thrakatulûk agh burzum-ishi krimpatul._
