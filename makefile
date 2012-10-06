@@ -12,6 +12,8 @@ OBJS = gtest.o
 SRCS = durbatuluk.cc
 SRCS += durbatuluk_tests.cc
 SRCS += crypto_tests.cc
+SRCS += message_handler.cc
+SRCS += message_handler_tests.cc
 
 LIBS = -lpthread
 LIBS += -lcrypto
