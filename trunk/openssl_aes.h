@@ -1,9 +1,7 @@
-// This file is largely borrowed from Saju Pillai.  Do not assert copyright.
+// Most of this code is borrowed from Saju Pillai.  Do not assert copyright.
 
 #ifndef OPENSSL_AES_H_
 #define OPENSSL_AES_H_
-
-#define AES_BLOCK_SIZE 32
 
 /**
   AES encryption/decryption demo program using OpenSSL EVP apis
@@ -18,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <openssl/evp.h>
+#include <openssl/aes.h>
 
 /**
  * Create an 256 bit key and IV using the supplied key_data. salt can be added for taste.

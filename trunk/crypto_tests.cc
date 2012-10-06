@@ -124,7 +124,7 @@ TEST(crypto_tests, test_encrypt_decrypt_session_key)
   delete[] plaintext;
 }
 
-TEST(crypto_tests, DISABLED_test_aes_sample) // thanks Saju Pillai
+TEST(crypto_tests, test_aes_sample) // thanks Saju Pillai
 {
   int i; // for etc.
 
@@ -141,7 +141,7 @@ TEST(crypto_tests, DISABLED_test_aes_sample) // thanks Saju Pillai
   unsigned int salt[] = {12345, 54321};
   const char *key_data = "joel key";
   int key_data_len = strlen(key_data);
-  const char *input[] = {"a", "abcd", "this is a test", "this is a bigger test",
+  const char* input[] = {"a", "abcd", "this is a test", "this is a bigger test",
     "\nWho are you ?\nI am the 'Doctor'.\n'Doctor' who ?\nPrecisely!",
     NULL};
 
@@ -153,7 +153,7 @@ TEST(crypto_tests, DISABLED_test_aes_sample) // thanks Saju Pillai
   /* encrypt and decrypt each input string and compare with the original */
   for (i = 0; input[i]; i++)
   {
-    int len;
+    int len = strlen(input[i])+1;
 
     // The enc/dec functions deal with binary data and not C strings. strlen()
     // will return length of the string without counting the '\0' string marker.
