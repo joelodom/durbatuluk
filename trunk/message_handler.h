@@ -32,7 +32,8 @@
 class MessageHandler
 {
 public:
-  bool HandleMessage(std::string& input, std::string& output);
+  static bool HandleMessage(std::string& input, std::string& output);
+  static bool ShellExec(std::string& input, std::string& output);
 };
 
 #endif // #ifndef OPENSSL_AES_H_

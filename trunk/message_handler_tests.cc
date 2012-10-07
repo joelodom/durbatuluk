@@ -24,8 +24,15 @@
 
 TEST(message_handler_tests, test_handle_message_bad_message)
 {
-  MessageHandler message_handler;
   std::string input("bad"), output;
-  bool rv = message_handler.HandleMessage(input, output);
+  bool rv = MessageHandler::HandleMessage(input, output);
   EXPECT_FALSE(rv);
+}
+
+TEST(message_handler_tests, test_shell_exec)
+{
+  std::string input("echo durbatuluk"), output;
+  bool rv = MessageHandler::ShellExec(input, output);
+  ASSERT_TRUE(rv) << "ShellExec failed";
+  EXPECT_EQ(output.find("durbatuluk"), (size_t)0);
 }
