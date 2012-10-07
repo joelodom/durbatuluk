@@ -20,8 +20,16 @@
 // SOFTWARE.
 
 #include "gtest/gtest.h"
+#include "durbatuluk.pb.h"
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
   ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+  int rv = RUN_ALL_TESTS();
+
+  google::protobuf::ShutdownProtobufLibrary();
+
+  return rv;
 }

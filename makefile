@@ -14,10 +14,12 @@ SRCS += durbatuluk_tests.cc
 SRCS += crypto_tests.cc
 SRCS += message_handler.cc
 SRCS += message_handler_tests.cc
+SRCS += durbatuluk.pb.cc
 
 LIBS = -lpthread
 LIBS += -lcrypto
 LIBS += -lssl
+LIBS += -lprotobuf
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(INCLUDES) -Wall -std=c++0x $(SRCS) -o durbatuluk $(LIBS)
