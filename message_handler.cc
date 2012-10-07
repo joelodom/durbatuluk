@@ -21,7 +21,24 @@
 
 #include "message_handler.h"
 
-bool MessageHandler::HandleMessage(std::string& input, std::string& output)
+/*static*/ bool MessageHandler::HandleMessage(
+  std::string& input, std::string& output)
 {
   return false; // problem
+}
+
+/*static*/ bool MessageHandler::ShellExec(
+  std::string& input, std::string& output)
+{
+  FILE* fp = popen(input.c_str(), "r");
+  if (fp == NULL)
+    return false;
+
+  char buf[1024];
+  while (fgets(buf, sizeof(buf), fp) != nullptr)
+    output.append(buf);
+
+  pclose(fp);
+
+  return true; // success
 }
