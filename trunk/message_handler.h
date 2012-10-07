@@ -22,7 +22,11 @@
 #ifndef OPENSSL_AES_H_
 #define OPENSSL_AES_H_
 
+#include "durbatuluk.pb.h"
 #include <string>
+
+#define MESSAGE_TYPE_SHELL_EXEC "ShellExec"
+#define MESSAGE_TYPE_SHELL_EXEC_OUTPUT "ShellExecOutput"
 
 //
 // The message handler is the main class that does the work.  This is the class
@@ -32,8 +36,9 @@
 class MessageHandler
 {
 public:
-  static bool HandleMessage(std::string& input, std::string& output);
-  static bool ShellExec(std::string& input, std::string& output);
+  static bool HandleMessage(
+    const DurbatulukMessage& input, DurbatulukMessage& output);
+  static bool ShellExec(const std::string& input, std::string& output);
 };
 
 #endif // #ifndef OPENSSL_AES_H_
