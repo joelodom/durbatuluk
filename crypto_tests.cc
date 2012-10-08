@@ -19,9 +19,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include "crypto.h"
 #include "gtest/gtest.h"
-#include <openssl/rsa.h>
-#include <openssl/engine.h>
 #include "openssl_aes.h"
 
 TEST(crypto_tests, test_gtest)
@@ -33,7 +32,7 @@ TEST(crypto_tests, test_digital_signature_good)
 {
   int i; // for checking return values
 
-  RSA* rsa = RSA_generate_key(2048, 65537, nullptr, nullptr);
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
   ASSERT_TRUE(rsa != nullptr);
 
   i = RSA_check_key(rsa);
@@ -62,7 +61,7 @@ TEST(crypto_tests, test_digital_signature_bad)
 {
   int i; // for checking return values
 
-  RSA* rsa = RSA_generate_key(2048, 65537, nullptr, nullptr);
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
   ASSERT_TRUE(rsa != nullptr);
 
   i = RSA_check_key(rsa);
@@ -93,7 +92,7 @@ TEST(crypto_tests, test_encrypt_decrypt_session_key)
 {
   int i; // for checking return values
 
-  RSA* rsa = RSA_generate_key(2048, 65537, nullptr, nullptr);
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
   ASSERT_TRUE(rsa != nullptr);
 
   i = RSA_check_key(rsa);
@@ -122,6 +121,24 @@ TEST(crypto_tests, test_encrypt_decrypt_session_key)
   RSA_free(rsa);
   delete[] ciphertext;
   delete[] plaintext;
+}
+
+TEST(crypto_tests, test_bignum_conversion)
+{
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  ASSERT_TRUE(rsa != nullptr);
+
+  int len = BN_num_bytes(rsa->n);
+  unsigned char* buf = new unsigned char[len];
+  len = BN_bn2bin(rsa->n, buf);
+
+  BIGNUM* bn = BN_bin2bn(buf, len, nullptr);
+  ASSERT_NE(bn, nullptr);
+  EXPECT_EQ(BN_cmp(rsa->n, bn), 0);
+
+  delete[] buf;
+  BN_free(bn);
+  RSA_free(rsa);
 }
 
 TEST(crypto_tests, test_aes_sample) // thanks Saju Pillai
@@ -175,4 +192,60 @@ TEST(crypto_tests, test_aes_sample) // thanks Saju Pillai
 
   EVP_CIPHER_CTX_cleanup(&en);
   EVP_CIPHER_CTX_cleanup(&de);
+}
+
+TEST(crypto_tests, test_extract_import_public_rsa_key)
+{
+  // generate a key
+  RSA* rsa_before = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  ASSERT_TRUE(rsa_before != nullptr);
+
+  // extract the public key
+  RSAKey extracted;
+  ASSERT_TRUE(Crypto::ExtractPublicRSAKey(rsa_before, extracted));
+
+  // import the public key
+  RSA* rsa_after = RSA_new();
+  ASSERT_TRUE(Crypto::ImportRSAKey(extracted, rsa_after));
+
+  // check the imported key
+  EXPECT_EQ(BN_cmp(rsa_before->n, rsa_after->n), 0);
+  EXPECT_EQ(BN_cmp(rsa_before->e, rsa_after->e), 0);
+  EXPECT_EQ(rsa_after->d, nullptr);
+  EXPECT_EQ(rsa_after->p, nullptr);
+  EXPECT_EQ(rsa_after->q, nullptr);
+  EXPECT_EQ(rsa_after->dmp1, nullptr);
+  EXPECT_EQ(rsa_after->dmq1, nullptr);
+  EXPECT_EQ(rsa_after->iqmp, nullptr);
+
+  RSA_free(rsa_before);
+  RSA_free(rsa_after);
+}
+
+TEST(crypto_tests, test_extract_import_private_rsa_key)
+{
+  // generate a key
+  RSA* rsa_before = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  ASSERT_TRUE(rsa_before != nullptr);
+
+  // extract the private key
+  RSAKey extracted;
+  ASSERT_TRUE(Crypto::ExtractPrivateRSAKey(rsa_before, extracted));
+
+  // import the public key
+  RSA* rsa_after = RSA_new();
+  ASSERT_TRUE(Crypto::ImportRSAKey(extracted, rsa_after));
+
+  // check the imported key
+  EXPECT_EQ(BN_cmp(rsa_before->n, rsa_after->n), 0);
+  EXPECT_EQ(BN_cmp(rsa_before->e, rsa_after->e), 0);
+  EXPECT_EQ(BN_cmp(rsa_before->d, rsa_after->d), 0);
+  EXPECT_EQ(BN_cmp(rsa_before->p, rsa_after->p), 0);
+  EXPECT_EQ(BN_cmp(rsa_before->q, rsa_after->q), 0);
+  EXPECT_EQ(BN_cmp(rsa_before->dmp1, rsa_after->dmp1), 0);
+  EXPECT_EQ(BN_cmp(rsa_before->dmq1, rsa_after->dmq1), 0);
+  EXPECT_EQ(BN_cmp(rsa_before->iqmp, rsa_after->iqmp), 0);
+
+  RSA_free(rsa_before);
+  RSA_free(rsa_after);
 }
