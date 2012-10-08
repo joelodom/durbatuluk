@@ -19,26 +19,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef MESSAGE_HANDLER_H_
-#define MESSAGE_HANDLER_H_
+#include "encoding.h"
+#include "base64.h"
 
-#include "durbatuluk.pb.h"
-#include <string>
-
-#define MESSAGE_TYPE_SHELL_EXEC "ShellExec"
-#define MESSAGE_TYPE_SHELL_EXEC_OUTPUT "ShellExecOutput"
-
-//
-// The message handler is the main class that does the work.  This is the class
-// to change in order to implement custom message handling.
-//
-
-class MessageHandler
+/*static*/ bool Encoding::EncodeMessage(
+  const std::string& input, std::string& output)
 {
-public:
-  static bool HandleMessage(
-    const DurbatulukMessage& input, DurbatulukMessage& output);
-  static bool ShellExec(const std::string& input, std::string& output);
-};
+  std::string encoded = base64_encode(
+    reinterpret_cast<const unsigned char*>(
+    input.c_str()), input.length());
 
-#endif // #ifndef MESSAGE_HANDLER_H_
+  output = "<durbatuluk>";
+  output.append(encoded);
+  output.append("</durbatuluk>");
+
+  return true; // success
+}
+
+/*static*/ bool Encoding::DecodeMessage(
+  const std::string& input, std::string& output)
+{
+  if (input.length() < ENCODING_OVERHEAD + 1)
+    return false; // failure
+  if (input.find("<durbatuluk>") != 0)
+    return false; // failure
+  if (input.find("</durbatuluk>") != input.length() - 13)
+    return false; // failure
+
+  output = base64_decode(input.substr(12, input.length() - ENCODING_OVERHEAD));
+
+  return true; // success
+}

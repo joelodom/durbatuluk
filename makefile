@@ -17,6 +17,8 @@ SRCS += message_handler.cc
 SRCS += message_handler_tests.cc
 SRCS += base64.cc
 SRCS += base64_tests.cc
+SRCS += encoding.cc
+SRCS += encoding_tests.cc
 
 LIBS = -lpthread
 LIBS += -lcrypto
