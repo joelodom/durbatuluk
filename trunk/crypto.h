@@ -31,9 +31,15 @@
 class Crypto
 {
 public:
+  // methods to convert between OpenSSL and protocol buffers
   static bool ExtractPublicRSAKey(RSA* rsa, RSAKey& public_key);
   static bool ExtractPrivateRSAKey(RSA* rsa, RSAKey& private_key);
-  static bool ImportRSAKey(RSAKey& rsa_key, RSA* rsa);
+  static bool ImportRSAKey(const RSAKey& rsa_key, RSA* rsa);
+
+  // methods to create and verify a protocol buffers SignedMessage
+  static bool CreateSignedMessage(
+    std::string& contents, RSA* rsa, SignedMessage& signed_message);
+  static bool VerifySignedMessage(SignedMessage& signed_message);
 
 private:
   static unsigned char* AllocateForRSAExtraction(RSA* rsa);

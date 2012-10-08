@@ -382,18 +382,10 @@ class SignedMessage : public ::google::protobuf::Message {
   inline ::RSAKey* mutable_sender();
   inline ::RSAKey* release_sender();
   
-  // optional .RSAKey recipient = 2;
-  inline bool has_recipient() const;
-  inline void clear_recipient();
-  static const int kRecipientFieldNumber = 2;
-  inline const ::RSAKey& recipient() const;
-  inline ::RSAKey* mutable_recipient();
-  inline ::RSAKey* release_recipient();
-  
-  // required string contents = 3;
+  // required string contents = 2;
   inline bool has_contents() const;
   inline void clear_contents();
-  static const int kContentsFieldNumber = 3;
+  static const int kContentsFieldNumber = 2;
   inline const ::std::string& contents() const;
   inline void set_contents(const ::std::string& value);
   inline void set_contents(const char* value);
@@ -401,20 +393,31 @@ class SignedMessage : public ::google::protobuf::Message {
   inline ::std::string* mutable_contents();
   inline ::std::string* release_contents();
   
+  // required bytes signature = 3;
+  inline bool has_signature() const;
+  inline void clear_signature();
+  static const int kSignatureFieldNumber = 3;
+  inline const ::std::string& signature() const;
+  inline void set_signature(const ::std::string& value);
+  inline void set_signature(const char* value);
+  inline void set_signature(const void* value, size_t size);
+  inline ::std::string* mutable_signature();
+  inline ::std::string* release_signature();
+  
   // @@protoc_insertion_point(class_scope:SignedMessage)
  private:
   inline void set_has_sender();
   inline void clear_has_sender();
-  inline void set_has_recipient();
-  inline void clear_has_recipient();
   inline void set_has_contents();
   inline void clear_has_contents();
+  inline void set_has_signature();
+  inline void clear_has_signature();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::RSAKey* sender_;
-  ::RSAKey* recipient_;
   ::std::string* contents_;
+  ::std::string* signature_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
@@ -1050,44 +1053,15 @@ inline ::RSAKey* SignedMessage::release_sender() {
   return temp;
 }
 
-// optional .RSAKey recipient = 2;
-inline bool SignedMessage::has_recipient() const {
+// required string contents = 2;
+inline bool SignedMessage::has_contents() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void SignedMessage::set_has_recipient() {
+inline void SignedMessage::set_has_contents() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void SignedMessage::clear_has_recipient() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void SignedMessage::clear_recipient() {
-  if (recipient_ != NULL) recipient_->::RSAKey::Clear();
-  clear_has_recipient();
-}
-inline const ::RSAKey& SignedMessage::recipient() const {
-  return recipient_ != NULL ? *recipient_ : *default_instance_->recipient_;
-}
-inline ::RSAKey* SignedMessage::mutable_recipient() {
-  set_has_recipient();
-  if (recipient_ == NULL) recipient_ = new ::RSAKey;
-  return recipient_;
-}
-inline ::RSAKey* SignedMessage::release_recipient() {
-  clear_has_recipient();
-  ::RSAKey* temp = recipient_;
-  recipient_ = NULL;
-  return temp;
-}
-
-// required string contents = 3;
-inline bool SignedMessage::has_contents() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void SignedMessage::set_has_contents() {
-  _has_bits_[0] |= 0x00000004u;
-}
 inline void SignedMessage::clear_has_contents() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline void SignedMessage::clear_contents() {
   if (contents_ != &::google::protobuf::internal::kEmptyString) {
@@ -1133,6 +1107,64 @@ inline ::std::string* SignedMessage::release_contents() {
   } else {
     ::std::string* temp = contents_;
     contents_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required bytes signature = 3;
+inline bool SignedMessage::has_signature() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void SignedMessage::set_has_signature() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void SignedMessage::clear_has_signature() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void SignedMessage::clear_signature() {
+  if (signature_ != &::google::protobuf::internal::kEmptyString) {
+    signature_->clear();
+  }
+  clear_has_signature();
+}
+inline const ::std::string& SignedMessage::signature() const {
+  return *signature_;
+}
+inline void SignedMessage::set_signature(const ::std::string& value) {
+  set_has_signature();
+  if (signature_ == &::google::protobuf::internal::kEmptyString) {
+    signature_ = new ::std::string;
+  }
+  signature_->assign(value);
+}
+inline void SignedMessage::set_signature(const char* value) {
+  set_has_signature();
+  if (signature_ == &::google::protobuf::internal::kEmptyString) {
+    signature_ = new ::std::string;
+  }
+  signature_->assign(value);
+}
+inline void SignedMessage::set_signature(const void* value, size_t size) {
+  set_has_signature();
+  if (signature_ == &::google::protobuf::internal::kEmptyString) {
+    signature_ = new ::std::string;
+  }
+  signature_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* SignedMessage::mutable_signature() {
+  set_has_signature();
+  if (signature_ == &::google::protobuf::internal::kEmptyString) {
+    signature_ = new ::std::string;
+  }
+  return signature_;
+}
+inline ::std::string* SignedMessage::release_signature() {
+  clear_has_signature();
+  if (signature_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = signature_;
+    signature_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
 }

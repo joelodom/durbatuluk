@@ -75,8 +75,8 @@ void protobuf_AssignDesc_durbatuluk_2eproto() {
   SignedMessage_descriptor_ = file->message_type(2);
   static const int SignedMessage_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SignedMessage, sender_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SignedMessage, recipient_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SignedMessage, contents_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SignedMessage, signature_),
   };
   SignedMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -131,9 +131,9 @@ void protobuf_AddDesc_durbatuluk_2eproto() {
     "\t\n\001e\030\002 \002(\014\022\t\n\001d\030\003 \001(\014\022\t\n\001p\030\004 \001(\014\022\t\n\001q\030\005 "
     "\001(\014\022\014\n\004dmp1\030\006 \001(\014\022\014\n\004dmq1\030\007 \001(\014\022\014\n\004iqmp\030"
     "\010 \001(\014\"3\n\021DurbatulukMessage\022\014\n\004type\030\001 \001(\t"
-    "\022\020\n\010contents\030\002 \001(\t\"V\n\rSignedMessage\022\027\n\006s"
-    "ender\030\001 \002(\0132\007.RSAKey\022\032\n\trecipient\030\002 \001(\0132"
-    "\007.RSAKey\022\020\n\010contents\030\003 \002(\t", 266);
+    "\022\020\n\010contents\030\002 \001(\t\"M\n\rSignedMessage\022\027\n\006s"
+    "ender\030\001 \002(\0132\007.RSAKey\022\020\n\010contents\030\002 \002(\t\022\021"
+    "\n\tsignature\030\003 \002(\014", 257);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "durbatuluk.proto", &protobuf_RegisterTypes);
   RSAKey::default_instance_ = new RSAKey();
@@ -990,8 +990,8 @@ void DurbatulukMessage::Swap(DurbatulukMessage* other) {
 
 #ifndef _MSC_VER
 const int SignedMessage::kSenderFieldNumber;
-const int SignedMessage::kRecipientFieldNumber;
 const int SignedMessage::kContentsFieldNumber;
+const int SignedMessage::kSignatureFieldNumber;
 #endif  // !_MSC_VER
 
 SignedMessage::SignedMessage()
@@ -1001,7 +1001,6 @@ SignedMessage::SignedMessage()
 
 void SignedMessage::InitAsDefaultInstance() {
   sender_ = const_cast< ::RSAKey*>(&::RSAKey::default_instance());
-  recipient_ = const_cast< ::RSAKey*>(&::RSAKey::default_instance());
 }
 
 SignedMessage::SignedMessage(const SignedMessage& from)
@@ -1013,8 +1012,8 @@ SignedMessage::SignedMessage(const SignedMessage& from)
 void SignedMessage::SharedCtor() {
   _cached_size_ = 0;
   sender_ = NULL;
-  recipient_ = NULL;
   contents_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  signature_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1026,9 +1025,11 @@ void SignedMessage::SharedDtor() {
   if (contents_ != &::google::protobuf::internal::kEmptyString) {
     delete contents_;
   }
+  if (signature_ != &::google::protobuf::internal::kEmptyString) {
+    delete signature_;
+  }
   if (this != default_instance_) {
     delete sender_;
-    delete recipient_;
   }
 }
 
@@ -1057,12 +1058,14 @@ void SignedMessage::Clear() {
     if (has_sender()) {
       if (sender_ != NULL) sender_->::RSAKey::Clear();
     }
-    if (has_recipient()) {
-      if (recipient_ != NULL) recipient_->::RSAKey::Clear();
-    }
     if (has_contents()) {
       if (contents_ != &::google::protobuf::internal::kEmptyString) {
         contents_->clear();
+      }
+    }
+    if (has_signature()) {
+      if (signature_ != &::google::protobuf::internal::kEmptyString) {
+        signature_->clear();
       }
     }
   }
@@ -1085,26 +1088,12 @@ bool SignedMessage::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(18)) goto parse_recipient;
+        if (input->ExpectTag(18)) goto parse_contents;
         break;
       }
       
-      // optional .RSAKey recipient = 2;
+      // required string contents = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_recipient:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_recipient()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(26)) goto parse_contents;
-        break;
-      }
-      
-      // required string contents = 3;
-      case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_contents:
@@ -1113,6 +1102,20 @@ bool SignedMessage::MergePartialFromCodedStream(
           ::google::protobuf::internal::WireFormat::VerifyUTF8String(
             this->contents().data(), this->contents().length(),
             ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_signature;
+        break;
+      }
+      
+      // required bytes signature = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_signature:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_signature()));
         } else {
           goto handle_uninterpreted;
         }
@@ -1144,19 +1147,19 @@ void SignedMessage::SerializeWithCachedSizes(
       1, this->sender(), output);
   }
   
-  // optional .RSAKey recipient = 2;
-  if (has_recipient()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->recipient(), output);
-  }
-  
-  // required string contents = 3;
+  // required string contents = 2;
   if (has_contents()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->contents().data(), this->contents().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      3, this->contents(), output);
+      2, this->contents(), output);
+  }
+  
+  // required bytes signature = 3;
+  if (has_signature()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytes(
+      3, this->signature(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -1174,21 +1177,21 @@ void SignedMessage::SerializeWithCachedSizes(
         1, this->sender(), target);
   }
   
-  // optional .RSAKey recipient = 2;
-  if (has_recipient()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        2, this->recipient(), target);
-  }
-  
-  // required string contents = 3;
+  // required string contents = 2;
   if (has_contents()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->contents().data(), this->contents().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->contents(), target);
+        2, this->contents(), target);
+  }
+  
+  // required bytes signature = 3;
+  if (has_signature()) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        3, this->signature(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1209,18 +1212,18 @@ int SignedMessage::ByteSize() const {
           this->sender());
     }
     
-    // optional .RSAKey recipient = 2;
-    if (has_recipient()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->recipient());
-    }
-    
-    // required string contents = 3;
+    // required string contents = 2;
     if (has_contents()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->contents());
+    }
+    
+    // required bytes signature = 3;
+    if (has_signature()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
+          this->signature());
     }
     
   }
@@ -1253,11 +1256,11 @@ void SignedMessage::MergeFrom(const SignedMessage& from) {
     if (from.has_sender()) {
       mutable_sender()->::RSAKey::MergeFrom(from.sender());
     }
-    if (from.has_recipient()) {
-      mutable_recipient()->::RSAKey::MergeFrom(from.recipient());
-    }
     if (from.has_contents()) {
       set_contents(from.contents());
+    }
+    if (from.has_signature()) {
+      set_signature(from.signature());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -1276,13 +1279,10 @@ void SignedMessage::CopyFrom(const SignedMessage& from) {
 }
 
 bool SignedMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000005) != 0x00000005) return false;
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
   
   if (has_sender()) {
     if (!this->sender().IsInitialized()) return false;
-  }
-  if (has_recipient()) {
-    if (!this->recipient().IsInitialized()) return false;
   }
   return true;
 }
@@ -1290,8 +1290,8 @@ bool SignedMessage::IsInitialized() const {
 void SignedMessage::Swap(SignedMessage* other) {
   if (other != this) {
     std::swap(sender_, other->sender_);
-    std::swap(recipient_, other->recipient_);
     std::swap(contents_, other->contents_);
+    std::swap(signature_, other->signature_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
