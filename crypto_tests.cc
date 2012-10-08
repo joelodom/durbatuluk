@@ -23,11 +23,6 @@
 #include "gtest/gtest.h"
 #include "openssl_aes.h"
 
-TEST(crypto_tests, test_gtest)
-{
-  EXPECT_TRUE(true) << "law of non-contradiction failed";
-}
-
 TEST(crypto_tests, test_digital_signature_good)
 {
   int i; // for checking return values
@@ -39,7 +34,7 @@ TEST(crypto_tests, test_digital_signature_good)
   ASSERT_EQ(i, 1) << "RSA_check_key failed";
 
   int rsa_size = RSA_size(rsa);
-  EXPECT_EQ(rsa_size, 256) << "this may be okay";
+  EXPECT_EQ(rsa_size, 256) << "this may be okay if RSA_BITS ever changes";
 
   std::string message("One ring to rule them all, one ring to find them");
   unsigned char* sigret = new unsigned char[rsa_size];
@@ -248,4 +243,22 @@ TEST(crypto_tests, test_extract_import_private_rsa_key)
 
   RSA_free(rsa_before);
   RSA_free(rsa_after);
+}
+
+TEST(crypto_tests, test_create_and_verify_signed_message)
+{
+  std::string contents("Arbitrary message contents...");
+
+  // generate a key
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  ASSERT_TRUE(rsa != nullptr);
+
+  // generate a SignedMessage and throw away the key
+  SignedMessage signed_message;
+  ASSERT_TRUE(Crypto::CreateSignedMessage(contents, rsa, signed_message));
+  RSA_free(rsa); // cleans the key from memory
+
+  // verify the SignedMessage
+  EXPECT_STREQ(signed_message.contents().c_str(), contents.c_str());
+  EXPECT_TRUE(Crypto::VerifySignedMessage(signed_message));
 }

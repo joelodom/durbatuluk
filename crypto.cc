@@ -20,6 +20,7 @@
 // SOFTWARE.
 
 #include "crypto.h"
+#include <openssl/engine.h>
 
 /*static*/ bool Crypto::ExtractPublicRSAKey(RSA* rsa, RSAKey& public_key)
 {
@@ -71,7 +72,7 @@
   return true; // success
 }
 
-/*static*/ bool Crypto::ImportRSAKey(RSAKey& rsa_key, RSA* rsa)
+/*static*/ bool Crypto::ImportRSAKey(const RSAKey& rsa_key, RSA* rsa)
 {
   ExtractBIGNUM(rsa_key.n(), &rsa->n);
   if (rsa->n == nullptr)
@@ -185,4 +186,71 @@
 {
   *bn = BN_bin2bn(reinterpret_cast<const unsigned char*>(s.c_str()),
     s.length(), nullptr);
+}
+
+/*static*/ bool Crypto::CreateSignedMessage(
+    std::string& contents, RSA* rsa, SignedMessage& signed_message)
+{
+  // set up variables and buffers
+  int rsa_size = RSA_size(rsa);
+  unsigned char* sigret = new unsigned char[rsa_size];
+  if (sigret == nullptr)
+    return false; // failure
+  unsigned int siglen;
+
+  // sign the contents
+  if (RSA_sign(NID_sha1, (const unsigned char*)contents.c_str(),
+    contents.size(), sigret, &siglen, rsa) != 1)
+    return false; // failure
+
+  // build the SignedMessage
+  RSAKey public_key;
+  if (!ExtractPublicRSAKey(rsa, public_key))
+    return false;
+  signed_message.mutable_sender()->set_n(public_key.n());
+  signed_message.mutable_sender()->set_e(public_key.e());
+  signed_message.set_contents(contents);
+  signed_message.set_signature(sigret, siglen);
+
+  delete[] sigret;
+  return true; // failure
+}
+
+/*static*/ bool Crypto::VerifySignedMessage(SignedMessage& signed_message)
+{
+  // import the public signing key
+
+  RSA* rsa = RSA_new();
+  if (!ImportRSAKey(signed_message.sender(), rsa))
+  {
+    RSA_free(rsa);
+    return false; // failure
+  }
+
+  int rsa_size = RSA_size(rsa);
+  unsigned char* sigret = new unsigned char[rsa_size];
+  if (sigret == nullptr)
+  {
+    RSA_free(rsa);
+    return false; // failure
+  }
+
+  // verify the digital signature
+
+  if (!RSA_verify(NID_sha1,
+    reinterpret_cast<const unsigned char*>(signed_message.contents().c_str()),
+    signed_message.contents().size(),
+    reinterpret_cast<const unsigned char*>(signed_message.signature().c_str()),
+    signed_message.signature().length(), rsa))
+  {
+    // signature verification failed -- this is important
+    delete[] sigret;
+    RSA_free(rsa);
+    return false;
+  }
+
+  delete[] sigret;
+  RSA_free(rsa);
+
+  return true; // success
 }

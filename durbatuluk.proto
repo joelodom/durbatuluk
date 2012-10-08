@@ -47,6 +47,6 @@ message DurbatulukMessage {
 // sender and recipient are both public signing keys
 message SignedMessage {
   required RSAKey sender = 1;
-  optional RSAKey recipient = 2; // optional because may be broadcast?
-  required string contents = 3;
+  required string contents = 2;
+  required bytes signature = 3;
 }
