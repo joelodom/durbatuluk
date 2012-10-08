@@ -30,9 +30,195 @@ void  protobuf_AddDesc_durbatuluk_2eproto();
 void protobuf_AssignDesc_durbatuluk_2eproto();
 void protobuf_ShutdownFile_durbatuluk_2eproto();
 
+class RSAKey;
 class DurbatulukMessage;
+class SignedMessage;
 
 // ===================================================================
+
+class RSAKey : public ::google::protobuf::Message {
+ public:
+  RSAKey();
+  virtual ~RSAKey();
+  
+  RSAKey(const RSAKey& from);
+  
+  inline RSAKey& operator=(const RSAKey& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const RSAKey& default_instance();
+  
+  void Swap(RSAKey* other);
+  
+  // implements Message ----------------------------------------------
+  
+  RSAKey* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const RSAKey& from);
+  void MergeFrom(const RSAKey& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required bytes n = 1;
+  inline bool has_n() const;
+  inline void clear_n();
+  static const int kNFieldNumber = 1;
+  inline const ::std::string& n() const;
+  inline void set_n(const ::std::string& value);
+  inline void set_n(const char* value);
+  inline void set_n(const void* value, size_t size);
+  inline ::std::string* mutable_n();
+  inline ::std::string* release_n();
+  
+  // required bytes e = 2;
+  inline bool has_e() const;
+  inline void clear_e();
+  static const int kEFieldNumber = 2;
+  inline const ::std::string& e() const;
+  inline void set_e(const ::std::string& value);
+  inline void set_e(const char* value);
+  inline void set_e(const void* value, size_t size);
+  inline ::std::string* mutable_e();
+  inline ::std::string* release_e();
+  
+  // optional bytes d = 3;
+  inline bool has_d() const;
+  inline void clear_d();
+  static const int kDFieldNumber = 3;
+  inline const ::std::string& d() const;
+  inline void set_d(const ::std::string& value);
+  inline void set_d(const char* value);
+  inline void set_d(const void* value, size_t size);
+  inline ::std::string* mutable_d();
+  inline ::std::string* release_d();
+  
+  // optional bytes p = 4;
+  inline bool has_p() const;
+  inline void clear_p();
+  static const int kPFieldNumber = 4;
+  inline const ::std::string& p() const;
+  inline void set_p(const ::std::string& value);
+  inline void set_p(const char* value);
+  inline void set_p(const void* value, size_t size);
+  inline ::std::string* mutable_p();
+  inline ::std::string* release_p();
+  
+  // optional bytes q = 5;
+  inline bool has_q() const;
+  inline void clear_q();
+  static const int kQFieldNumber = 5;
+  inline const ::std::string& q() const;
+  inline void set_q(const ::std::string& value);
+  inline void set_q(const char* value);
+  inline void set_q(const void* value, size_t size);
+  inline ::std::string* mutable_q();
+  inline ::std::string* release_q();
+  
+  // optional bytes dmp1 = 6;
+  inline bool has_dmp1() const;
+  inline void clear_dmp1();
+  static const int kDmp1FieldNumber = 6;
+  inline const ::std::string& dmp1() const;
+  inline void set_dmp1(const ::std::string& value);
+  inline void set_dmp1(const char* value);
+  inline void set_dmp1(const void* value, size_t size);
+  inline ::std::string* mutable_dmp1();
+  inline ::std::string* release_dmp1();
+  
+  // optional bytes dmq1 = 7;
+  inline bool has_dmq1() const;
+  inline void clear_dmq1();
+  static const int kDmq1FieldNumber = 7;
+  inline const ::std::string& dmq1() const;
+  inline void set_dmq1(const ::std::string& value);
+  inline void set_dmq1(const char* value);
+  inline void set_dmq1(const void* value, size_t size);
+  inline ::std::string* mutable_dmq1();
+  inline ::std::string* release_dmq1();
+  
+  // optional bytes iqmp = 8;
+  inline bool has_iqmp() const;
+  inline void clear_iqmp();
+  static const int kIqmpFieldNumber = 8;
+  inline const ::std::string& iqmp() const;
+  inline void set_iqmp(const ::std::string& value);
+  inline void set_iqmp(const char* value);
+  inline void set_iqmp(const void* value, size_t size);
+  inline ::std::string* mutable_iqmp();
+  inline ::std::string* release_iqmp();
+  
+  // @@protoc_insertion_point(class_scope:RSAKey)
+ private:
+  inline void set_has_n();
+  inline void clear_has_n();
+  inline void set_has_e();
+  inline void clear_has_e();
+  inline void set_has_d();
+  inline void clear_has_d();
+  inline void set_has_p();
+  inline void clear_has_p();
+  inline void set_has_q();
+  inline void clear_has_q();
+  inline void set_has_dmp1();
+  inline void clear_has_dmp1();
+  inline void set_has_dmq1();
+  inline void clear_has_dmq1();
+  inline void set_has_iqmp();
+  inline void clear_has_iqmp();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* n_;
+  ::std::string* e_;
+  ::std::string* d_;
+  ::std::string* p_;
+  ::std::string* q_;
+  ::std::string* dmp1_;
+  ::std::string* dmq1_;
+  ::std::string* iqmp_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_durbatuluk_2eproto();
+  friend void protobuf_AssignDesc_durbatuluk_2eproto();
+  friend void protobuf_ShutdownFile_durbatuluk_2eproto();
+  
+  void InitAsDefaultInstance();
+  static RSAKey* default_instance_;
+};
+// -------------------------------------------------------------------
 
 class DurbatulukMessage : public ::google::protobuf::Message {
  public:
@@ -132,10 +318,586 @@ class DurbatulukMessage : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static DurbatulukMessage* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class SignedMessage : public ::google::protobuf::Message {
+ public:
+  SignedMessage();
+  virtual ~SignedMessage();
+  
+  SignedMessage(const SignedMessage& from);
+  
+  inline SignedMessage& operator=(const SignedMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const SignedMessage& default_instance();
+  
+  void Swap(SignedMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  SignedMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const SignedMessage& from);
+  void MergeFrom(const SignedMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .RSAKey sender = 1;
+  inline bool has_sender() const;
+  inline void clear_sender();
+  static const int kSenderFieldNumber = 1;
+  inline const ::RSAKey& sender() const;
+  inline ::RSAKey* mutable_sender();
+  inline ::RSAKey* release_sender();
+  
+  // optional .RSAKey recipient = 2;
+  inline bool has_recipient() const;
+  inline void clear_recipient();
+  static const int kRecipientFieldNumber = 2;
+  inline const ::RSAKey& recipient() const;
+  inline ::RSAKey* mutable_recipient();
+  inline ::RSAKey* release_recipient();
+  
+  // required string contents = 3;
+  inline bool has_contents() const;
+  inline void clear_contents();
+  static const int kContentsFieldNumber = 3;
+  inline const ::std::string& contents() const;
+  inline void set_contents(const ::std::string& value);
+  inline void set_contents(const char* value);
+  inline void set_contents(const char* value, size_t size);
+  inline ::std::string* mutable_contents();
+  inline ::std::string* release_contents();
+  
+  // @@protoc_insertion_point(class_scope:SignedMessage)
+ private:
+  inline void set_has_sender();
+  inline void clear_has_sender();
+  inline void set_has_recipient();
+  inline void clear_has_recipient();
+  inline void set_has_contents();
+  inline void clear_has_contents();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::RSAKey* sender_;
+  ::RSAKey* recipient_;
+  ::std::string* contents_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_durbatuluk_2eproto();
+  friend void protobuf_AssignDesc_durbatuluk_2eproto();
+  friend void protobuf_ShutdownFile_durbatuluk_2eproto();
+  
+  void InitAsDefaultInstance();
+  static SignedMessage* default_instance_;
+};
 // ===================================================================
 
 
 // ===================================================================
+
+// RSAKey
+
+// required bytes n = 1;
+inline bool RSAKey::has_n() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void RSAKey::set_has_n() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void RSAKey::clear_has_n() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void RSAKey::clear_n() {
+  if (n_ != &::google::protobuf::internal::kEmptyString) {
+    n_->clear();
+  }
+  clear_has_n();
+}
+inline const ::std::string& RSAKey::n() const {
+  return *n_;
+}
+inline void RSAKey::set_n(const ::std::string& value) {
+  set_has_n();
+  if (n_ == &::google::protobuf::internal::kEmptyString) {
+    n_ = new ::std::string;
+  }
+  n_->assign(value);
+}
+inline void RSAKey::set_n(const char* value) {
+  set_has_n();
+  if (n_ == &::google::protobuf::internal::kEmptyString) {
+    n_ = new ::std::string;
+  }
+  n_->assign(value);
+}
+inline void RSAKey::set_n(const void* value, size_t size) {
+  set_has_n();
+  if (n_ == &::google::protobuf::internal::kEmptyString) {
+    n_ = new ::std::string;
+  }
+  n_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* RSAKey::mutable_n() {
+  set_has_n();
+  if (n_ == &::google::protobuf::internal::kEmptyString) {
+    n_ = new ::std::string;
+  }
+  return n_;
+}
+inline ::std::string* RSAKey::release_n() {
+  clear_has_n();
+  if (n_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = n_;
+    n_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required bytes e = 2;
+inline bool RSAKey::has_e() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void RSAKey::set_has_e() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void RSAKey::clear_has_e() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void RSAKey::clear_e() {
+  if (e_ != &::google::protobuf::internal::kEmptyString) {
+    e_->clear();
+  }
+  clear_has_e();
+}
+inline const ::std::string& RSAKey::e() const {
+  return *e_;
+}
+inline void RSAKey::set_e(const ::std::string& value) {
+  set_has_e();
+  if (e_ == &::google::protobuf::internal::kEmptyString) {
+    e_ = new ::std::string;
+  }
+  e_->assign(value);
+}
+inline void RSAKey::set_e(const char* value) {
+  set_has_e();
+  if (e_ == &::google::protobuf::internal::kEmptyString) {
+    e_ = new ::std::string;
+  }
+  e_->assign(value);
+}
+inline void RSAKey::set_e(const void* value, size_t size) {
+  set_has_e();
+  if (e_ == &::google::protobuf::internal::kEmptyString) {
+    e_ = new ::std::string;
+  }
+  e_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* RSAKey::mutable_e() {
+  set_has_e();
+  if (e_ == &::google::protobuf::internal::kEmptyString) {
+    e_ = new ::std::string;
+  }
+  return e_;
+}
+inline ::std::string* RSAKey::release_e() {
+  clear_has_e();
+  if (e_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = e_;
+    e_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional bytes d = 3;
+inline bool RSAKey::has_d() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void RSAKey::set_has_d() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void RSAKey::clear_has_d() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void RSAKey::clear_d() {
+  if (d_ != &::google::protobuf::internal::kEmptyString) {
+    d_->clear();
+  }
+  clear_has_d();
+}
+inline const ::std::string& RSAKey::d() const {
+  return *d_;
+}
+inline void RSAKey::set_d(const ::std::string& value) {
+  set_has_d();
+  if (d_ == &::google::protobuf::internal::kEmptyString) {
+    d_ = new ::std::string;
+  }
+  d_->assign(value);
+}
+inline void RSAKey::set_d(const char* value) {
+  set_has_d();
+  if (d_ == &::google::protobuf::internal::kEmptyString) {
+    d_ = new ::std::string;
+  }
+  d_->assign(value);
+}
+inline void RSAKey::set_d(const void* value, size_t size) {
+  set_has_d();
+  if (d_ == &::google::protobuf::internal::kEmptyString) {
+    d_ = new ::std::string;
+  }
+  d_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* RSAKey::mutable_d() {
+  set_has_d();
+  if (d_ == &::google::protobuf::internal::kEmptyString) {
+    d_ = new ::std::string;
+  }
+  return d_;
+}
+inline ::std::string* RSAKey::release_d() {
+  clear_has_d();
+  if (d_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = d_;
+    d_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional bytes p = 4;
+inline bool RSAKey::has_p() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void RSAKey::set_has_p() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void RSAKey::clear_has_p() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void RSAKey::clear_p() {
+  if (p_ != &::google::protobuf::internal::kEmptyString) {
+    p_->clear();
+  }
+  clear_has_p();
+}
+inline const ::std::string& RSAKey::p() const {
+  return *p_;
+}
+inline void RSAKey::set_p(const ::std::string& value) {
+  set_has_p();
+  if (p_ == &::google::protobuf::internal::kEmptyString) {
+    p_ = new ::std::string;
+  }
+  p_->assign(value);
+}
+inline void RSAKey::set_p(const char* value) {
+  set_has_p();
+  if (p_ == &::google::protobuf::internal::kEmptyString) {
+    p_ = new ::std::string;
+  }
+  p_->assign(value);
+}
+inline void RSAKey::set_p(const void* value, size_t size) {
+  set_has_p();
+  if (p_ == &::google::protobuf::internal::kEmptyString) {
+    p_ = new ::std::string;
+  }
+  p_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* RSAKey::mutable_p() {
+  set_has_p();
+  if (p_ == &::google::protobuf::internal::kEmptyString) {
+    p_ = new ::std::string;
+  }
+  return p_;
+}
+inline ::std::string* RSAKey::release_p() {
+  clear_has_p();
+  if (p_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = p_;
+    p_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional bytes q = 5;
+inline bool RSAKey::has_q() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void RSAKey::set_has_q() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void RSAKey::clear_has_q() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void RSAKey::clear_q() {
+  if (q_ != &::google::protobuf::internal::kEmptyString) {
+    q_->clear();
+  }
+  clear_has_q();
+}
+inline const ::std::string& RSAKey::q() const {
+  return *q_;
+}
+inline void RSAKey::set_q(const ::std::string& value) {
+  set_has_q();
+  if (q_ == &::google::protobuf::internal::kEmptyString) {
+    q_ = new ::std::string;
+  }
+  q_->assign(value);
+}
+inline void RSAKey::set_q(const char* value) {
+  set_has_q();
+  if (q_ == &::google::protobuf::internal::kEmptyString) {
+    q_ = new ::std::string;
+  }
+  q_->assign(value);
+}
+inline void RSAKey::set_q(const void* value, size_t size) {
+  set_has_q();
+  if (q_ == &::google::protobuf::internal::kEmptyString) {
+    q_ = new ::std::string;
+  }
+  q_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* RSAKey::mutable_q() {
+  set_has_q();
+  if (q_ == &::google::protobuf::internal::kEmptyString) {
+    q_ = new ::std::string;
+  }
+  return q_;
+}
+inline ::std::string* RSAKey::release_q() {
+  clear_has_q();
+  if (q_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = q_;
+    q_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional bytes dmp1 = 6;
+inline bool RSAKey::has_dmp1() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void RSAKey::set_has_dmp1() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void RSAKey::clear_has_dmp1() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void RSAKey::clear_dmp1() {
+  if (dmp1_ != &::google::protobuf::internal::kEmptyString) {
+    dmp1_->clear();
+  }
+  clear_has_dmp1();
+}
+inline const ::std::string& RSAKey::dmp1() const {
+  return *dmp1_;
+}
+inline void RSAKey::set_dmp1(const ::std::string& value) {
+  set_has_dmp1();
+  if (dmp1_ == &::google::protobuf::internal::kEmptyString) {
+    dmp1_ = new ::std::string;
+  }
+  dmp1_->assign(value);
+}
+inline void RSAKey::set_dmp1(const char* value) {
+  set_has_dmp1();
+  if (dmp1_ == &::google::protobuf::internal::kEmptyString) {
+    dmp1_ = new ::std::string;
+  }
+  dmp1_->assign(value);
+}
+inline void RSAKey::set_dmp1(const void* value, size_t size) {
+  set_has_dmp1();
+  if (dmp1_ == &::google::protobuf::internal::kEmptyString) {
+    dmp1_ = new ::std::string;
+  }
+  dmp1_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* RSAKey::mutable_dmp1() {
+  set_has_dmp1();
+  if (dmp1_ == &::google::protobuf::internal::kEmptyString) {
+    dmp1_ = new ::std::string;
+  }
+  return dmp1_;
+}
+inline ::std::string* RSAKey::release_dmp1() {
+  clear_has_dmp1();
+  if (dmp1_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = dmp1_;
+    dmp1_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional bytes dmq1 = 7;
+inline bool RSAKey::has_dmq1() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void RSAKey::set_has_dmq1() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void RSAKey::clear_has_dmq1() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void RSAKey::clear_dmq1() {
+  if (dmq1_ != &::google::protobuf::internal::kEmptyString) {
+    dmq1_->clear();
+  }
+  clear_has_dmq1();
+}
+inline const ::std::string& RSAKey::dmq1() const {
+  return *dmq1_;
+}
+inline void RSAKey::set_dmq1(const ::std::string& value) {
+  set_has_dmq1();
+  if (dmq1_ == &::google::protobuf::internal::kEmptyString) {
+    dmq1_ = new ::std::string;
+  }
+  dmq1_->assign(value);
+}
+inline void RSAKey::set_dmq1(const char* value) {
+  set_has_dmq1();
+  if (dmq1_ == &::google::protobuf::internal::kEmptyString) {
+    dmq1_ = new ::std::string;
+  }
+  dmq1_->assign(value);
+}
+inline void RSAKey::set_dmq1(const void* value, size_t size) {
+  set_has_dmq1();
+  if (dmq1_ == &::google::protobuf::internal::kEmptyString) {
+    dmq1_ = new ::std::string;
+  }
+  dmq1_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* RSAKey::mutable_dmq1() {
+  set_has_dmq1();
+  if (dmq1_ == &::google::protobuf::internal::kEmptyString) {
+    dmq1_ = new ::std::string;
+  }
+  return dmq1_;
+}
+inline ::std::string* RSAKey::release_dmq1() {
+  clear_has_dmq1();
+  if (dmq1_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = dmq1_;
+    dmq1_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional bytes iqmp = 8;
+inline bool RSAKey::has_iqmp() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void RSAKey::set_has_iqmp() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void RSAKey::clear_has_iqmp() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void RSAKey::clear_iqmp() {
+  if (iqmp_ != &::google::protobuf::internal::kEmptyString) {
+    iqmp_->clear();
+  }
+  clear_has_iqmp();
+}
+inline const ::std::string& RSAKey::iqmp() const {
+  return *iqmp_;
+}
+inline void RSAKey::set_iqmp(const ::std::string& value) {
+  set_has_iqmp();
+  if (iqmp_ == &::google::protobuf::internal::kEmptyString) {
+    iqmp_ = new ::std::string;
+  }
+  iqmp_->assign(value);
+}
+inline void RSAKey::set_iqmp(const char* value) {
+  set_has_iqmp();
+  if (iqmp_ == &::google::protobuf::internal::kEmptyString) {
+    iqmp_ = new ::std::string;
+  }
+  iqmp_->assign(value);
+}
+inline void RSAKey::set_iqmp(const void* value, size_t size) {
+  set_has_iqmp();
+  if (iqmp_ == &::google::protobuf::internal::kEmptyString) {
+    iqmp_ = new ::std::string;
+  }
+  iqmp_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* RSAKey::mutable_iqmp() {
+  set_has_iqmp();
+  if (iqmp_ == &::google::protobuf::internal::kEmptyString) {
+    iqmp_ = new ::std::string;
+  }
+  return iqmp_;
+}
+inline ::std::string* RSAKey::release_iqmp() {
+  clear_has_iqmp();
+  if (iqmp_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = iqmp_;
+    iqmp_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// -------------------------------------------------------------------
 
 // DurbatulukMessage
 
@@ -245,6 +1007,126 @@ inline ::std::string* DurbatulukMessage::mutable_contents() {
   return contents_;
 }
 inline ::std::string* DurbatulukMessage::release_contents() {
+  clear_has_contents();
+  if (contents_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = contents_;
+    contents_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// -------------------------------------------------------------------
+
+// SignedMessage
+
+// required .RSAKey sender = 1;
+inline bool SignedMessage::has_sender() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void SignedMessage::set_has_sender() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void SignedMessage::clear_has_sender() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void SignedMessage::clear_sender() {
+  if (sender_ != NULL) sender_->::RSAKey::Clear();
+  clear_has_sender();
+}
+inline const ::RSAKey& SignedMessage::sender() const {
+  return sender_ != NULL ? *sender_ : *default_instance_->sender_;
+}
+inline ::RSAKey* SignedMessage::mutable_sender() {
+  set_has_sender();
+  if (sender_ == NULL) sender_ = new ::RSAKey;
+  return sender_;
+}
+inline ::RSAKey* SignedMessage::release_sender() {
+  clear_has_sender();
+  ::RSAKey* temp = sender_;
+  sender_ = NULL;
+  return temp;
+}
+
+// optional .RSAKey recipient = 2;
+inline bool SignedMessage::has_recipient() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void SignedMessage::set_has_recipient() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void SignedMessage::clear_has_recipient() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void SignedMessage::clear_recipient() {
+  if (recipient_ != NULL) recipient_->::RSAKey::Clear();
+  clear_has_recipient();
+}
+inline const ::RSAKey& SignedMessage::recipient() const {
+  return recipient_ != NULL ? *recipient_ : *default_instance_->recipient_;
+}
+inline ::RSAKey* SignedMessage::mutable_recipient() {
+  set_has_recipient();
+  if (recipient_ == NULL) recipient_ = new ::RSAKey;
+  return recipient_;
+}
+inline ::RSAKey* SignedMessage::release_recipient() {
+  clear_has_recipient();
+  ::RSAKey* temp = recipient_;
+  recipient_ = NULL;
+  return temp;
+}
+
+// required string contents = 3;
+inline bool SignedMessage::has_contents() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void SignedMessage::set_has_contents() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void SignedMessage::clear_has_contents() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void SignedMessage::clear_contents() {
+  if (contents_ != &::google::protobuf::internal::kEmptyString) {
+    contents_->clear();
+  }
+  clear_has_contents();
+}
+inline const ::std::string& SignedMessage::contents() const {
+  return *contents_;
+}
+inline void SignedMessage::set_contents(const ::std::string& value) {
+  set_has_contents();
+  if (contents_ == &::google::protobuf::internal::kEmptyString) {
+    contents_ = new ::std::string;
+  }
+  contents_->assign(value);
+}
+inline void SignedMessage::set_contents(const char* value) {
+  set_has_contents();
+  if (contents_ == &::google::protobuf::internal::kEmptyString) {
+    contents_ = new ::std::string;
+  }
+  contents_->assign(value);
+}
+inline void SignedMessage::set_contents(const char* value, size_t size) {
+  set_has_contents();
+  if (contents_ == &::google::protobuf::internal::kEmptyString) {
+    contents_ = new ::std::string;
+  }
+  contents_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* SignedMessage::mutable_contents() {
+  set_has_contents();
+  if (contents_ == &::google::protobuf::internal::kEmptyString) {
+    contents_ = new ::std::string;
+  }
+  return contents_;
+}
+inline ::std::string* SignedMessage::release_contents() {
   clear_has_contents();
   if (contents_ == &::google::protobuf::internal::kEmptyString) {
     return NULL;

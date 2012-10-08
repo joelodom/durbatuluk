@@ -19,34 +19,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-//
-// Sample command to generate C++ code based on this .proto file:
-//
-// protoc --cpp_out=. durbatuluk.proto
-//
+#ifndef CRYPTO_H_
+#define CRYPTO_H_
 
-message RSAKey {
-  // public parameters
-  required bytes n = 1;
-  required bytes e = 2;
+#include "durbatuluk.pb.h"
+#include <openssl/rsa.h>
 
-  // private parameters (see http://www.openssl.org/docs/crypto/rsa.html)
-  optional bytes d = 3;
-  optional bytes p = 4;
-  optional bytes q = 5;
-  optional bytes dmp1 = 6;
-  optional bytes dmq1 = 7;
-  optional bytes iqmp = 8;
-}
+#define RSA_BITS 2048
+#define RSA_G 65537
 
-message DurbatulukMessage {
-  optional string type = 1;
-  optional string contents = 2;
-}
+class Crypto
+{
+public:
+  static bool ExtractPublicRSAKey(RSA* rsa, RSAKey& public_key);
+  static bool ExtractPrivateRSAKey(RSA* rsa, RSAKey& private_key);
+  static bool ImportRSAKey(RSAKey& rsa_key, RSA* rsa);
 
-// sender and recipient are both public signing keys
-message SignedMessage {
-  required RSAKey sender = 1;
-  optional RSAKey recipient = 2; // optional because may be broadcast?
-  required string contents = 3;
-}
+private:
+  static unsigned char* AllocateForRSAExtraction(RSA* rsa);
+  static void ExtractBIGNUM(std::string s, BIGNUM** bn);
+};
+
+#endif // #ifndef CRYPTO_H_
