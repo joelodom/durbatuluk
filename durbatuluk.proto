@@ -39,14 +39,20 @@ message RSAKey {
   optional bytes iqmp = 8;
 }
 
-message DurbatulukMessage {
-  optional string type = 1;
-  optional string contents = 2;
+message SignedMessage {
+  required RSAKey sender = 1; // public signing key
+  required string contents = 2; // usually a serialized EncryptedMessage
+  required bytes signature = 3;
 }
 
-// sender and recipient are both public signing keys
-message SignedMessage {
-  required RSAKey sender = 1;
-  required string contents = 2;
-  required bytes signature = 3;
+message EncryptedMessage {
+  required RSAKey recipient = 1; // recipient public encryption key
+  required string encrypted_key = 2; // encrypted by recipient private key
+  required string encrypted_contents = 3; // encrypted by symmetric key
+}
+
+message DurbatulukMessage { // usually encapsulated in an EncryptedMessage
+  optional string type = 1;
+  optional string contents = 2;
+  optional uint64 sequence_number = 3;
 }

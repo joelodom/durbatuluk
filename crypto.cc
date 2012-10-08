@@ -237,20 +237,45 @@
 
   // verify the digital signature
 
-  if (!RSA_verify(NID_sha1,
+  bool signature_passed = RSA_verify(NID_sha1,
     reinterpret_cast<const unsigned char*>(signed_message.contents().c_str()),
     signed_message.contents().size(),
     reinterpret_cast<const unsigned char*>(signed_message.signature().c_str()),
-    signed_message.signature().length(), rsa))
-  {
-    // signature verification failed -- this is important
-    delete[] sigret;
-    RSA_free(rsa);
-    return false;
-  }
+    signed_message.signature().length(), rsa);
 
   delete[] sigret;
   RSA_free(rsa);
 
-  return true; // success
+  return signature_passed;
+}
+
+/*static*/ bool Crypto::EncryptMessage(RSAKey& recipient_public_key,
+    std::string& contents, EncryptedMessage& encrypted_message)
+{
+  return false; // under construction
+}
+
+/*static*/ bool Crypto::DecryptMessage(RSA* rsa,
+  EncryptedMessage& encrypted_message, std::string& decrypted)
+{
+  // verify that private_key is recipient of message
+  RSAKey private_key;
+  if (!ExtractPrivateRSAKey(rsa, private_key))
+    return false; // failure
+  if (encrypted_message.recipient().n() != private_key.e()
+    || encrypted_message.recipient().n() != private_key.n())
+    return false; // public recipient key doesn't match
+
+  // decrypt the session key
+  int rsa_size = RSA_size(rsa);
+  unsigned char* session_key = new unsigned char[rsa_size];
+  if (session_key == nullptr)
+    return false; // failure
+  if (RSA_private_decrypt(rsa_size,
+    reinterpret_cast<const unsigned char*>(
+    encrypted_message.encrypted_key().c_str()),
+    session_key, rsa, RSA_PKCS1_OAEP_PADDING) < 0)
+    return false; // failure
+
+  return false; // under construction
 }
