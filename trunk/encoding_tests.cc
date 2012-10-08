@@ -19,26 +19,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef MESSAGE_HANDLER_H_
-#define MESSAGE_HANDLER_H_
+#include "encoding.h"
+#include "gtest/gtest.h"
 
-#include "durbatuluk.pb.h"
-#include <string>
-
-#define MESSAGE_TYPE_SHELL_EXEC "ShellExec"
-#define MESSAGE_TYPE_SHELL_EXEC_OUTPUT "ShellExecOutput"
-
-//
-// The message handler is the main class that does the work.  This is the class
-// to change in order to implement custom message handling.
-//
-
-class MessageHandler
+TEST(encoding_tests, test_encode_decode)
 {
-public:
-  static bool HandleMessage(
-    const DurbatulukMessage& input, DurbatulukMessage& output);
-  static bool ShellExec(const std::string& input, std::string& output);
-};
+  std::string message("This is an arbitrary binary string.");
+  std::string encoded, decoded;
 
-#endif // #ifndef MESSAGE_HANDLER_H_
+  ASSERT_TRUE(Encoding::EncodeMessage(message, encoded));
+  ASSERT_GT(encoded.length(), ENCODING_OVERHEAD + message.length());
+  encoded.insert(15, "  "); // make sure that we can insert whitespace
+
+  ASSERT_TRUE(Encoding::DecodeMessage(encoded, decoded));
+
+  EXPECT_STREQ(message.c_str(), decoded.c_str());
+}

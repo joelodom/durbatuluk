@@ -19,26 +19,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef MESSAGE_HANDLER_H_
-#define MESSAGE_HANDLER_H_
+#ifndef ENCODING_H_
+#define ENCODING_H_
 
-#include "durbatuluk.pb.h"
 #include <string>
 
-#define MESSAGE_TYPE_SHELL_EXEC "ShellExec"
-#define MESSAGE_TYPE_SHELL_EXEC_OUTPUT "ShellExecOutput"
+// the size of <durbatuluk></durbatuluk>
+#define ENCODING_OVERHEAD 25
 
 //
-// The message handler is the main class that does the work.  This is the class
-// to change in order to implement custom message handling.
+// The encoding class performs encoding and decoding of Durbatuluk messages.
+// The encoding format is <durbatuluk>base64 encoded data</durbatuluk>.
 //
 
-class MessageHandler
+class Encoding
 {
 public:
-  static bool HandleMessage(
-    const DurbatulukMessage& input, DurbatulukMessage& output);
-  static bool ShellExec(const std::string& input, std::string& output);
+  static bool EncodeMessage(const std::string& input, std::string& output);
+  static bool DecodeMessage(const std::string& input, std::string& output);
 };
 
-#endif // #ifndef MESSAGE_HANDLER_H_
+#endif // #ifndef ENCODING_H_

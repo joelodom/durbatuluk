@@ -20,8 +20,41 @@
 // SOFTWARE.
 
 #include "gtest/gtest.h"
+#include "message_handler.h"
+#include "base64.h"
 
 TEST(durbatuluk_tests, test_gtest)
 {
   EXPECT_TRUE(true) << "law of non-contradiction failed";
+}
+
+TEST(durbatuluk_tests, test_command_from_base64)
+{
+  // This test is mainly a proof-of-concept / integration test that shows
+  // that we can take an encoded string, decode it, and run it through the
+  // message handler.
+
+  // build the shell command message
+  DurbatulukMessage input, parsed, output;
+  input.set_type(MESSAGE_TYPE_SHELL_EXEC);
+  input.set_contents("echo durbatuluk");
+
+  // encode the message
+  std::string serialized;
+  input.SerializeToString(&serialized);
+  std::string encoded = base64_encode(
+    reinterpret_cast<const unsigned char*>(
+    serialized.c_str()), serialized.length());
+
+  // decode & parse the message
+  std::string decoded = base64_decode(encoded);
+  ASSERT_TRUE(parsed.ParseFromString(decoded));
+
+  // send the message to the message handler
+  bool rv = MessageHandler::HandleMessage(parsed, output);
+  ASSERT_TRUE(rv) << "HandleMessage failed";
+
+  // check the result
+  EXPECT_STREQ(output.type().c_str(), MESSAGE_TYPE_SHELL_EXEC_OUTPUT);
+  EXPECT_EQ(output.contents().find("durbatuluk"), (size_t)0);
 }
