@@ -31,8 +31,9 @@ void protobuf_AssignDesc_durbatuluk_2eproto();
 void protobuf_ShutdownFile_durbatuluk_2eproto();
 
 class RSAKey;
-class DurbatulukMessage;
 class SignedMessage;
+class EncryptedMessage;
+class DurbatulukMessage;
 
 // ===================================================================
 
@@ -220,106 +221,6 @@ class RSAKey : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class DurbatulukMessage : public ::google::protobuf::Message {
- public:
-  DurbatulukMessage();
-  virtual ~DurbatulukMessage();
-  
-  DurbatulukMessage(const DurbatulukMessage& from);
-  
-  inline DurbatulukMessage& operator=(const DurbatulukMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const DurbatulukMessage& default_instance();
-  
-  void Swap(DurbatulukMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  DurbatulukMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const DurbatulukMessage& from);
-  void MergeFrom(const DurbatulukMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // optional string type = 1;
-  inline bool has_type() const;
-  inline void clear_type();
-  static const int kTypeFieldNumber = 1;
-  inline const ::std::string& type() const;
-  inline void set_type(const ::std::string& value);
-  inline void set_type(const char* value);
-  inline void set_type(const char* value, size_t size);
-  inline ::std::string* mutable_type();
-  inline ::std::string* release_type();
-  
-  // optional string contents = 2;
-  inline bool has_contents() const;
-  inline void clear_contents();
-  static const int kContentsFieldNumber = 2;
-  inline const ::std::string& contents() const;
-  inline void set_contents(const ::std::string& value);
-  inline void set_contents(const char* value);
-  inline void set_contents(const char* value, size_t size);
-  inline ::std::string* mutable_contents();
-  inline ::std::string* release_contents();
-  
-  // @@protoc_insertion_point(class_scope:DurbatulukMessage)
- private:
-  inline void set_has_type();
-  inline void clear_has_type();
-  inline void set_has_contents();
-  inline void clear_has_contents();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::std::string* type_;
-  ::std::string* contents_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_durbatuluk_2eproto();
-  friend void protobuf_AssignDesc_durbatuluk_2eproto();
-  friend void protobuf_ShutdownFile_durbatuluk_2eproto();
-  
-  void InitAsDefaultInstance();
-  static DurbatulukMessage* default_instance_;
-};
-// -------------------------------------------------------------------
-
 class SignedMessage : public ::google::protobuf::Message {
  public:
   SignedMessage();
@@ -428,6 +329,227 @@ class SignedMessage : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static SignedMessage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class EncryptedMessage : public ::google::protobuf::Message {
+ public:
+  EncryptedMessage();
+  virtual ~EncryptedMessage();
+  
+  EncryptedMessage(const EncryptedMessage& from);
+  
+  inline EncryptedMessage& operator=(const EncryptedMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const EncryptedMessage& default_instance();
+  
+  void Swap(EncryptedMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  EncryptedMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const EncryptedMessage& from);
+  void MergeFrom(const EncryptedMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .RSAKey recipient = 1;
+  inline bool has_recipient() const;
+  inline void clear_recipient();
+  static const int kRecipientFieldNumber = 1;
+  inline const ::RSAKey& recipient() const;
+  inline ::RSAKey* mutable_recipient();
+  inline ::RSAKey* release_recipient();
+  
+  // required string encrypted_key = 2;
+  inline bool has_encrypted_key() const;
+  inline void clear_encrypted_key();
+  static const int kEncryptedKeyFieldNumber = 2;
+  inline const ::std::string& encrypted_key() const;
+  inline void set_encrypted_key(const ::std::string& value);
+  inline void set_encrypted_key(const char* value);
+  inline void set_encrypted_key(const char* value, size_t size);
+  inline ::std::string* mutable_encrypted_key();
+  inline ::std::string* release_encrypted_key();
+  
+  // required string encrypted_contents = 3;
+  inline bool has_encrypted_contents() const;
+  inline void clear_encrypted_contents();
+  static const int kEncryptedContentsFieldNumber = 3;
+  inline const ::std::string& encrypted_contents() const;
+  inline void set_encrypted_contents(const ::std::string& value);
+  inline void set_encrypted_contents(const char* value);
+  inline void set_encrypted_contents(const char* value, size_t size);
+  inline ::std::string* mutable_encrypted_contents();
+  inline ::std::string* release_encrypted_contents();
+  
+  // @@protoc_insertion_point(class_scope:EncryptedMessage)
+ private:
+  inline void set_has_recipient();
+  inline void clear_has_recipient();
+  inline void set_has_encrypted_key();
+  inline void clear_has_encrypted_key();
+  inline void set_has_encrypted_contents();
+  inline void clear_has_encrypted_contents();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::RSAKey* recipient_;
+  ::std::string* encrypted_key_;
+  ::std::string* encrypted_contents_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_durbatuluk_2eproto();
+  friend void protobuf_AssignDesc_durbatuluk_2eproto();
+  friend void protobuf_ShutdownFile_durbatuluk_2eproto();
+  
+  void InitAsDefaultInstance();
+  static EncryptedMessage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class DurbatulukMessage : public ::google::protobuf::Message {
+ public:
+  DurbatulukMessage();
+  virtual ~DurbatulukMessage();
+  
+  DurbatulukMessage(const DurbatulukMessage& from);
+  
+  inline DurbatulukMessage& operator=(const DurbatulukMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const DurbatulukMessage& default_instance();
+  
+  void Swap(DurbatulukMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  DurbatulukMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const DurbatulukMessage& from);
+  void MergeFrom(const DurbatulukMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional string type = 1;
+  inline bool has_type() const;
+  inline void clear_type();
+  static const int kTypeFieldNumber = 1;
+  inline const ::std::string& type() const;
+  inline void set_type(const ::std::string& value);
+  inline void set_type(const char* value);
+  inline void set_type(const char* value, size_t size);
+  inline ::std::string* mutable_type();
+  inline ::std::string* release_type();
+  
+  // optional string contents = 2;
+  inline bool has_contents() const;
+  inline void clear_contents();
+  static const int kContentsFieldNumber = 2;
+  inline const ::std::string& contents() const;
+  inline void set_contents(const ::std::string& value);
+  inline void set_contents(const char* value);
+  inline void set_contents(const char* value, size_t size);
+  inline ::std::string* mutable_contents();
+  inline ::std::string* release_contents();
+  
+  // optional uint64 sequence_number = 3;
+  inline bool has_sequence_number() const;
+  inline void clear_sequence_number();
+  static const int kSequenceNumberFieldNumber = 3;
+  inline ::google::protobuf::uint64 sequence_number() const;
+  inline void set_sequence_number(::google::protobuf::uint64 value);
+  
+  // @@protoc_insertion_point(class_scope:DurbatulukMessage)
+ private:
+  inline void set_has_type();
+  inline void clear_has_type();
+  inline void set_has_contents();
+  inline void clear_has_contents();
+  inline void set_has_sequence_number();
+  inline void clear_has_sequence_number();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* type_;
+  ::std::string* contents_;
+  ::google::protobuf::uint64 sequence_number_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_durbatuluk_2eproto();
+  friend void protobuf_AssignDesc_durbatuluk_2eproto();
+  friend void protobuf_ShutdownFile_durbatuluk_2eproto();
+  
+  void InitAsDefaultInstance();
+  static DurbatulukMessage* default_instance_;
 };
 // ===================================================================
 
@@ -902,126 +1024,6 @@ inline ::std::string* RSAKey::release_iqmp() {
 
 // -------------------------------------------------------------------
 
-// DurbatulukMessage
-
-// optional string type = 1;
-inline bool DurbatulukMessage::has_type() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void DurbatulukMessage::set_has_type() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void DurbatulukMessage::clear_has_type() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void DurbatulukMessage::clear_type() {
-  if (type_ != &::google::protobuf::internal::kEmptyString) {
-    type_->clear();
-  }
-  clear_has_type();
-}
-inline const ::std::string& DurbatulukMessage::type() const {
-  return *type_;
-}
-inline void DurbatulukMessage::set_type(const ::std::string& value) {
-  set_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    type_ = new ::std::string;
-  }
-  type_->assign(value);
-}
-inline void DurbatulukMessage::set_type(const char* value) {
-  set_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    type_ = new ::std::string;
-  }
-  type_->assign(value);
-}
-inline void DurbatulukMessage::set_type(const char* value, size_t size) {
-  set_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    type_ = new ::std::string;
-  }
-  type_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* DurbatulukMessage::mutable_type() {
-  set_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    type_ = new ::std::string;
-  }
-  return type_;
-}
-inline ::std::string* DurbatulukMessage::release_type() {
-  clear_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = type_;
-    type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
-}
-
-// optional string contents = 2;
-inline bool DurbatulukMessage::has_contents() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void DurbatulukMessage::set_has_contents() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void DurbatulukMessage::clear_has_contents() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void DurbatulukMessage::clear_contents() {
-  if (contents_ != &::google::protobuf::internal::kEmptyString) {
-    contents_->clear();
-  }
-  clear_has_contents();
-}
-inline const ::std::string& DurbatulukMessage::contents() const {
-  return *contents_;
-}
-inline void DurbatulukMessage::set_contents(const ::std::string& value) {
-  set_has_contents();
-  if (contents_ == &::google::protobuf::internal::kEmptyString) {
-    contents_ = new ::std::string;
-  }
-  contents_->assign(value);
-}
-inline void DurbatulukMessage::set_contents(const char* value) {
-  set_has_contents();
-  if (contents_ == &::google::protobuf::internal::kEmptyString) {
-    contents_ = new ::std::string;
-  }
-  contents_->assign(value);
-}
-inline void DurbatulukMessage::set_contents(const char* value, size_t size) {
-  set_has_contents();
-  if (contents_ == &::google::protobuf::internal::kEmptyString) {
-    contents_ = new ::std::string;
-  }
-  contents_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* DurbatulukMessage::mutable_contents() {
-  set_has_contents();
-  if (contents_ == &::google::protobuf::internal::kEmptyString) {
-    contents_ = new ::std::string;
-  }
-  return contents_;
-}
-inline ::std::string* DurbatulukMessage::release_contents() {
-  clear_has_contents();
-  if (contents_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = contents_;
-    contents_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
-}
-
-// -------------------------------------------------------------------
-
 // SignedMessage
 
 // required .RSAKey sender = 1;
@@ -1167,6 +1169,297 @@ inline ::std::string* SignedMessage::release_signature() {
     signature_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
+}
+
+// -------------------------------------------------------------------
+
+// EncryptedMessage
+
+// required .RSAKey recipient = 1;
+inline bool EncryptedMessage::has_recipient() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void EncryptedMessage::set_has_recipient() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void EncryptedMessage::clear_has_recipient() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void EncryptedMessage::clear_recipient() {
+  if (recipient_ != NULL) recipient_->::RSAKey::Clear();
+  clear_has_recipient();
+}
+inline const ::RSAKey& EncryptedMessage::recipient() const {
+  return recipient_ != NULL ? *recipient_ : *default_instance_->recipient_;
+}
+inline ::RSAKey* EncryptedMessage::mutable_recipient() {
+  set_has_recipient();
+  if (recipient_ == NULL) recipient_ = new ::RSAKey;
+  return recipient_;
+}
+inline ::RSAKey* EncryptedMessage::release_recipient() {
+  clear_has_recipient();
+  ::RSAKey* temp = recipient_;
+  recipient_ = NULL;
+  return temp;
+}
+
+// required string encrypted_key = 2;
+inline bool EncryptedMessage::has_encrypted_key() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void EncryptedMessage::set_has_encrypted_key() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void EncryptedMessage::clear_has_encrypted_key() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void EncryptedMessage::clear_encrypted_key() {
+  if (encrypted_key_ != &::google::protobuf::internal::kEmptyString) {
+    encrypted_key_->clear();
+  }
+  clear_has_encrypted_key();
+}
+inline const ::std::string& EncryptedMessage::encrypted_key() const {
+  return *encrypted_key_;
+}
+inline void EncryptedMessage::set_encrypted_key(const ::std::string& value) {
+  set_has_encrypted_key();
+  if (encrypted_key_ == &::google::protobuf::internal::kEmptyString) {
+    encrypted_key_ = new ::std::string;
+  }
+  encrypted_key_->assign(value);
+}
+inline void EncryptedMessage::set_encrypted_key(const char* value) {
+  set_has_encrypted_key();
+  if (encrypted_key_ == &::google::protobuf::internal::kEmptyString) {
+    encrypted_key_ = new ::std::string;
+  }
+  encrypted_key_->assign(value);
+}
+inline void EncryptedMessage::set_encrypted_key(const char* value, size_t size) {
+  set_has_encrypted_key();
+  if (encrypted_key_ == &::google::protobuf::internal::kEmptyString) {
+    encrypted_key_ = new ::std::string;
+  }
+  encrypted_key_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* EncryptedMessage::mutable_encrypted_key() {
+  set_has_encrypted_key();
+  if (encrypted_key_ == &::google::protobuf::internal::kEmptyString) {
+    encrypted_key_ = new ::std::string;
+  }
+  return encrypted_key_;
+}
+inline ::std::string* EncryptedMessage::release_encrypted_key() {
+  clear_has_encrypted_key();
+  if (encrypted_key_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = encrypted_key_;
+    encrypted_key_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string encrypted_contents = 3;
+inline bool EncryptedMessage::has_encrypted_contents() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void EncryptedMessage::set_has_encrypted_contents() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void EncryptedMessage::clear_has_encrypted_contents() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void EncryptedMessage::clear_encrypted_contents() {
+  if (encrypted_contents_ != &::google::protobuf::internal::kEmptyString) {
+    encrypted_contents_->clear();
+  }
+  clear_has_encrypted_contents();
+}
+inline const ::std::string& EncryptedMessage::encrypted_contents() const {
+  return *encrypted_contents_;
+}
+inline void EncryptedMessage::set_encrypted_contents(const ::std::string& value) {
+  set_has_encrypted_contents();
+  if (encrypted_contents_ == &::google::protobuf::internal::kEmptyString) {
+    encrypted_contents_ = new ::std::string;
+  }
+  encrypted_contents_->assign(value);
+}
+inline void EncryptedMessage::set_encrypted_contents(const char* value) {
+  set_has_encrypted_contents();
+  if (encrypted_contents_ == &::google::protobuf::internal::kEmptyString) {
+    encrypted_contents_ = new ::std::string;
+  }
+  encrypted_contents_->assign(value);
+}
+inline void EncryptedMessage::set_encrypted_contents(const char* value, size_t size) {
+  set_has_encrypted_contents();
+  if (encrypted_contents_ == &::google::protobuf::internal::kEmptyString) {
+    encrypted_contents_ = new ::std::string;
+  }
+  encrypted_contents_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* EncryptedMessage::mutable_encrypted_contents() {
+  set_has_encrypted_contents();
+  if (encrypted_contents_ == &::google::protobuf::internal::kEmptyString) {
+    encrypted_contents_ = new ::std::string;
+  }
+  return encrypted_contents_;
+}
+inline ::std::string* EncryptedMessage::release_encrypted_contents() {
+  clear_has_encrypted_contents();
+  if (encrypted_contents_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = encrypted_contents_;
+    encrypted_contents_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// -------------------------------------------------------------------
+
+// DurbatulukMessage
+
+// optional string type = 1;
+inline bool DurbatulukMessage::has_type() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void DurbatulukMessage::set_has_type() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void DurbatulukMessage::clear_has_type() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void DurbatulukMessage::clear_type() {
+  if (type_ != &::google::protobuf::internal::kEmptyString) {
+    type_->clear();
+  }
+  clear_has_type();
+}
+inline const ::std::string& DurbatulukMessage::type() const {
+  return *type_;
+}
+inline void DurbatulukMessage::set_type(const ::std::string& value) {
+  set_has_type();
+  if (type_ == &::google::protobuf::internal::kEmptyString) {
+    type_ = new ::std::string;
+  }
+  type_->assign(value);
+}
+inline void DurbatulukMessage::set_type(const char* value) {
+  set_has_type();
+  if (type_ == &::google::protobuf::internal::kEmptyString) {
+    type_ = new ::std::string;
+  }
+  type_->assign(value);
+}
+inline void DurbatulukMessage::set_type(const char* value, size_t size) {
+  set_has_type();
+  if (type_ == &::google::protobuf::internal::kEmptyString) {
+    type_ = new ::std::string;
+  }
+  type_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* DurbatulukMessage::mutable_type() {
+  set_has_type();
+  if (type_ == &::google::protobuf::internal::kEmptyString) {
+    type_ = new ::std::string;
+  }
+  return type_;
+}
+inline ::std::string* DurbatulukMessage::release_type() {
+  clear_has_type();
+  if (type_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = type_;
+    type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional string contents = 2;
+inline bool DurbatulukMessage::has_contents() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void DurbatulukMessage::set_has_contents() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void DurbatulukMessage::clear_has_contents() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void DurbatulukMessage::clear_contents() {
+  if (contents_ != &::google::protobuf::internal::kEmptyString) {
+    contents_->clear();
+  }
+  clear_has_contents();
+}
+inline const ::std::string& DurbatulukMessage::contents() const {
+  return *contents_;
+}
+inline void DurbatulukMessage::set_contents(const ::std::string& value) {
+  set_has_contents();
+  if (contents_ == &::google::protobuf::internal::kEmptyString) {
+    contents_ = new ::std::string;
+  }
+  contents_->assign(value);
+}
+inline void DurbatulukMessage::set_contents(const char* value) {
+  set_has_contents();
+  if (contents_ == &::google::protobuf::internal::kEmptyString) {
+    contents_ = new ::std::string;
+  }
+  contents_->assign(value);
+}
+inline void DurbatulukMessage::set_contents(const char* value, size_t size) {
+  set_has_contents();
+  if (contents_ == &::google::protobuf::internal::kEmptyString) {
+    contents_ = new ::std::string;
+  }
+  contents_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* DurbatulukMessage::mutable_contents() {
+  set_has_contents();
+  if (contents_ == &::google::protobuf::internal::kEmptyString) {
+    contents_ = new ::std::string;
+  }
+  return contents_;
+}
+inline ::std::string* DurbatulukMessage::release_contents() {
+  clear_has_contents();
+  if (contents_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = contents_;
+    contents_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional uint64 sequence_number = 3;
+inline bool DurbatulukMessage::has_sequence_number() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void DurbatulukMessage::set_has_sequence_number() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void DurbatulukMessage::clear_has_sequence_number() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void DurbatulukMessage::clear_sequence_number() {
+  sequence_number_ = GOOGLE_ULONGLONG(0);
+  clear_has_sequence_number();
+}
+inline ::google::protobuf::uint64 DurbatulukMessage::sequence_number() const {
+  return sequence_number_;
+}
+inline void DurbatulukMessage::set_sequence_number(::google::protobuf::uint64 value) {
+  set_has_sequence_number();
+  sequence_number_ = value;
 }
 
 

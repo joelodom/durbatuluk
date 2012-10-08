@@ -36,11 +36,16 @@ public:
   static bool ExtractPrivateRSAKey(RSA* rsa, RSAKey& private_key);
   static bool ImportRSAKey(const RSAKey& rsa_key, RSA* rsa);
 
-  // methods to create and verify a protocol buffers SignedMessage
+  // methods to create and to verify a protocol buffers SignedMessage
   static bool CreateSignedMessage(
     std::string& contents, RSA* rsa, SignedMessage& signed_message);
   static bool VerifySignedMessage(SignedMessage& signed_message);
 
+  // methods to encrypt and to decrypte a protocol buffers EncryptedMessage
+  static bool EncryptMessage(RSAKey& recipient_public_key,
+    std::string& contents, EncryptedMessage& encrypted_message);
+  static bool DecryptMessage(RSA* rsa, EncryptedMessage& encrypted_message,
+    std::string& decrypted);
 private:
   static unsigned char* AllocateForRSAExtraction(RSA* rsa);
   static void ExtractBIGNUM(std::string s, BIGNUM** bn);

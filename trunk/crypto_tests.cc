@@ -101,7 +101,7 @@ TEST(crypto_tests, test_encrypt_decrypt_session_key)
     << "required condition for RSA_PKCS1_OAEP_PADDING";
 
   unsigned char* ciphertext = new unsigned char[rsa_size];
-  i = RSA_public_encrypt(session_key.size(),
+  i = RSA_public_encrypt(session_key.length(),
     (unsigned char *)session_key.c_str(),
     ciphertext, rsa, RSA_PKCS1_OAEP_PADDING);
   ASSERT_EQ(i, rsa_size) << "RSA_public_encrypt failed";
@@ -109,7 +109,7 @@ TEST(crypto_tests, test_encrypt_decrypt_session_key)
   unsigned char* plaintext = new unsigned char[rsa_size];
   i = RSA_private_decrypt(rsa_size, ciphertext,
      plaintext, rsa, RSA_PKCS1_OAEP_PADDING);
-  EXPECT_EQ((size_t)i, session_key.size()) << "RSA_private_decrypt failed";
+  EXPECT_EQ((size_t)i, session_key.length()) << "RSA_private_decrypt failed";
 
   EXPECT_STREQ((const char*)plaintext, session_key.c_str());
 
@@ -261,4 +261,27 @@ TEST(crypto_tests, test_create_and_verify_signed_message)
   // verify the SignedMessage
   EXPECT_STREQ(signed_message.contents().c_str(), contents.c_str());
   EXPECT_TRUE(Crypto::VerifySignedMessage(signed_message));
+}
+
+TEST(crypto_tests, test_encrypt_and_decrypt_encrypted_message)
+{
+  std::string message("Arbitrary message to encrypt...");
+
+  // generate recipient key
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  ASSERT_TRUE(rsa != nullptr);
+  RSAKey public_key;
+  ASSERT_TRUE(Crypto::ExtractPublicRSAKey(rsa, public_key));
+  ASSERT_TRUE(Crypto::ExtractPrivateRSAKey(rsa, public_key));
+
+  // encrypt the message
+  EncryptedMessage encrypted_message;
+  ASSERT_TRUE(Crypto::EncryptMessage(public_key, message, encrypted_message));
+
+  // decrypt the message
+  std::string decrypted;
+  ASSERT_TRUE(Crypto::DecryptMessage(rsa, encrypted_message, decrypted));
+  RSA_free(rsa);
+
+  EXPECT_STREQ(decrypted.c_str(), message.c_str());
 }
