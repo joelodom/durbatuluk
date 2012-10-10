@@ -21,6 +21,7 @@
 
 #include "crypto.h"
 #include <openssl/engine.h>
+#include "openssl_aes.h"
 
 /*static*/ bool Crypto::ExtractPublicRSAKey(RSA* rsa, RSAKey& public_key)
 {
@@ -252,19 +253,67 @@
 /*static*/ bool Crypto::EncryptMessage(RSAKey& recipient_public_key,
     std::string& contents, EncryptedMessage& encrypted_message)
 {
-  return false; // under construction
+  // set up for encryption early so that the session key stays in memory
+  // for as short a time as possible
+  bool success = false;
+  RSA* rsa = RSA_new();
+  ImportRSAKey(recipient_public_key, rsa);
+  int rsa_size = RSA_size(rsa);
+  EVP_CIPHER_CTX en, de;
+  unsigned char* ciphertext = nullptr;
+  int len = static_cast<int>(contents.length());
+
+  // generate a random session key
+  unsigned char* session_key = (unsigned char*)
+    "JVO TODO CRITICAL!  generate cryptographically secure session keys";
+  size_t session_key_len = strlen((char*)session_key);
+  unsigned char* salt = (unsigned char*)"todotodo";
+
+  while (true) // break out when finished
+  {
+    // encrypt the session key
+    int i = RSA_public_encrypt(session_key_len,
+      session_key, ciphertext, rsa, RSA_PKCS1_OAEP_PADDING);
+    if (i != rsa_size)
+      break; // something went wrong
+
+    // encrypt the message contents with the session key
+    i = aes_init(session_key, session_key_len,
+      salt, &en, &de);
+    if (i == 0)
+      break; // couldn't initialize AES cipher
+    ciphertext = aes_encrypt(&en, (unsigned char*)contents.c_str(), &len);
+
+    success = ciphertext != nullptr;
+    break;
+  }
+
+  // dispose of session key as quickly as possible
+  memset(session_key, 0, session_key_len);
+  session_key_len = 0;
+  EVP_CIPHER_CTX_cleanup(&en);
+  EVP_CIPHER_CTX_cleanup(&de);
+  RSA_free(rsa); // remember this is only the receiver public key
+
+  if (success)
+  {
+    // populate the encrypted message
+    return false; // under construction
+  }
+
+  return success; // under construction
 }
 
 /*static*/ bool Crypto::DecryptMessage(RSA* rsa,
   EncryptedMessage& encrypted_message, std::string& decrypted)
 {
-  // verify that private_key is recipient of message
+  // verify that RSA key parameter is that of recipient of message
   RSAKey private_key;
   if (!ExtractPrivateRSAKey(rsa, private_key))
     return false; // failure
-  if (encrypted_message.recipient().n() != private_key.e()
+  if (encrypted_message.recipient().e() != private_key.e() // e usually smaller
     || encrypted_message.recipient().n() != private_key.n())
-    return false; // public recipient key doesn't match
+    return false; // recipient key mismatch / not intended for this recipient
 
   // decrypt the session key
   int rsa_size = RSA_size(rsa);
@@ -277,5 +326,8 @@
     session_key, rsa, RSA_PKCS1_OAEP_PADDING) < 0)
     return false; // failure
 
+  //std::cout << "JVO decrypted session key: " << session_key << std::endl;
+
+  delete[] session_key;
   return false; // under construction
 }

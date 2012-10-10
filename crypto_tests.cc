@@ -148,7 +148,7 @@ TEST(crypto_tests, test_aes_sample) // thanks Saju Pillai
   // 8 bytes to salt the key_data during key generation. This is an example of
   // compiled in salt. We just read the bit pattern created by these two 4 byte
   // integers on the stack as 64 bits of contigous salt material -
-  // ofcourse this only works if sizeof(int) >= 4
+  // of course this only works if sizeof(int) >= 4
 
   unsigned int salt[] = {12345, 54321};
   const char *key_data = "joel key";
