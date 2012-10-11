@@ -47,8 +47,8 @@ message SignedMessage {
 
 message EncryptedMessage {
   required RSAKey recipient = 1; // recipient public encryption key
-  required string encrypted_key = 2; // encrypted by recipient private key
-  required string encrypted_contents = 3; // encrypted by symmetric key
+  required bytes encrypted_key = 2; // encrypted by recipient private key
+  required bytes encrypted_contents = 3; // encrypted by symmetric key
 }
 
 message DurbatulukMessage { // usually encapsulated in an EncryptedMessage
