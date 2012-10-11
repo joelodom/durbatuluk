@@ -255,58 +255,75 @@
 {
   // set up for encryption early so that the session key stays in memory
   // for as short a time as possible
-  bool success = false;
   RSA* rsa = RSA_new();
   ImportRSAKey(recipient_public_key, rsa);
   int rsa_size = RSA_size(rsa);
   EVP_CIPHER_CTX en, de;
   unsigned char* ciphertext = nullptr;
-  int len = static_cast<int>(contents.length());
+  int len = (int)contents.length() + 1; // capture terminating null
+  unsigned char* encrypted_session_key = new unsigned char[rsa_size];
 
   // generate a random session key
-  unsigned char* session_key = (unsigned char*)
-    "JVO TODO CRITICAL!  generate cryptographically secure session keys";
-  size_t session_key_len = strlen((char*)session_key);
-  unsigned char* salt = (unsigned char*)"todotodo";
+  // CRITICAL!  generate cryptographically secure session keys
+  char* session_key = new char[16];
+  strcpy(session_key, "JVO TODO");
+  size_t session_key_len = strlen(session_key);
+  unsigned int salt[] = {12345, 54321};
 
   while (true) // break out when finished
   {
     // encrypt the session key
-    int i = RSA_public_encrypt(session_key_len,
-      session_key, ciphertext, rsa, RSA_PKCS1_OAEP_PADDING);
+    int i = RSA_public_encrypt(session_key_len + 1, // capture terminating null
+      (unsigned char*)session_key,
+      encrypted_session_key, rsa, RSA_PKCS1_OAEP_PADDING);
+      
     if (i != rsa_size)
       break; // something went wrong
 
     // encrypt the message contents with the session key
-    i = aes_init(session_key, session_key_len,
-      salt, &en, &de);
-    if (i == 0)
+    i = aes_init((unsigned char*)session_key, session_key_len,
+      (unsigned char*)&salt, &en, &de);
+    if (i != 0)
       break; // couldn't initialize AES cipher
     ciphertext = aes_encrypt(&en, (unsigned char*)contents.c_str(), &len);
 
-    success = ciphertext != nullptr;
     break;
   }
 
   // dispose of session key as quickly as possible
-  memset(session_key, 0, session_key_len);
+  memset((char*)session_key, 0, session_key_len);
   session_key_len = 0;
   EVP_CIPHER_CTX_cleanup(&en);
   EVP_CIPHER_CTX_cleanup(&de);
+  delete[] session_key;
   RSA_free(rsa); // remember this is only the receiver public key
 
-  if (success)
+  bool success = false;
+
+  if (ciphertext != nullptr)
   {
     // populate the encrypted message
-    return false; // under construction
+    encrypted_message.mutable_recipient()->set_n(recipient_public_key.n());
+    encrypted_message.mutable_recipient()->set_e(recipient_public_key.e());
+    encrypted_message.set_encrypted_key(encrypted_session_key, rsa_size);
+    encrypted_message.set_encrypted_contents(ciphertext, len);
+
+    free(ciphertext); // (safe to free nullptr)
+    success = true;
   }
 
-  return success; // under construction
+  delete[] encrypted_session_key;
+  return success;
 }
 
 /*static*/ bool Crypto::DecryptMessage(RSA* rsa,
   EncryptedMessage& encrypted_message, std::string& decrypted)
 {
+  size_t session_key_len;
+  EVP_CIPHER_CTX en, de;
+
+  decrypted.erase(); // length used to check for error condition below
+
   // verify that RSA key parameter is that of recipient of message
   RSAKey private_key;
   if (!ExtractPrivateRSAKey(rsa, private_key))
@@ -315,19 +332,56 @@
     || encrypted_message.recipient().n() != private_key.n())
     return false; // recipient key mismatch / not intended for this recipient
 
-  // decrypt the session key
+  // decrypt the message contents
+
   int rsa_size = RSA_size(rsa);
   unsigned char* session_key = new unsigned char[rsa_size];
   if (session_key == nullptr)
-    return false; // failure
-  if (RSA_private_decrypt(rsa_size,
-    reinterpret_cast<const unsigned char*>(
-    encrypted_message.encrypted_key().c_str()),
-    session_key, rsa, RSA_PKCS1_OAEP_PADDING) < 0)
-    return false; // failure
+    return false; // memory allocation failure
 
-  //std::cout << "JVO decrypted session key: " << session_key << std::endl;
+  while (true) // break out when finished
+  {
+    // decrypt the session key
 
+    if (RSA_private_decrypt(rsa_size,
+      reinterpret_cast<const unsigned char*>(
+      encrypted_message.encrypted_key().c_str()),
+      session_key, rsa, RSA_PKCS1_OAEP_PADDING) < 0)
+      break; // failure
+
+    unsigned int salt[] = {12345, 54321};
+
+    session_key_len = strlen((char*)session_key);
+    if (session_key_len > 10)
+      break; // TODO: set max length above
+
+    // decrypt the contents
+
+    int i = aes_init((unsigned char*)session_key, session_key_len,
+      (unsigned char*)&salt, &en, &de);
+    if (i != 0)
+      break; // couldn't initialize AES cipher
+
+    int len = encrypted_message.encrypted_contents().length();
+
+    char* plaintext = (char*)aes_decrypt(&de,
+      (unsigned char*)encrypted_message.encrypted_contents().c_str(), &len);
+
+    if (plaintext == nullptr)
+      break; // something went wrong with encryption
+
+    decrypted = plaintext;
+    free(plaintext);
+
+    break;
+  }
+
+  // clean the session key from memory
+  memset((char*)session_key, 0, session_key_len);
+  session_key_len = 0;
   delete[] session_key;
-  return false; // under construction
+  EVP_CIPHER_CTX_cleanup(&en);
+  EVP_CIPHER_CTX_cleanup(&de);
+
+  return decrypted.length() > 0;
 }

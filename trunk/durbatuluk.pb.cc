@@ -158,8 +158,8 @@ void protobuf_AddDesc_durbatuluk_2eproto() {
     "\010 \001(\014\"M\n\rSignedMessage\022\027\n\006sender\030\001 \002(\0132\007"
     ".RSAKey\022\020\n\010contents\030\002 \002(\t\022\021\n\tsignature\030\003"
     " \002(\014\"a\n\020EncryptedMessage\022\032\n\trecipient\030\001 "
-    "\002(\0132\007.RSAKey\022\025\n\rencrypted_key\030\002 \002(\t\022\032\n\022e"
-    "ncrypted_contents\030\003 \002(\t\"L\n\021DurbatulukMes"
+    "\002(\0132\007.RSAKey\022\025\n\rencrypted_key\030\002 \002(\014\022\032\n\022e"
+    "ncrypted_contents\030\003 \002(\014\"L\n\021DurbatulukMes"
     "sage\022\014\n\004type\030\001 \001(\t\022\020\n\010contents\030\002 \001(\t\022\027\n\017"
     "sequence_number\030\003 \001(\004", 381);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
@@ -1162,16 +1162,13 @@ bool EncryptedMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required string encrypted_key = 2;
+      // required bytes encrypted_key = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_encrypted_key:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_encrypted_key()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->encrypted_key().data(), this->encrypted_key().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
         }
@@ -1179,16 +1176,13 @@ bool EncryptedMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required string encrypted_contents = 3;
+      // required bytes encrypted_contents = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_encrypted_contents:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_encrypted_contents()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->encrypted_contents().data(), this->encrypted_contents().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
         }
@@ -1220,21 +1214,15 @@ void EncryptedMessage::SerializeWithCachedSizes(
       1, this->recipient(), output);
   }
   
-  // required string encrypted_key = 2;
+  // required bytes encrypted_key = 2;
   if (has_encrypted_key()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->encrypted_key().data(), this->encrypted_key().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+    ::google::protobuf::internal::WireFormatLite::WriteBytes(
       2, this->encrypted_key(), output);
   }
   
-  // required string encrypted_contents = 3;
+  // required bytes encrypted_contents = 3;
   if (has_encrypted_contents()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->encrypted_contents().data(), this->encrypted_contents().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+    ::google::protobuf::internal::WireFormatLite::WriteBytes(
       3, this->encrypted_contents(), output);
   }
   
@@ -1253,23 +1241,17 @@ void EncryptedMessage::SerializeWithCachedSizes(
         1, this->recipient(), target);
   }
   
-  // required string encrypted_key = 2;
+  // required bytes encrypted_key = 2;
   if (has_encrypted_key()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->encrypted_key().data(), this->encrypted_key().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         2, this->encrypted_key(), target);
   }
   
-  // required string encrypted_contents = 3;
+  // required bytes encrypted_contents = 3;
   if (has_encrypted_contents()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->encrypted_contents().data(), this->encrypted_contents().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         3, this->encrypted_contents(), target);
   }
   
@@ -1291,17 +1273,17 @@ int EncryptedMessage::ByteSize() const {
           this->recipient());
     }
     
-    // required string encrypted_key = 2;
+    // required bytes encrypted_key = 2;
     if (has_encrypted_key()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->encrypted_key());
     }
     
-    // required string encrypted_contents = 3;
+    // required bytes encrypted_contents = 3;
     if (has_encrypted_contents()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->encrypted_contents());
     }
     

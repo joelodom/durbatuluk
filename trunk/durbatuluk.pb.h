@@ -394,25 +394,25 @@ class EncryptedMessage : public ::google::protobuf::Message {
   inline ::RSAKey* mutable_recipient();
   inline ::RSAKey* release_recipient();
   
-  // required string encrypted_key = 2;
+  // required bytes encrypted_key = 2;
   inline bool has_encrypted_key() const;
   inline void clear_encrypted_key();
   static const int kEncryptedKeyFieldNumber = 2;
   inline const ::std::string& encrypted_key() const;
   inline void set_encrypted_key(const ::std::string& value);
   inline void set_encrypted_key(const char* value);
-  inline void set_encrypted_key(const char* value, size_t size);
+  inline void set_encrypted_key(const void* value, size_t size);
   inline ::std::string* mutable_encrypted_key();
   inline ::std::string* release_encrypted_key();
   
-  // required string encrypted_contents = 3;
+  // required bytes encrypted_contents = 3;
   inline bool has_encrypted_contents() const;
   inline void clear_encrypted_contents();
   static const int kEncryptedContentsFieldNumber = 3;
   inline const ::std::string& encrypted_contents() const;
   inline void set_encrypted_contents(const ::std::string& value);
   inline void set_encrypted_contents(const char* value);
-  inline void set_encrypted_contents(const char* value, size_t size);
+  inline void set_encrypted_contents(const void* value, size_t size);
   inline ::std::string* mutable_encrypted_contents();
   inline ::std::string* release_encrypted_contents();
   
@@ -1204,7 +1204,7 @@ inline ::RSAKey* EncryptedMessage::release_recipient() {
   return temp;
 }
 
-// required string encrypted_key = 2;
+// required bytes encrypted_key = 2;
 inline bool EncryptedMessage::has_encrypted_key() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -1237,7 +1237,7 @@ inline void EncryptedMessage::set_encrypted_key(const char* value) {
   }
   encrypted_key_->assign(value);
 }
-inline void EncryptedMessage::set_encrypted_key(const char* value, size_t size) {
+inline void EncryptedMessage::set_encrypted_key(const void* value, size_t size) {
   set_has_encrypted_key();
   if (encrypted_key_ == &::google::protobuf::internal::kEmptyString) {
     encrypted_key_ = new ::std::string;
@@ -1262,7 +1262,7 @@ inline ::std::string* EncryptedMessage::release_encrypted_key() {
   }
 }
 
-// required string encrypted_contents = 3;
+// required bytes encrypted_contents = 3;
 inline bool EncryptedMessage::has_encrypted_contents() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -1295,7 +1295,7 @@ inline void EncryptedMessage::set_encrypted_contents(const char* value) {
   }
   encrypted_contents_->assign(value);
 }
-inline void EncryptedMessage::set_encrypted_contents(const char* value, size_t size) {
+inline void EncryptedMessage::set_encrypted_contents(const void* value, size_t size) {
   set_has_encrypted_contents();
   if (encrypted_contents_ == &::google::protobuf::internal::kEmptyString) {
     encrypted_contents_ = new ::std::string;
