@@ -156,7 +156,7 @@ void protobuf_AddDesc_durbatuluk_2eproto() {
     "\t\n\001e\030\002 \002(\014\022\t\n\001d\030\003 \001(\014\022\t\n\001p\030\004 \001(\014\022\t\n\001q\030\005 "
     "\001(\014\022\014\n\004dmp1\030\006 \001(\014\022\014\n\004dmq1\030\007 \001(\014\022\014\n\004iqmp\030"
     "\010 \001(\014\"M\n\rSignedMessage\022\027\n\006sender\030\001 \002(\0132\007"
-    ".RSAKey\022\020\n\010contents\030\002 \002(\t\022\021\n\tsignature\030\003"
+    ".RSAKey\022\020\n\010contents\030\002 \002(\014\022\021\n\tsignature\030\003"
     " \002(\014\"a\n\020EncryptedMessage\022\032\n\trecipient\030\001 "
     "\002(\0132\007.RSAKey\022\025\n\rencrypted_key\030\002 \002(\014\022\032\n\022e"
     "ncrypted_contents\030\003 \002(\014\"L\n\021DurbatulukMes"
@@ -841,16 +841,13 @@ bool SignedMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required string contents = 2;
+      // required bytes contents = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_contents:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_contents()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->contents().data(), this->contents().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
         }
@@ -896,12 +893,9 @@ void SignedMessage::SerializeWithCachedSizes(
       1, this->sender(), output);
   }
   
-  // required string contents = 2;
+  // required bytes contents = 2;
   if (has_contents()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->contents().data(), this->contents().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+    ::google::protobuf::internal::WireFormatLite::WriteBytes(
       2, this->contents(), output);
   }
   
@@ -926,13 +920,10 @@ void SignedMessage::SerializeWithCachedSizes(
         1, this->sender(), target);
   }
   
-  // required string contents = 2;
+  // required bytes contents = 2;
   if (has_contents()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->contents().data(), this->contents().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         2, this->contents(), target);
   }
   
@@ -961,10 +952,10 @@ int SignedMessage::ByteSize() const {
           this->sender());
     }
     
-    // required string contents = 2;
+    // required bytes contents = 2;
     if (has_contents()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->contents());
     }
     

@@ -189,6 +189,13 @@
     s.length(), nullptr);
 }
 
+/*static*/ bool Crypto::SHA1(const std::string& message, std::string& digest)
+{
+  // see http://www.bmt-online.org/geekisms/RSA_verify
+  digest = message.substr(0, 20); // CRITICAL TODO
+  return true; // success
+}
+
 /*static*/ bool Crypto::CreateSignedMessage(
     std::string& contents, RSA* rsa, SignedMessage& signed_message)
 {
@@ -199,18 +206,23 @@
     return false; // failure
   unsigned int siglen;
 
+  // hash the contents
+  std::string digest;
+  if (!SHA1(contents, digest))
+    return false; // failure
+
   // sign the contents
-  if (RSA_sign(NID_sha1, (const unsigned char*)contents.c_str(),
-    contents.size(), sigret, &siglen, rsa) != 1)
+  if (RSA_sign(NID_sha1, (unsigned char*)digest.c_str(),
+    digest.length(), sigret, &siglen, rsa) != 1)
     return false; // failure
 
   // build the SignedMessage
   RSAKey public_key;
   if (!ExtractPublicRSAKey(rsa, public_key))
-    return false;
+    return false; // failure
   signed_message.mutable_sender()->set_n(public_key.n());
   signed_message.mutable_sender()->set_e(public_key.e());
-  signed_message.set_contents(contents);
+  signed_message.set_contents(contents.c_str(), contents.length());
   signed_message.set_signature(sigret, siglen);
 
   delete[] sigret;
@@ -236,12 +248,15 @@
     return false; // failure
   }
 
-  // verify the digital signature
+  // hash the contents
+  std::string digest;
+  if (!SHA1(signed_message.contents(), digest))
+    return false; // failure
 
+  // verify the digital signature
   bool signature_passed = RSA_verify(NID_sha1,
-    reinterpret_cast<const unsigned char*>(signed_message.contents().c_str()),
-    signed_message.contents().size(),
-    reinterpret_cast<const unsigned char*>(signed_message.signature().c_str()),
+    (unsigned char*)digest.c_str(), digest.size(),
+    (unsigned char*)signed_message.signature().c_str(),
     signed_message.signature().length(), rsa);
 
   delete[] sigret;

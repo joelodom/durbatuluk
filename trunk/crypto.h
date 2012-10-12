@@ -47,9 +47,11 @@ public:
     std::string& contents, EncryptedMessage& encrypted_message);
   static bool DecryptMessage(RSA* rsa, EncryptedMessage& encrypted_message,
     std::string& decrypted);
+
 private:
   static unsigned char* AllocateForRSAExtraction(RSA* rsa);
   static void ExtractBIGNUM(std::string s, BIGNUM** bn);
+  static bool SHA1(const std::string& message, std::string& digest);
 };
 
 #endif // #ifndef CRYPTO_H_

@@ -283,14 +283,14 @@ class SignedMessage : public ::google::protobuf::Message {
   inline ::RSAKey* mutable_sender();
   inline ::RSAKey* release_sender();
   
-  // required string contents = 2;
+  // required bytes contents = 2;
   inline bool has_contents() const;
   inline void clear_contents();
   static const int kContentsFieldNumber = 2;
   inline const ::std::string& contents() const;
   inline void set_contents(const ::std::string& value);
   inline void set_contents(const char* value);
-  inline void set_contents(const char* value, size_t size);
+  inline void set_contents(const void* value, size_t size);
   inline ::std::string* mutable_contents();
   inline ::std::string* release_contents();
   
@@ -1055,7 +1055,7 @@ inline ::RSAKey* SignedMessage::release_sender() {
   return temp;
 }
 
-// required string contents = 2;
+// required bytes contents = 2;
 inline bool SignedMessage::has_contents() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -1088,7 +1088,7 @@ inline void SignedMessage::set_contents(const char* value) {
   }
   contents_->assign(value);
 }
-inline void SignedMessage::set_contents(const char* value, size_t size) {
+inline void SignedMessage::set_contents(const void* value, size_t size) {
   set_has_contents();
   if (contents_ == &::google::protobuf::internal::kEmptyString) {
     contents_ = new ::std::string;

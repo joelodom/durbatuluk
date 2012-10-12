@@ -19,40 +19,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-//
-// Sample command to generate C++ code based on this .proto file:
-//
-// protoc --cpp_out=. durbatuluk.proto
-//
+#include "processing_engine.h"
+#include "gtest/gtest.h"
 
-message RSAKey {
-  // public parameters
-  required bytes n = 1;
-  required bytes e = 2;
+TEST(processing_engine_tests, test_full_circle)
+{
+  std::string message("this tests tests the full circle message");
 
-  // private parameters (see http://www.openssl.org/docs/crypto/rsa.html)
-  optional bytes d = 3;
-  optional bytes p = 4;
-  optional bytes q = 5;
-  optional bytes dmp1 = 6;
-  optional bytes dmq1 = 7;
-  optional bytes iqmp = 8;
-}
+  // generate sender key
+  RSA* rsa_sender_signing
+    = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  ASSERT_TRUE(rsa_sender_signing != nullptr);
 
-message SignedMessage {
-  required RSAKey sender = 1; // public signing key
-  required bytes contents = 2; // usually a serialized EncryptedMessage
-  required bytes signature = 3;
-}
+  // generate recipient key
+  RSA* rsa_recipient_encryption
+    = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  ASSERT_TRUE(rsa_recipient_encryption != nullptr);
+  RSAKey rsa_recipient_encryption_public_key;
+  ASSERT_TRUE(Crypto::ExtractPublicRSAKey(
+    rsa_recipient_encryption, rsa_recipient_encryption_public_key));
 
-message EncryptedMessage {
-  required RSAKey recipient = 1; // recipient public encryption key
-  required bytes encrypted_key = 2; // encrypted by recipient private key
-  required bytes encrypted_contents = 3; // encrypted by symmetric key
-}
+  // encrypt, sign and encode the message
+  std::string encoded;
+  ASSERT_TRUE(ProcessingEngine::EncryptSignAndEncode(
+    message, rsa_recipient_encryption_public_key, rsa_sender_signing, encoded));
 
-message DurbatulukMessage { // usually encapsulated in an EncryptedMessage
-  optional string type = 1;
-  optional string contents = 2;
-  optional uint64 sequence_number = 3;
+  // decode, verify and decrypt the encoded message
+  std::string message2;
+  ASSERT_TRUE(ProcessingEngine::DecodeVerifyAndDecrypt(
+    encoded, rsa_recipient_encryption, message2));
+
+  EXPECT_STREQ(message.c_str(), message2.c_str());
 }
