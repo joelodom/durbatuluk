@@ -19,40 +19,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-//
-// Sample command to generate C++ code based on this .proto file:
-//
-// protoc --cpp_out=. durbatuluk.proto
-//
+#ifndef PROCESSING_ENGINE_H_
+#define PROCESSING_ENGINE_H_
 
-message RSAKey {
-  // public parameters
-  required bytes n = 1;
-  required bytes e = 2;
+#include "crypto.h"
 
-  // private parameters (see http://www.openssl.org/docs/crypto/rsa.html)
-  optional bytes d = 3;
-  optional bytes p = 4;
-  optional bytes q = 5;
-  optional bytes dmp1 = 6;
-  optional bytes dmq1 = 7;
-  optional bytes iqmp = 8;
-}
+class ProcessingEngine
+{
+public:
+  // methods to perform a full Durbatuluk circle of encryption and encoding
+  static bool EncryptSignAndEncode(std::string& message,
+    RSAKey& recipient_public_key, RSA* sender_signing_key,
+    std::string& encoded);
+  static bool DecodeVerifyAndDecrypt(std::string& encoded,
+    RSA* recipient_private_encryption_key, std::string& message);
+};
 
-message SignedMessage {
-  required RSAKey sender = 1; // public signing key
-  required bytes contents = 2; // usually a serialized EncryptedMessage
-  required bytes signature = 3;
-}
-
-message EncryptedMessage {
-  required RSAKey recipient = 1; // recipient public encryption key
-  required bytes encrypted_key = 2; // encrypted by recipient private key
-  required bytes encrypted_contents = 3; // encrypted by symmetric key
-}
-
-message DurbatulukMessage { // usually encapsulated in an EncryptedMessage
-  optional string type = 1;
-  optional string contents = 2;
-  optional uint64 sequence_number = 3;
-}
+#endif // #ifndef PROCESSING_ENGINE_H_

@@ -272,7 +272,6 @@ TEST(crypto_tests, test_encrypt_and_decrypt_encrypted_message)
   ASSERT_TRUE(rsa != nullptr);
   RSAKey public_key;
   ASSERT_TRUE(Crypto::ExtractPublicRSAKey(rsa, public_key));
-  ASSERT_TRUE(Crypto::ExtractPrivateRSAKey(rsa, public_key));
 
   // encrypt the message
   EncryptedMessage encrypted_message;
