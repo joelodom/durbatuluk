@@ -21,8 +21,9 @@
 
 #include "processing_engine.h"
 #include "gtest/gtest.h"
+#include "message_handler.h"
 
-TEST(processing_engine_tests, test_full_circle)
+TEST(processing_engine_tests, test_full_circle_of_string_message)
 {
   std::string message("this tests the full circle message");
 
@@ -50,4 +51,36 @@ TEST(processing_engine_tests, test_full_circle)
     encoded, rsa_recipient_encryption, message2));
 
   EXPECT_STREQ(message.c_str(), message2.c_str());
+}
+
+TEST(processing_engine_tests, test_full_circle_of_shell_command)
+{
+  // generate sender key
+  RSA* rsa_sender_signing
+    = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  ASSERT_TRUE(rsa_sender_signing != nullptr);
+
+  // generate recipient key
+  RSA* rsa_recipient_encryption
+    = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  ASSERT_TRUE(rsa_recipient_encryption != nullptr);
+  RSAKey rsa_recipient_encryption_public_key;
+  ASSERT_TRUE(Crypto::ExtractPublicRSAKey(
+    rsa_recipient_encryption, rsa_recipient_encryption_public_key));
+
+  // generate the message as if I am a commander
+  std::string type(MESSAGE_TYPE_SHELL_EXEC), command("touch todo"),
+    encoded_message;
+  ASSERT_TRUE(ProcessingEngine::GenerateEncodedDurbatulukMessage(
+    type, command, rsa_recipient_encryption_public_key,
+    rsa_sender_signing, encoded_message));
+
+  // process the message as if I am a client
+  std::string encoded_response;
+  ASSERT_TRUE(ProcessingEngine::HandleIncomingEncodedMessage(
+    encoded_message, rsa_recipient_encryption, encoded_response));
+
+  // process the response as if I am the commander getting the response
+  // TODO: how to process responses as a commander???
+  // TODO: I have todos all over.  Figure this out...
 }
