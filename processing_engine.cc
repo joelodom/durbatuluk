@@ -21,6 +21,44 @@
 
 #include "processing_engine.h"
 #include "encoding.h"
+#include "message_handler.h"
+
+/*static*/ bool ProcessingEngine::GenerateEncodedDurbatulukMessage(
+  std::string& type, std::string& contents, RSAKey& recipient_public_key,
+  RSA* sender_signing_key, std::string& encoded_message)
+{
+  DurbatulukMessage durbatuluk_message;
+  durbatuluk_message.set_type(type);
+  durbatuluk_message.set_contents(contents);
+
+  std::string serialized;
+  if (!durbatuluk_message.SerializeToString(&serialized))
+    return false; // failure
+
+  return EncryptSignAndEncode(serialized, recipient_public_key,
+    sender_signing_key, encoded_message);
+}
+
+/*static*/ bool ProcessingEngine::HandleIncomingEncodedMessage(
+  std::string& encoded_incoming, RSA* recipient_private_encryption_key,
+  std::string& encoded_response)
+{
+  std::string decoded_message;
+  if (!DecodeVerifyAndDecrypt(
+    encoded_incoming, recipient_private_encryption_key, decoded_message))
+    return false; // failure
+
+  DurbatulukMessage input, output;
+  if (!input.ParseFromString(decoded_message))
+    return false; // failure
+
+  if (!MessageHandler::HandleMessage(input, output))
+    return false; // failure
+
+  // TODO: what to do with output???
+
+  return true; // success
+}
 
 /*static*/ bool ProcessingEngine::EncryptSignAndEncode(std::string& message,
     RSAKey& recipient_public_key, RSA* sender_signing_key,

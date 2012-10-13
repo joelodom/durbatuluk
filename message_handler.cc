@@ -35,6 +35,12 @@
     }
   }
 
+  if (input.type() == MESSAGE_TYPE_SHELL_EXEC_OUTPUT)
+  {
+    printf("How to handle this? %s\n", input.contents().c_str());
+    return true; // success
+  }
+
   return false; // problem
 }
 
