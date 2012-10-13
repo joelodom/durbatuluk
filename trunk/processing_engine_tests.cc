@@ -24,7 +24,7 @@
 
 TEST(processing_engine_tests, test_full_circle)
 {
-  std::string message("this tests tests the full circle message");
+  std::string message("this tests the full circle message");
 
   // generate sender key
   RSA* rsa_sender_signing
