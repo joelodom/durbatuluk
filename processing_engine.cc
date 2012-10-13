@@ -20,7 +20,7 @@
 // SOFTWARE.
 
 #include "processing_engine.h"
-#include "base64.h"
+#include "encoding.h"
 
 /*static*/ bool ProcessingEngine::EncryptSignAndEncode(std::string& message,
     RSAKey& recipient_public_key, RSA* sender_signing_key,
@@ -44,8 +44,8 @@
     return false; // failure
 
   // encode the signed message
-  encoded = base64_encode(reinterpret_cast<const unsigned char*>(
-    signed_str.c_str()), signed_str.length());
+  if (!Encoding::EncodeMessage(signed_str, encoded))
+    return false; // failure
 
   return true; // success
 }
@@ -53,5 +53,25 @@
 /*static*/ bool ProcessingEngine::DecodeVerifyAndDecrypt(std::string& encoded,
     RSA* recipient_private_encryption_key, std::string& message)
 {
-  return false; // under construction
+  // decode the message
+  std::string decoded;
+  if (!Encoding::DecodeMessage(encoded, decoded))
+    return false; // failure
+  SignedMessage signed_message;
+  if (!signed_message.ParseFromString(decoded))
+    return false; // failure
+
+  // TODO: verify here that the sender is authorized
+
+  // verify the message signature
+  if (!Crypto::VerifySignedMessage(signed_message))
+    return false; // failure
+  EncryptedMessage encrypted_message;
+  if (!encrypted_message.ParseFromString(signed_message.contents()))
+    return false; // failure
+
+  // decrypt the message
+  std::string decrypted;
+  return Crypto::DecryptMessage(
+    recipient_private_encryption_key, encrypted_message, message);
 }

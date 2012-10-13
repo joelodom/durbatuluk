@@ -22,6 +22,7 @@
 #include "crypto.h"
 #include "gtest/gtest.h"
 #include "openssl_aes.h"
+#include <openssl/engine.h>
 
 TEST(crypto_tests, test_digital_signature_good)
 {
@@ -37,7 +38,7 @@ TEST(crypto_tests, test_digital_signature_good)
   EXPECT_EQ(rsa_size, 256) << "this may be okay if RSA_BITS ever changes";
 
   std::string message("One ring to rule them all, one ring to find them");
-  unsigned char* sigret = new unsigned char[rsa_size];
+  unsigned char sigret[rsa_size];
   unsigned int siglen;
 
   i = RSA_sign(NID_sha1, (const unsigned char*)message.c_str(),
@@ -49,7 +50,6 @@ TEST(crypto_tests, test_digital_signature_good)
   EXPECT_EQ(i, 1) << "RSA_verify failed";
 
   RSA_free(rsa);
-  delete[] sigret;
 }
 
 TEST(crypto_tests, test_digital_signature_bad)
@@ -66,7 +66,7 @@ TEST(crypto_tests, test_digital_signature_bad)
   EXPECT_EQ(rsa_size, 256) << "this may be okay";
 
   std::string message("One ring to rule them all, one ring to find them");
-  unsigned char* sigret = new unsigned char[rsa_size];
+  unsigned char sigret[rsa_size];
   unsigned int siglen;
 
   i = RSA_sign(NID_sha1, (const unsigned char*)message.c_str(),
@@ -80,7 +80,6 @@ TEST(crypto_tests, test_digital_signature_bad)
   EXPECT_NE(i, 1) << "RSA_verify should have failed";
 
   RSA_free(rsa);
-  delete[] sigret;
 }
 
 TEST(crypto_tests, test_encrypt_decrypt_session_key)
@@ -100,22 +99,21 @@ TEST(crypto_tests, test_encrypt_decrypt_session_key)
   ASSERT_LT(session_key.size(), (size_t)(RSA_size(rsa) - 41))
     << "required condition for RSA_PKCS1_OAEP_PADDING";
 
-  unsigned char* ciphertext = new unsigned char[rsa_size];
+  unsigned char ciphertext[rsa_size];
   i = RSA_public_encrypt(session_key.length(),
     (unsigned char *)session_key.c_str(),
     ciphertext, rsa, RSA_PKCS1_OAEP_PADDING);
   ASSERT_EQ(i, rsa_size) << "RSA_public_encrypt failed";
 
-  unsigned char* plaintext = new unsigned char[rsa_size];
+  unsigned char plaintext[rsa_size];
   i = RSA_private_decrypt(rsa_size, ciphertext,
      plaintext, rsa, RSA_PKCS1_OAEP_PADDING);
   EXPECT_EQ((size_t)i, session_key.length()) << "RSA_private_decrypt failed";
 
-  EXPECT_STREQ((const char*)plaintext, session_key.c_str());
+  EXPECT_TRUE(
+    (memcmp(plaintext, session_key.c_str(), session_key.length()) == 0));
 
   RSA_free(rsa);
-  delete[] ciphertext;
-  delete[] plaintext;
 }
 
 TEST(crypto_tests, test_bignum_conversion)
@@ -124,14 +122,13 @@ TEST(crypto_tests, test_bignum_conversion)
   ASSERT_TRUE(rsa != nullptr);
 
   int len = BN_num_bytes(rsa->n);
-  unsigned char* buf = new unsigned char[len];
+  unsigned char buf[len];
   len = BN_bn2bin(rsa->n, buf);
 
   BIGNUM* bn = BN_bin2bn(buf, len, nullptr);
   ASSERT_NE(bn, nullptr);
   EXPECT_EQ(BN_cmp(rsa->n, bn), 0);
 
-  delete[] buf;
   BN_free(bn);
   RSA_free(rsa);
 }
@@ -201,6 +198,7 @@ TEST(crypto_tests, test_extract_import_public_rsa_key)
 
   // import the public key
   RSA* rsa_after = RSA_new();
+  ASSERT_TRUE(rsa_after != nullptr);
   ASSERT_TRUE(Crypto::ImportRSAKey(extracted, rsa_after));
 
   // check the imported key
@@ -229,6 +227,7 @@ TEST(crypto_tests, test_extract_import_private_rsa_key)
 
   // import the public key
   RSA* rsa_after = RSA_new();
+  ASSERT_TRUE(rsa_after != nullptr);
   ASSERT_TRUE(Crypto::ImportRSAKey(extracted, rsa_after));
 
   // check the imported key
@@ -243,6 +242,20 @@ TEST(crypto_tests, test_extract_import_private_rsa_key)
 
   RSA_free(rsa_before);
   RSA_free(rsa_after);
+}
+
+TEST(crypto_tests, test_sha1)
+{
+  std::string message("Let me go.  I don't want to be a hero.  "
+    "I don't want to be a big man.  "
+    "I just want to fight like everyone else.  "
+    "Your masquerade!  I don't want to be a part of your parade.  "
+    "Everyone deserves a chance to walk with everyone else.");
+
+  unsigned char digest[SHA_DIGEST_LENGTH];
+  SHA1((const unsigned char*)message.c_str(), message.length(), digest);
+  EXPECT_TRUE(memcmp(digest, "\x7a\x52\x85\xd1\x7e\x53\xae\x21\x30\x07"
+    "\x27\xb3\xe4\x6e\x59\x9e\x7c\x06\x46\xca", SHA_DIGEST_LENGTH) == 0);
 }
 
 TEST(crypto_tests, test_create_and_verify_signed_message)
@@ -282,5 +295,7 @@ TEST(crypto_tests, test_encrypt_and_decrypt_encrypted_message)
   ASSERT_TRUE(Crypto::DecryptMessage(rsa, encrypted_message, decrypted));
   RSA_free(rsa);
 
-  EXPECT_STREQ(decrypted.c_str(), message.c_str());
+  EXPECT_TRUE(
+    memcmp(decrypted.c_str(), message.c_str(), message.length()) == 0);
+  EXPECT_EQ(message.length(), decrypted.length());
 }

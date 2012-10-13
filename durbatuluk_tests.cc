@@ -21,15 +21,17 @@
 
 #include "gtest/gtest.h"
 #include "message_handler.h"
-#include "base64.h"
+#include "encoding.h"
 
 TEST(durbatuluk_tests, test_gtest)
 {
   EXPECT_TRUE(true) << "law of non-contradiction failed";
 }
 
-TEST(durbatuluk_tests, test_command_from_base64)
+TEST(durbatuluk_tests, test_command_from_encoded)
 {
+  std::string serialized, encoded, decoded;
+
   // This test is mainly a proof-of-concept / integration test that shows
   // that we can take an encoded string, decode it, and run it through the
   // message handler.
@@ -40,14 +42,11 @@ TEST(durbatuluk_tests, test_command_from_base64)
   input.set_contents("echo durbatuluk");
 
   // encode the message
-  std::string serialized;
   input.SerializeToString(&serialized);
-  std::string encoded = base64_encode(
-    reinterpret_cast<const unsigned char*>(
-    serialized.c_str()), serialized.length());
+  ASSERT_TRUE(Encoding::EncodeMessage(serialized, encoded));
 
   // decode & parse the message
-  std::string decoded = base64_decode(encoded);
+  ASSERT_TRUE(Encoding::DecodeMessage(encoded, decoded));
   ASSERT_TRUE(parsed.ParseFromString(decoded));
 
   // send the message to the message handler

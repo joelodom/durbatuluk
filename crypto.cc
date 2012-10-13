@@ -185,47 +185,34 @@
 
 /*static*/ void Crypto::ExtractBIGNUM(std::string s, BIGNUM** bn)
 {
-  *bn = BN_bin2bn(reinterpret_cast<const unsigned char*>(s.c_str()),
-    s.length(), nullptr);
-}
-
-/*static*/ bool Crypto::SHA1(const std::string& message, std::string& digest)
-{
-  // see http://www.bmt-online.org/geekisms/RSA_verify
-  digest = message.substr(0, 20); // CRITICAL TODO
-  return true; // success
+  *bn = BN_bin2bn((const unsigned char*)s.c_str(), s.length(), nullptr);
 }
 
 /*static*/ bool Crypto::CreateSignedMessage(
     std::string& contents, RSA* rsa, SignedMessage& signed_message)
 {
   // set up variables and buffers
+
   int rsa_size = RSA_size(rsa);
-  unsigned char* sigret = new unsigned char[rsa_size];
-  if (sigret == nullptr)
-    return false; // failure
+  unsigned char sigret[rsa_size];
   unsigned int siglen;
 
-  // hash the contents
-  std::string digest;
-  if (!SHA1(contents, digest))
-    return false; // failure
-
-  // sign the contents
-  if (RSA_sign(NID_sha1, (unsigned char*)digest.c_str(),
-    digest.length(), sigret, &siglen, rsa) != 1)
-    return false; // failure
-
-  // build the SignedMessage
   RSAKey public_key;
   if (!ExtractPublicRSAKey(rsa, public_key))
     return false; // failure
+
+  // sign the contents
+  unsigned char digest[SHA_DIGEST_LENGTH];
+  SHA1((const unsigned char*)contents.c_str(), contents.length(), digest);
+  if (RSA_sign(NID_sha1, digest, SHA_DIGEST_LENGTH, sigret, &siglen, rsa) != 1)
+    return false; // failure
+
+  // build the SignedMessage
   signed_message.mutable_sender()->set_n(public_key.n());
   signed_message.mutable_sender()->set_e(public_key.e());
   signed_message.set_contents(contents.c_str(), contents.length());
   signed_message.set_signature(sigret, siglen);
 
-  delete[] sigret;
   return true; // failure
 }
 
@@ -234,57 +221,53 @@
   // import the public signing key
 
   RSA* rsa = RSA_new();
+  if (rsa == nullptr)
+    return false; // failure
+
   if (!ImportRSAKey(signed_message.sender(), rsa))
   {
     RSA_free(rsa);
     return false; // failure
   }
 
-  int rsa_size = RSA_size(rsa);
-  unsigned char* sigret = new unsigned char[rsa_size];
-  if (sigret == nullptr)
-  {
-    RSA_free(rsa);
-    return false; // failure
-  }
-
-  // hash the contents
-  std::string digest;
-  if (!SHA1(signed_message.contents(), digest))
-    return false; // failure
-
   // verify the digital signature
-  bool signature_passed = RSA_verify(NID_sha1,
-    (unsigned char*)digest.c_str(), digest.size(),
+  unsigned char digest[SHA_DIGEST_LENGTH];
+  SHA1((const unsigned char*)signed_message.contents().c_str(),
+    signed_message.contents().length(), digest);
+  bool signature_passed = RSA_verify(NID_sha1, digest, SHA_DIGEST_LENGTH,
     (unsigned char*)signed_message.signature().c_str(),
     signed_message.signature().length(), rsa);
 
-  delete[] sigret;
   RSA_free(rsa);
-
   return signature_passed;
 }
 
 /*static*/ bool Crypto::EncryptMessage(RSAKey& recipient_public_key,
     std::string& contents, EncryptedMessage& encrypted_message)
 {
+  // import the public key
+
+  RSA* rsa = RSA_new();
+  if (rsa == nullptr)
+    return false; // failure
+
+  if (!ImportRSAKey(recipient_public_key, rsa))
+    return false; // failure
+
+  int rsa_size = RSA_size(rsa);
+
   // set up for encryption early so that the session key stays in memory
   // for as short a time as possible
-  RSA* rsa = RSA_new();
-  ImportRSAKey(recipient_public_key, rsa);
-  int rsa_size = RSA_size(rsa);
-  EVP_CIPHER_CTX en, de;
+  unsigned char session_key[SESSION_KEY_LEN];
   unsigned char* ciphertext = nullptr;
-  int len = (int)contents.length() + 1; // capture terminating null
-  unsigned char* encrypted_session_key = new unsigned char[rsa_size];
-  unsigned char* session_key = new unsigned char[SESSION_KEY_LEN];
+  int len = (int)contents.length();
+  unsigned char encrypted_session_key[rsa_size];
+  EVP_CIPHER_CTX en, de;
+
+  // encrypt
 
   while (true) // break out when finished
   {
-    // memory allocation check
-    if (encrypted_session_key == nullptr || session_key == nullptr)
-      break; // couldn't allocate memory
-
     // generate a random session key
     if (RAND_bytes(session_key, SESSION_KEY_LEN) != 1)
       break; // couldn't generate cryptographically secure session key
@@ -308,7 +291,6 @@
   memset((unsigned char*)session_key, 0, SESSION_KEY_LEN);
   EVP_CIPHER_CTX_cleanup(&en);
   EVP_CIPHER_CTX_cleanup(&de);
-  delete[] session_key;
   RSA_free(rsa); // remember this is only the receiver public key
 
   bool success = false;
@@ -325,17 +307,12 @@
     success = true;
   }
 
-  delete[] encrypted_session_key;
   return success;
 }
 
 /*static*/ bool Crypto::DecryptMessage(RSA* rsa,
   EncryptedMessage& encrypted_message, std::string& decrypted)
 {
-  EVP_CIPHER_CTX en, de;
-
-  decrypted.erase(); // length used to check for error condition below
-
   // verify that RSA key parameter is that of recipient of message
   RSAKey private_key;
   if (!ExtractPrivateRSAKey(rsa, private_key))
@@ -346,10 +323,10 @@
 
   // decrypt the message contents
 
+  decrypted.erase(); // for good measure
   int rsa_size = RSA_size(rsa);
-  unsigned char* session_key = new unsigned char[rsa_size];
-  if (session_key == nullptr)
-    return false; // memory allocation failure
+  unsigned char session_key[rsa_size];
+  EVP_CIPHER_CTX en, de;
 
   while (true) // break out when finished
   {
@@ -374,15 +351,19 @@
     if (plaintext == nullptr)
       break; // something went wrong with encryption
 
-    decrypted = plaintext;
-    free(plaintext);
+    // place the contents in the decrypted string
+    if ((size_t)len > decrypted.max_size())
+      break; // message too long
+    decrypted.reserve(len);
+    for (i = 0; i < len; i++)
+      decrypted.push_back(plaintext[i]);
 
+    free(plaintext);
     break;
   }
 
   // clean the session key from memory
   memset(session_key, 0, SESSION_KEY_LEN);
-  delete[] session_key;
   EVP_CIPHER_CTX_cleanup(&en);
   EVP_CIPHER_CTX_cleanup(&de);
 
