@@ -69,18 +69,35 @@ TEST(processing_engine_tests, test_full_circle_of_shell_command)
     rsa_recipient_encryption, rsa_recipient_encryption_public_key));
 
   // generate the message as if I am a commander
-  std::string type(MESSAGE_TYPE_SHELL_EXEC), command("touch todo"),
+  std::string type(MESSAGE_TYPE_SHELL_EXEC), command("echo durbatuluk"),
     encoded_message;
   ASSERT_TRUE(ProcessingEngine::GenerateEncodedDurbatulukMessage(
     type, command, rsa_recipient_encryption_public_key,
     rsa_sender_signing, encoded_message));
 
   // process the message as if I am a client
-  std::string encoded_response;
+  DurbatulukMessage output;
   ASSERT_TRUE(ProcessingEngine::HandleIncomingEncodedMessage(
-    encoded_message, rsa_recipient_encryption, encoded_response));
+    encoded_message, rsa_recipient_encryption, output));
+
+  // send the output to myself as a message (for testing)
+  // (since we already have output as a Durbatuluk message, we only need
+  // to encrypt, sign and encode)
+  type = MESSAGE_TYPE_SHELL_EXEC_OUTPUT;
+  std::string output_str;
+  ASSERT_TRUE(output.SerializeToString(&output_str));
+  ASSERT_TRUE(ProcessingEngine::EncryptSignAndEncode(output_str,
+    rsa_recipient_encryption_public_key, rsa_sender_signing, encoded_message));
+
+  // a lambda function for handling the callback from the message handler
+  MessageHandlerCallback callback
+    = [](const std::string& type, const std::string& contents)
+    {
+      return type == MESSAGE_TYPE_SHELL_EXEC_OUTPUT
+        && contents.find("durbatuluk") == 0;
+    };
 
   // process the response as if I am the commander getting the response
-  // TODO: how to process responses as a commander???
-  // TODO: I have todos all over.  Figure this out...
+  ASSERT_TRUE(ProcessingEngine::HandleIncomingEncodedMessage(
+    encoded_message, rsa_recipient_encryption, output, callback));
 }

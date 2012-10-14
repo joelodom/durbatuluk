@@ -41,23 +41,18 @@
 
 /*static*/ bool ProcessingEngine::HandleIncomingEncodedMessage(
   std::string& encoded_incoming, RSA* recipient_private_encryption_key,
-  std::string& encoded_response)
+  DurbatulukMessage& output, MessageHandlerCallback callback /*= nullptr*/)
 {
   std::string decoded_message;
   if (!DecodeVerifyAndDecrypt(
     encoded_incoming, recipient_private_encryption_key, decoded_message))
     return false; // failure
 
-  DurbatulukMessage input, output;
+  DurbatulukMessage input;
   if (!input.ParseFromString(decoded_message))
     return false; // failure
 
-  if (!MessageHandler::HandleMessage(input, output))
-    return false; // failure
-
-  // TODO: what to do with output???
-
-  return true; // success
+  return MessageHandler::HandleMessage(input, output, callback);
 }
 
 /*static*/ bool ProcessingEngine::EncryptSignAndEncode(std::string& message,

@@ -19,26 +19,57 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include "logger.h"
 #include "message_handler.h"
+#include <sstream>
 
 /*static*/ bool MessageHandler::HandleMessage(
-  const DurbatulukMessage& input, DurbatulukMessage& output)
+  const DurbatulukMessage& input, DurbatulukMessage& output,
+  MessageHandlerCallback callback /*= nullptr*/)
 {
+  std::stringstream ss;
+  ss << "Entering HandleMessage (type " << input.type() << ")";
+  Logger::LogMessage(INFO, "MessageHandler", ss.str());
+
   if (input.type() == MESSAGE_TYPE_SHELL_EXEC)
   {
     std::string shell_exec_output;
     if (ShellExec(input.contents(), shell_exec_output))
     {
+      ss.str("");
+      ss << "ShellExec output begins " << shell_exec_output.substr(0, 20);
+      Logger::LogMessage(DEBUG, "MessageHandler", ss.str());
+
       output.set_type(MESSAGE_TYPE_SHELL_EXEC_OUTPUT);
       output.set_contents(shell_exec_output);
       return true; // success
     }
+
+    return false; // ShellExec failed
   }
 
   if (input.type() == MESSAGE_TYPE_SHELL_EXEC_OUTPUT)
   {
-    printf("How to handle this? %s\n", input.contents().c_str());
-    return true; // success
+    ss.str("");
+    ss << MESSAGE_TYPE_SHELL_EXEC_OUTPUT << " contents begins "
+      << input.contents().substr(0, 20);
+    Logger::LogMessage(DEBUG, "MessageHandler", ss.str());
+
+    ss.str("");
+    ss << "Attempting to callback (callback IS "
+      << (callback != nullptr ? "NOT " : "") << "NULL)";
+    Logger::LogMessage(DEBUG, "MessageHandler", ss.str());
+
+    // kick back to caller
+
+    bool rv = callback == nullptr ? false
+      : callback(input.type(), input.contents());
+
+    ss.str("");
+    ss << "Callback returned " << rv;
+    Logger::LogMessage(DEBUG, "MessageHandler", ss.str());
+
+    return rv;
   }
 
   return false; // problem

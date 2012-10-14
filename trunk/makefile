@@ -23,6 +23,7 @@ SRCS += encoding.cc
 SRCS += encoding_tests.cc
 SRCS += processing_engine.cc
 SRCS += processing_engine_tests.cc
+SRCS += logger.cc
 
 LIBS = -lpthread
 LIBS += -lcrypto

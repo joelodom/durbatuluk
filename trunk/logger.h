@@ -19,33 +19,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef PROCESSING_ENGINE_H_
-#define PROCESSING_ENGINE_H_
+#ifndef LOGGER_H_
+#define LOGGER_H_
 
-#include "crypto.h"
-#include "message_handler.h"
+#include <string>
 
-class ProcessingEngine
+enum LoggerSeverity { DEBUG, INFO, ERROR };
+
+class Logger
 {
 public:
-  // method to generate a DurbatulukMessage
-  static bool GenerateEncodedDurbatulukMessage(std::string& type,
-    std::string& contents, RSAKey& recipient_public_key,
-    RSA* sender_signing_key, std::string& encoded_message);
-
-  // method to handle an encoded message with message handler
-  // (doesn't generate encoded response, but passes on message handler output
-  // and callback)
-  static bool HandleIncomingEncodedMessage(
-    std::string& encoded_incoming, RSA* recipient_private_encryption_key,
-    DurbatulukMessage& output, MessageHandlerCallback callback = nullptr);
-
-  // methods to perform a full Durbatuluk circle of encryption and encoding
-  static bool EncryptSignAndEncode(std::string& message,
-    RSAKey& recipient_public_key, RSA* sender_signing_key,
-    std::string& encoded);
-  static bool DecodeVerifyAndDecrypt(std::string& encoded,
-    RSA* recipient_private_encryption_key, std::string& message);
+  static void LogMessage(LoggerSeverity severity,
+    const std::string& component, const std::string& message);
 };
 
-#endif // #ifndef PROCESSING_ENGINE_H_
+#endif // #ifndef LOGGER_H_
