@@ -23,7 +23,6 @@
 #include "gtest/gtest.h"
 #include "message_handler.h"
 #include "encoding.h"
-#include <fstream>
 
 TEST(durbatuluk_tests, test_gtest)
 {
@@ -58,23 +57,4 @@ TEST(durbatuluk_tests, test_command_from_encoded)
   // check the result
   EXPECT_STREQ(output.type().c_str(), MESSAGE_TYPE_SHELL_EXEC_OUTPUT);
   EXPECT_EQ(output.contents().find("durbatuluk"), (size_t)0);
-}
-
-TEST(durbatuluk_tests, test_generate_keyfiles)
-{
-  const char* argv[]
-    = { "durbatuluk", "--generate-keyfiles", "__test_keyfiles__" };
-  ASSERT_TRUE(generate_keyfiles(3, (char**)argv));
-
-  {
-    std::ifstream file("test_keyfiles.public");
-    ASSERT_TRUE(file.good());
-    EXPECT_TRUE(remove("test_keyfiles.public") == 0);
-  }
-
-  {
-    std::ifstream file("test_keyfiles.private");
-    ASSERT_TRUE(file.good());
-    EXPECT_TRUE(remove("test_keyfiles.private") == 0);
-  }
 }

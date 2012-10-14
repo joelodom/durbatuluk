@@ -24,7 +24,7 @@
 #include "durbatuluk.pb.h"
 #include "logger.h"
 #include "crypto.h"
-#include <fstream>
+#include "keyfile.h"
 
 // leave as EXIT_FAILURE until handler function is sure of success
 int final_return_value = EXIT_FAILURE;
@@ -57,37 +57,6 @@ bool tests(int argc, char **argv)
   return false; // not handled
 }
 
-bool write_to_file(const std::string& filename, const std::string& data)
-{
-  std::ofstream out_file;
-
-  out_file.open(filename);
-  if (out_file.fail())
-  {
-    Logger::LogMessage(
-      ERROR, "write_to_file", "failed to open output file");
-    return false; // failure
-  }
-
-  out_file << data;
-  if (out_file.fail())
-  {
-    Logger::LogMessage(
-      ERROR, "write_to_file", "failed to write to output file");
-    return false; // failure
-  }
-
-  out_file.close();
-  if (out_file.fail())
-  {
-    Logger::LogMessage(
-      ERROR, "write_to_file", "failed to close output file");
-    return false; // failure
-  }
-
-  return true; // success
-}
-
 bool generate_keyfiles(int argc, char **argv)
 {
   if (argc != 3 || strcmp(argv[1], "--generate-keyfiles") != 0)
@@ -98,9 +67,6 @@ bool generate_keyfiles(int argc, char **argv)
     return false; // not handled
   }
 
-  RSAKey public_key, private_key;
-  std::string filename_base(argv[2]), serialized;
-
   // generate an RSA key
   RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
   if (rsa == nullptr)
@@ -109,56 +75,14 @@ bool generate_keyfiles(int argc, char **argv)
     return true; // handled
   }
 
-  // extract the public key
-  if (!Crypto::ExtractPublicRSAKey(rsa, public_key))
+  // write the key files
+  if (!KeyFile::WriteKeyFiles(argv[2], rsa))
   {
-    Logger::LogMessage(
-      ERROR, "generate_keyfiles", "ExtractPublicRSAKey failed");
+    Logger::LogMessage(ERROR, "generate_keyfiles", "WriteKeyFiles failed");
     return true; // handled
   }
 
-  // extract the private key
-  if (!Crypto::ExtractPrivateRSAKey(rsa, private_key))
-  {
-    Logger::LogMessage(
-      ERROR, "generate_keyfiles", "ExtractPrivateRSAKey failed");
-    return true; // handled
-  }
-
-  // write the public key to a file
-
-  if (!public_key.SerializeToString(&serialized))
-  {
-    Logger::LogMessage(
-      ERROR, "generate_keyfiles", "SerializeToString failed");
-    return true; // handled
-  }
-
-  if (!write_to_file(filename_base + ".public", serialized))
-  {
-    Logger::LogMessage(
-      ERROR, "generate_keyfiles", "write_to_file failed");
-    return true; // handled
-  }
-
-  // write the private key to a file
-
-  if (!private_key.SerializeToString(&serialized))
-  {
-    Logger::LogMessage(
-      ERROR, "generate_keyfiles", "SerializeToString failed");
-    return true; // handled
-  }
-
-  if (!write_to_file(filename_base + ".private", serialized))
-  {
-    Logger::LogMessage(
-      ERROR, "generate_keyfiles", "write_to_file failed");
-    return true; // handled
-  }
-
-  //TODO: output a success message here...  Also, it's not removing test keyfiles...
-
+  std::cout << "Key files generated." << std::endl << std::endl;
   final_return_value = EXIT_SUCCESS;
   return true; // handled
 }
@@ -166,6 +90,8 @@ bool generate_keyfiles(int argc, char **argv)
 int main(int argc, char **argv)
 {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  // TODO: initialize PRNG here
 
   if (!(
     tests(argc, argv) ||
