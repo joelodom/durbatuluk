@@ -21,7 +21,6 @@
 
 #include "logger.h"
 #include "message_handler.h"
-#include <sstream>
 
 /*static*/ bool MessageHandler::HandleMessage(
   const DurbatulukMessage& input, DurbatulukMessage& output,
@@ -36,7 +35,6 @@
     std::string shell_exec_output;
     if (ShellExec(input.contents(), shell_exec_output))
     {
-      ss.str("");
       ss << "ShellExec output begins " << shell_exec_output.substr(0, 20);
       Logger::LogMessage(DEBUG, "MessageHandler", ss.str());
 
@@ -50,12 +48,10 @@
 
   if (input.type() == MESSAGE_TYPE_SHELL_EXEC_OUTPUT)
   {
-    ss.str("");
     ss << MESSAGE_TYPE_SHELL_EXEC_OUTPUT << " contents begins "
       << input.contents().substr(0, 20);
     Logger::LogMessage(DEBUG, "MessageHandler", ss.str());
 
-    ss.str("");
     ss << "Attempting to callback (callback IS "
       << (callback != nullptr ? "NOT " : "") << "NULL)";
     Logger::LogMessage(DEBUG, "MessageHandler", ss.str());
@@ -65,7 +61,6 @@
     bool rv = callback == nullptr ? false
       : callback(input.type(), input.contents());
 
-    ss.str("");
     ss << "Callback returned " << rv;
     Logger::LogMessage(DEBUG, "MessageHandler", ss.str());
 

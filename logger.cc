@@ -28,7 +28,9 @@
   // TODO: make stream a static object so that we don't recreate every time,
   // set logging to ERROR by default, etc...
 
-#if 0
+  if (severity < ERROR)
+    return;
+
   std::ostream stream(std::cerr.rdbuf());
 
   switch (severity)
@@ -45,5 +47,11 @@
   }
 
   stream << component << ": " << message << std::endl;
-#endif
+}
+
+/*static*/ void Logger::LogMessage(LoggerSeverity severity,
+    const std::string& component, std::stringstream& message)
+{
+  LogMessage(severity, component, message.str());
+  message.str("");
 }
