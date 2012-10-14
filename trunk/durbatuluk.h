@@ -19,23 +19,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef LOGGER_H_
-#define LOGGER_H_
+#ifndef DURBATULUK_H_
+#define DURBATULUK_H_
 
-#include <string>
-#include <sstream>
+bool generate_keyfiles(int argc, char **argv);
 
-enum LoggerSeverity { DEBUG, INFO, ERROR };
-
-class Logger
-{
-public:
-  static void LogMessage(LoggerSeverity severity,
-    const std::string& component, const std::string& message);
-
-  // this version empties the stringstream so that it can be reused
-  static void LogMessage(LoggerSeverity severity,
-    const std::string& component, std::stringstream& message);
-};
-
-#endif // #ifndef LOGGER_H_
+#endif // #ifndef DURBATULUK_H_
