@@ -19,33 +19,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef PROCESSING_ENGINE_H_
-#define PROCESSING_ENGINE_H_
+#include "logger.h"
+#include <iostream>
 
-#include "crypto.h"
-#include "message_handler.h"
-
-class ProcessingEngine
+/*static*/ void Logger::LogMessage(LoggerSeverity severity,
+  const std::string& component, const std::string& message)
 {
-public:
-  // method to generate a DurbatulukMessage
-  static bool GenerateEncodedDurbatulukMessage(std::string& type,
-    std::string& contents, RSAKey& recipient_public_key,
-    RSA* sender_signing_key, std::string& encoded_message);
+  // TODO: make stream a static object so that we don't recreate every time,
+  // set logging to ERROR by default, etc...
 
-  // method to handle an encoded message with message handler
-  // (doesn't generate encoded response, but passes on message handler output
-  // and callback)
-  static bool HandleIncomingEncodedMessage(
-    std::string& encoded_incoming, RSA* recipient_private_encryption_key,
-    DurbatulukMessage& output, MessageHandlerCallback callback = nullptr);
+#if 0
+  std::ostream stream(std::cerr.rdbuf());
 
-  // methods to perform a full Durbatuluk circle of encryption and encoding
-  static bool EncryptSignAndEncode(std::string& message,
-    RSAKey& recipient_public_key, RSA* sender_signing_key,
-    std::string& encoded);
-  static bool DecodeVerifyAndDecrypt(std::string& encoded,
-    RSA* recipient_private_encryption_key, std::string& message);
-};
+  switch (severity)
+  {
+    case DEBUG:
+      stream << "DEBUG: ";
+      break;
+    case INFO:
+      stream << "INFO: ";
+      break;
+    case ERROR:
+      stream << "ERROR: ";
+      break;
+  }
 
-#endif // #ifndef PROCESSING_ENGINE_H_
+  stream << component << ": " << message << std::endl;
+#endif
+}

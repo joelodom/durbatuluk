@@ -33,11 +33,14 @@
 // to change in order to implement custom message handling.
 //
 
+typedef bool (*MessageHandlerCallback)(
+  const std::string& type, const std::string& contents);
+
 class MessageHandler
 {
 public:
-  static bool HandleMessage(
-    const DurbatulukMessage& input, DurbatulukMessage& output);
+  static bool HandleMessage(const DurbatulukMessage& input,
+    DurbatulukMessage& output, MessageHandlerCallback callback = nullptr);
   static bool ShellExec(const std::string& input, std::string& output);
 };
 
