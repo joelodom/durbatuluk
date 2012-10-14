@@ -44,11 +44,13 @@ TEST(processing_engine_tests, test_full_circle_of_string_message)
   std::string encoded;
   ASSERT_TRUE(ProcessingEngine::EncryptSignAndEncode(
     message, rsa_recipient_encryption_public_key, rsa_sender_signing, encoded));
+  RSA_free(rsa_sender_signing);
 
   // decode, verify and decrypt the encoded message
   std::string message2;
   ASSERT_TRUE(ProcessingEngine::DecodeVerifyAndDecrypt(
     encoded, rsa_recipient_encryption, message2));
+  RSA_free(rsa_recipient_encryption);
 
   EXPECT_STREQ(message.c_str(), message2.c_str());
 }
@@ -69,11 +71,10 @@ TEST(processing_engine_tests, test_full_circle_of_shell_command)
     rsa_recipient_encryption, rsa_recipient_encryption_public_key));
 
   // generate the message as if I am a commander
-  std::string type(MESSAGE_TYPE_SHELL_EXEC), command("echo durbatuluk"),
-    encoded_message;
+  std::string encoded_message;
   ASSERT_TRUE(ProcessingEngine::GenerateEncodedDurbatulukMessage(
-    type, command, rsa_recipient_encryption_public_key,
-    rsa_sender_signing, encoded_message));
+    MESSAGE_TYPE_SHELL_EXEC, "echo durbatuluk",
+    rsa_recipient_encryption_public_key, rsa_sender_signing, encoded_message));
 
   // process the message as if I am a client
   DurbatulukMessage output;
@@ -83,11 +84,11 @@ TEST(processing_engine_tests, test_full_circle_of_shell_command)
   // send the output to myself as a message (for testing)
   // (since we already have output as a Durbatuluk message, we only need
   // to encrypt, sign and encode)
-  type = MESSAGE_TYPE_SHELL_EXEC_OUTPUT;
   std::string output_str;
   ASSERT_TRUE(output.SerializeToString(&output_str));
   ASSERT_TRUE(ProcessingEngine::EncryptSignAndEncode(output_str,
     rsa_recipient_encryption_public_key, rsa_sender_signing, encoded_message));
+  RSA_free(rsa_sender_signing);
 
   // a lambda function for handling the callback from the message handler
   MessageHandlerCallback callback
@@ -100,4 +101,5 @@ TEST(processing_engine_tests, test_full_circle_of_shell_command)
   // process the response as if I am the commander getting the response
   ASSERT_TRUE(ProcessingEngine::HandleIncomingEncodedMessage(
     encoded_message, rsa_recipient_encryption, output, callback));
+  RSA_free(rsa_recipient_encryption);
 }

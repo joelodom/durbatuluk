@@ -25,6 +25,8 @@
 #include "logger.h"
 #include "crypto.h"
 #include "keyfile.h"
+#include "message_handler.h"
+#include "processing_engine.h"
 
 // leave as EXIT_FAILURE until handler function is sure of success
 int final_return_value = EXIT_FAILURE;
@@ -39,6 +41,8 @@ void usage()
   std::cout << "Usage:" << std::endl;
   std::cout << "  durbatuluk --tests" << std::endl;
   std::cout << "  durbatuluk --generate-keyfiles key_name" << std::endl;
+  std::cout << "  durbatuluk --generate-command recipient_encryption_key "
+    "sender_signing_key (command text read from stdin)" << std::endl;
 
   std::cout << std::endl;
 
@@ -82,7 +86,66 @@ bool generate_keyfiles(int argc, char **argv)
     return true; // handled
   }
 
+  RSA_free(rsa);
   std::cout << "Key files generated." << std::endl << std::endl;
+  final_return_value = EXIT_SUCCESS;
+  return true; // handled
+}
+
+bool generate_command(int argc, char **argv)
+{
+  if (argc != 4 || strcmp(argv[1], "--generate-command") != 0)
+    return false; // not handled
+
+  std::cerr << "under construction" << std::endl;
+  return true;
+
+  // read the recipient encryption key
+  RSAKey recipient_public_key;
+  if (!KeyFile::ReadPublicKeyFile(argv[2], recipient_public_key))
+  {
+    Logger::LogMessage(ERROR, "generate_command", "ReadPublicKeyFile failed");
+    return true; // handled
+  }
+
+  // read the sender signing key
+
+  RSAKey sender_signing_rsa;
+  if (!KeyFile::ReadPrivateKeyFile(argv[3], sender_signing_rsa))
+  {
+    Logger::LogMessage(ERROR, "generate_command", "ReadPrivateKeyFile failed");
+    return true; // handled
+  }
+
+  RSA* rsa = RSA_new();
+  if (rsa == nullptr)
+  {
+    Logger::LogMessage(ERROR, "generate_command", "RSA_new failed");
+    RSA_free(rsa);
+    return true; // handled
+  }
+
+  if (!Crypto::ImportRSAKey(sender_signing_rsa, rsa))
+  {
+    Logger::LogMessage(ERROR, "generate_command", "RSA_new failed");
+    RSA_free(rsa);
+    return true; // handled
+  }
+
+  // generate the message
+  std::string encoded_message;
+  if (!ProcessingEngine::GenerateEncodedDurbatulukMessage(
+    MESSAGE_TYPE_SHELL_EXEC, "touch todo",
+    recipient_public_key, rsa, encoded_message))
+  {
+    Logger::LogMessage(
+      ERROR, "generate_command", "GenerateEncodedDurbatulukMessage failed");
+    RSA_free(rsa);
+    return true; // handled
+  }
+
+  RSA_free(rsa);
+  std::cout << encoded_message;
   final_return_value = EXIT_SUCCESS;
   return true; // handled
 }
@@ -95,7 +158,8 @@ int main(int argc, char **argv)
 
   if (!(
     tests(argc, argv) ||
-    generate_keyfiles(argc, argv)
+    generate_keyfiles(argc, argv) ||
+    generate_command(argc, argv)
     ))
     usage();
 

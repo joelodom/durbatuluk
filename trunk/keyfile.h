@@ -29,9 +29,13 @@ class KeyFile
 {
 public:
   static bool WriteKeyFiles(const std::string& key_name, RSA* rsa);
+  static bool ReadPublicKeyFile(const std::string& key_name, RSAKey& key);
+  static bool ReadPrivateKeyFile(const std::string& key_name, RSAKey& key);
 
 private:
-  static bool WriteToFile(const std::string& filename, const std::string& data);
+  static bool WriteToFile(
+    const std::string& file_name, const std::string& data);
+  static bool ReadKeyFile(const std::string& file_name, RSAKey& key);
 };
 
 #endif // #ifndef KEYFILE_H_

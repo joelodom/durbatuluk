@@ -23,7 +23,7 @@
 #include "gtest/gtest.h"
 #include <fstream>
 
-TEST(keyfile_tests, test_write_keyfiles)
+TEST(keyfile_tests, test_keyfiles)
 {
   // generate an RSA key
   RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
@@ -33,21 +33,49 @@ TEST(keyfile_tests, test_write_keyfiles)
   std::string key_name("__test_keyfiles__");
   ASSERT_TRUE(KeyFile::WriteKeyFiles(key_name, rsa));
 
-  // check and delete the test key files
+  // check and delete the public key file
 
-  {
-    std::string file_name(key_name);
-    file_name += ".public";
-    std::ifstream file(file_name);
-    ASSERT_TRUE(file.good());
-    EXPECT_TRUE(remove(file_name.c_str()) == 0);
-  }
+  RSAKey public_key;
+  ASSERT_TRUE(KeyFile::ReadPublicKeyFile(key_name, public_key));
 
-  {
-    std::string file_name(key_name);
-    file_name += ".private";
-    std::ifstream file(file_name);
-    ASSERT_TRUE(file.good());
-    EXPECT_TRUE(remove(file_name.c_str()) == 0);
-  }
+  RSA* rsa_public_after = RSA_new();
+  ASSERT_TRUE(rsa_public_after != nullptr);
+  ASSERT_TRUE(Crypto::ImportRSAKey(public_key, rsa_public_after));
+
+  EXPECT_EQ(BN_cmp(rsa->n, rsa_public_after->n), 0);
+  EXPECT_EQ(BN_cmp(rsa->e, rsa_public_after->e), 0);
+  EXPECT_EQ(rsa_public_after->d, nullptr);
+  EXPECT_EQ(rsa_public_after->p, nullptr);
+  EXPECT_EQ(rsa_public_after->q, nullptr);
+  EXPECT_EQ(rsa_public_after->dmp1, nullptr);
+  EXPECT_EQ(rsa_public_after->dmq1, nullptr);
+  EXPECT_EQ(rsa_public_after->iqmp, nullptr);
+
+  RSA_free(rsa_public_after);
+
+  EXPECT_TRUE(remove((key_name + ".public").c_str()) == 0);
+
+  // check and delete the private key file
+
+  RSAKey private_key;
+  ASSERT_TRUE(KeyFile::ReadPrivateKeyFile(key_name, private_key));
+
+  RSA* rsa_private_after = RSA_new();
+  ASSERT_TRUE(rsa_private_after != nullptr);
+  ASSERT_TRUE(Crypto::ImportRSAKey(private_key, rsa_private_after));
+
+  EXPECT_EQ(BN_cmp(rsa->n, rsa_private_after->n), 0);
+  EXPECT_EQ(BN_cmp(rsa->e, rsa_private_after->e), 0);
+  EXPECT_EQ(BN_cmp(rsa->d, rsa_private_after->d), 0);
+  EXPECT_EQ(BN_cmp(rsa->p, rsa_private_after->p), 0);
+  EXPECT_EQ(BN_cmp(rsa->q, rsa_private_after->q), 0);
+  EXPECT_EQ(BN_cmp(rsa->dmp1, rsa_private_after->dmp1), 0);
+  EXPECT_EQ(BN_cmp(rsa->dmq1, rsa_private_after->dmq1), 0);
+  EXPECT_EQ(BN_cmp(rsa->iqmp, rsa_private_after->iqmp), 0);
+
+  RSA_free(rsa_private_after);
+
+  EXPECT_TRUE(remove((key_name + ".private").c_str()) == 0);
+
+  RSA_free(rsa);
 }

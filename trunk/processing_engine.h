@@ -29,8 +29,8 @@ class ProcessingEngine
 {
 public:
   // method to generate a DurbatulukMessage
-  static bool GenerateEncodedDurbatulukMessage(std::string& type,
-    std::string& contents, RSAKey& recipient_public_key,
+  static bool GenerateEncodedDurbatulukMessage(const std::string& type,
+    const std::string& contents, RSAKey& recipient_public_key,
     RSA* sender_signing_key, std::string& encoded_message);
 
   // method to handle an encoded message with message handler

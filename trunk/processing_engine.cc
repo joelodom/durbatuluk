@@ -24,7 +24,8 @@
 #include "message_handler.h"
 
 /*static*/ bool ProcessingEngine::GenerateEncodedDurbatulukMessage(
-  std::string& type, std::string& contents, RSAKey& recipient_public_key,
+  const std::string& type, const std::string& contents,
+  RSAKey& recipient_public_key,
   RSA* sender_signing_key, std::string& encoded_message)
 {
   DurbatulukMessage durbatuluk_message;
