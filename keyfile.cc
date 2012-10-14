@@ -32,15 +32,13 @@
 
   if (!Crypto::ExtractPublicRSAKey(rsa, public_key))
   {
-    Logger::LogMessage(
-      ERROR, "KeyFile", "ExtractPublicRSAKey failed");
+    Logger::LogMessage(ERROR, "KeyFile", "ExtractPublicRSAKey failed");
     return false; // failure
   }
 
   if (!public_key.SerializeToString(&public_serialized))
   {
-    Logger::LogMessage(
-      ERROR, "KeyFile", "SerializeToString failed");
+    Logger::LogMessage(ERROR, "KeyFile", "SerializeToString failed");
     return false; // failure
   }
 
@@ -48,15 +46,13 @@
 
   if (!Crypto::ExtractPrivateRSAKey(rsa, private_key))
   {
-    Logger::LogMessage(
-      ERROR, "KeyFile", "ExtractPrivateRSAKey failed");
+    Logger::LogMessage(ERROR, "KeyFile", "ExtractPrivateRSAKey failed");
     return false; // failure
   }
 
   if (!private_key.SerializeToString(&private_serialized))
   {
-    Logger::LogMessage(
-      ERROR, "KeyFile", "SerializeToString failed");
+    Logger::LogMessage(ERROR, "KeyFile", "SerializeToString failed");
     return false; // failure
   }
 
@@ -64,8 +60,7 @@
 
   if (!WriteToFile(key_name + ".public", public_serialized))
   {
-    Logger::LogMessage(
-      ERROR, "KeyFile", "WriteToFile failed");
+    Logger::LogMessage(ERROR, "KeyFile", "WriteToFile failed");
     return false; // failure
   }
 
@@ -73,8 +68,7 @@
 
   if (!WriteToFile(key_name + ".private", private_serialized))
   {
-    Logger::LogMessage(
-      ERROR, "KeyFile", "WriteToFile failed");
+    Logger::LogMessage(ERROR, "KeyFile", "WriteToFile failed");
     return false; // failure
   }
 
@@ -82,33 +76,80 @@
 }
 
 /*static*/ bool KeyFile::WriteToFile(
-  const std::string& filename, const std::string& data)
+  const std::string& file_name, const std::string& data)
 {
   std::ofstream out_file;
 
-  out_file.open(filename);
+  out_file.open(file_name);
   if (out_file.fail())
   {
-    Logger::LogMessage(
-      ERROR, "KeyFile", "failed to open output file");
+    Logger::LogMessage(ERROR, "KeyFile", "failed to open output file");
     return false; // failure
   }
 
   out_file << data;
   if (out_file.fail())
   {
-    Logger::LogMessage(
-      ERROR, "KeyFile", "failed to write to output file");
+    Logger::LogMessage(ERROR, "KeyFile", "failed to write to output file");
     return false; // failure
   }
 
   out_file.close();
   if (out_file.fail())
   {
-    Logger::LogMessage(
-      ERROR, "KeyFile", "failed to close output file");
+    Logger::LogMessage(ERROR, "KeyFile", "failed to close output file");
     return false; // failure
   }
 
+  return true; // success
+}
+
+/*static*/ bool KeyFile::ReadPublicKeyFile(
+  const std::string& key_name, RSAKey& key)
+{
+  if (!ReadKeyFile(key_name + ".public", key))
+  {
+    Logger::LogMessage(ERROR, "KeyFile", "ReadKeyFile failed");
+    return false; // failure
+  }
+
+  if (key.has_d() || key.has_p() || key.has_q() || key.has_dmp1()
+    || key.has_dmq1() || key.has_iqmp())
+  {
+    Logger::LogMessage(ERROR, "KeyFile", "private data in public key");
+    return false; // failure
+  }
+
+  return true; // success
+}
+
+/*static*/ bool KeyFile::ReadPrivateKeyFile(
+  const std::string& key_name, RSAKey& key)
+{
+  return ReadKeyFile(key_name + ".private", key);
+}
+
+/*static*/ bool KeyFile::ReadKeyFile(const std::string& file_name, RSAKey& key)
+{
+  std::ifstream in_file;
+
+  in_file.open(file_name);
+  if (in_file.fail())
+  {
+    Logger::LogMessage(ERROR, "KeyFile", "failed to open input file");
+    return false; // failure
+  }
+
+  if (key.ParseFromIstream(&in_file))
+  {
+    Logger::LogMessage(DEBUG, "KeyFile", "ParseFromIstream succeeded");
+  }
+  else
+  {
+    Logger::LogMessage(ERROR, "KeyFile", "ParseFromIstream failed");
+    return false; // failure
+  }
+
+  in_file.close(); // does ParseFromIstream close in_file?
   return true; // success
 }
