@@ -28,15 +28,18 @@
 {
   std::stringstream ss;
   ss << "Entering HandleMessage (type " << input.type() << ")";
-  Logger::LogMessage(INFO, "MessageHandler", ss.str());
+  Logger::LogMessage(INFO, "MessageHandler", ss);
 
   if (input.type() == MESSAGE_TYPE_SHELL_EXEC)
   {
+    ss << "ShellExec command: " << input.contents();
+    Logger::LogMessage(INFO, "MessageHandler", ss);
+
     std::string shell_exec_output;
     if (ShellExec(input.contents(), shell_exec_output))
     {
       ss << "ShellExec output begins " << shell_exec_output.substr(0, 20);
-      Logger::LogMessage(DEBUG, "MessageHandler", ss.str());
+      Logger::LogMessage(DEBUG, "MessageHandler", ss);
 
       output.set_type(MESSAGE_TYPE_SHELL_EXEC_OUTPUT);
       output.set_contents(shell_exec_output);
@@ -50,11 +53,11 @@
   {
     ss << MESSAGE_TYPE_SHELL_EXEC_OUTPUT << " contents begins "
       << input.contents().substr(0, 20);
-    Logger::LogMessage(DEBUG, "MessageHandler", ss.str());
+    Logger::LogMessage(DEBUG, "MessageHandler", ss);
 
     ss << "Attempting to callback (callback IS "
       << (callback != nullptr ? "NOT " : "") << "NULL)";
-    Logger::LogMessage(DEBUG, "MessageHandler", ss.str());
+    Logger::LogMessage(DEBUG, "MessageHandler", ss);
 
     // kick back to caller
 
@@ -62,7 +65,7 @@
       : callback(input.type(), input.contents());
 
     ss << "Callback returned " << rv;
-    Logger::LogMessage(DEBUG, "MessageHandler", ss.str());
+    Logger::LogMessage(DEBUG, "MessageHandler", ss);
 
     return rv;
   }

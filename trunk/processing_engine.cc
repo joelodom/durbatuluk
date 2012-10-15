@@ -22,6 +22,7 @@
 #include "processing_engine.h"
 #include "encoding.h"
 #include "message_handler.h"
+#include "logger.h"
 
 /*static*/ bool ProcessingEngine::GenerateEncodedDurbatulukMessage(
   const std::string& type, const std::string& contents,
@@ -47,13 +48,28 @@
   std::string decoded_message;
   if (!DecodeVerifyAndDecrypt(
     encoded_incoming, recipient_private_encryption_key, decoded_message))
+  {
+    Logger::LogMessage(ERROR, "ProcessingEngine",
+      "DecodeVerifyAndDecrypt failed");
     return false; // failure
+  }
 
   DurbatulukMessage input;
   if (!input.ParseFromString(decoded_message))
+  {
+    Logger::LogMessage(ERROR, "ProcessingEngine",
+      "ParseFromString failed");
     return false; // failure
+  }
 
-  return MessageHandler::HandleMessage(input, output, callback);
+  if (!MessageHandler::HandleMessage(input, output, callback))
+  {
+    Logger::LogMessage(ERROR, "ProcessingEngine",
+      "HandleMessage failed");
+    return false; // failure
+  }
+
+  return true; // success
 }
 
 /*static*/ bool ProcessingEngine::EncryptSignAndEncode(std::string& message,
@@ -88,24 +104,48 @@
     RSA* recipient_private_encryption_key, std::string& message)
 {
   // decode the message
+
   std::string decoded;
   if (!Encoding::DecodeMessage(encoded, decoded))
+  {
+    Logger::LogMessage(ERROR, "ProcessingEngine", "DecodeMessage failed");
     return false; // failure
+  }
+
   SignedMessage signed_message;
   if (!signed_message.ParseFromString(decoded))
+  {
+    Logger::LogMessage(ERROR, "ProcessingEngine",
+      "ParseFromString for signed_message failed");
     return false; // failure
+  }
 
   // TODO: verify here that the sender is authorized
 
   // verify the message signature
+
   if (!Crypto::VerifySignedMessage(signed_message))
+  {
+    Logger::LogMessage(ERROR, "ProcessingEngine", "VerifySignedMessage failed");
     return false; // failure
+  }
+
   EncryptedMessage encrypted_message;
   if (!encrypted_message.ParseFromString(signed_message.contents()))
+  {
+    Logger::LogMessage(ERROR, "ProcessingEngine",
+      "ParseFromString for encrypted_message failed");
     return false; // failure
+  }
 
   // decrypt the message
   std::string decrypted;
-  return Crypto::DecryptMessage(
-    recipient_private_encryption_key, encrypted_message, message);
+  if (!Crypto::DecryptMessage(
+    recipient_private_encryption_key, encrypted_message, message))
+  {
+    Logger::LogMessage(ERROR, "ProcessingEngine", "DecryptMessage failed");
+    return false; // failure
+  }
+
+  return true; // success
 }
