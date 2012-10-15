@@ -19,9 +19,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef DURBATULUK_H_
-#define DURBATULUK_H_
+#include "net_fetcher.h"
+#include "gtest/gtest.h"
 
-// world's most boring header file
-
-#endif // #ifndef DURBATULUK_H_
+TEST(net_fetcher_tests, test_fetch_url)
+{
+  std::string url("http://durbatuluk-server.appspot.com/"), contents;
+  ASSERT_TRUE(NetFetcher::FetchURL(url, contents));
+  EXPECT_TRUE(contents.find("<html>") != contents.npos);
+}
