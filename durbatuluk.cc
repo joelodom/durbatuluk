@@ -43,6 +43,8 @@ void usage()
   std::cout << "  durbatuluk --generate-keyfiles key_name" << std::endl;
   std::cout << "  durbatuluk --generate-command recipient_encryption_key "
     "sender_signing_key (command text read from stdin)" << std::endl;
+  std::cout << "  durbatuluk --process-command recipient_encryption_key "
+    "(encoded command read from stdin)" << std::endl;
 
   std::cout << std::endl;
 
@@ -67,7 +69,7 @@ bool generate_keyfiles(int argc, char **argv)
   {
     std::stringstream ss;
     ss << "argc: " << argc << " argv[1]: " << argv[1];
-    Logger::LogMessage(DEBUG, "generate_keyfiles", ss.str());
+    Logger::LogMessage(DEBUG, "generate_keyfiles", ss);
     return false; // not handled
   }
 
@@ -97,8 +99,14 @@ bool generate_command(int argc, char **argv)
   if (argc != 4 || strcmp(argv[1], "--generate-command") != 0)
     return false; // not handled
 
-  std::cerr << "under construction" << std::endl;
-  return true;
+  // read the command from stdin
+
+  std::string command;
+  std::getline(std::cin, command);
+
+  std::stringstream ss;
+  ss << "command: " << command;
+  Logger::LogMessage(DEBUG, "generate_command", ss);
 
   // read the recipient encryption key
   RSAKey recipient_public_key;
@@ -121,13 +129,12 @@ bool generate_command(int argc, char **argv)
   if (rsa == nullptr)
   {
     Logger::LogMessage(ERROR, "generate_command", "RSA_new failed");
-    RSA_free(rsa);
     return true; // handled
   }
 
   if (!Crypto::ImportRSAKey(sender_signing_rsa, rsa))
   {
-    Logger::LogMessage(ERROR, "generate_command", "RSA_new failed");
+    Logger::LogMessage(ERROR, "generate_command", "ImportRSAKey failed");
     RSA_free(rsa);
     return true; // handled
   }
@@ -135,7 +142,7 @@ bool generate_command(int argc, char **argv)
   // generate the message
   std::string encoded_message;
   if (!ProcessingEngine::GenerateEncodedDurbatulukMessage(
-    MESSAGE_TYPE_SHELL_EXEC, "touch todo",
+    MESSAGE_TYPE_SHELL_EXEC, command,
     recipient_public_key, rsa, encoded_message))
   {
     Logger::LogMessage(
@@ -150,6 +157,53 @@ bool generate_command(int argc, char **argv)
   return true; // handled
 }
 
+bool process_command(int argc, char **argv)
+{
+  if (argc != 3 || strcmp(argv[1], "--process-command") != 0)
+    return false; // not handled
+
+  // read the encoded command from stdin
+  std::string encoded;
+  std::cin >> encoded;
+
+  // read the recipient encryption key
+  RSAKey recipient_private_key;
+  if (!KeyFile::ReadPrivateKeyFile(argv[2], recipient_private_key))
+  {
+    Logger::LogMessage(ERROR, "process_command", "ReadPrivateKeyFile failed");
+    return true; // handled
+  }
+
+  RSA* rsa = RSA_new();
+  if (rsa == nullptr)
+  {
+    Logger::LogMessage(ERROR, "process_command", "RSA_new failed");
+    return true; // handled
+  }
+
+  if (!Crypto::ImportRSAKey(recipient_private_key, rsa))
+  {
+    Logger::LogMessage(ERROR, "process_command", "ImportRSAKey failed");
+    RSA_free(rsa);
+    return true; // handled
+  }
+
+  // handle the message
+  DurbatulukMessage output;
+  if (!ProcessingEngine::HandleIncomingEncodedMessage(encoded, rsa, output))
+  {
+    Logger::LogMessage(ERROR, "process_command",
+      "HandleIncomingEncodedMessage failed");
+    RSA_free(rsa);
+    return true; // handled
+  }
+
+  RSA_free(rsa);
+  std::cout << output.contents() << std::endl;
+  final_return_value = EXIT_SUCCESS;
+  return true; // handled
+}
+
 int main(int argc, char **argv)
 {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -159,7 +213,8 @@ int main(int argc, char **argv)
   if (!(
     tests(argc, argv) ||
     generate_keyfiles(argc, argv) ||
-    generate_command(argc, argv)
+    generate_command(argc, argv) ||
+    process_command(argc, argv)
     ))
     usage();
 

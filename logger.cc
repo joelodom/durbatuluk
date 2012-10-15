@@ -26,9 +26,9 @@
   const std::string& component, const std::string& message)
 {
   // TODO: make stream a static object so that we don't recreate every time,
-  // set logging to ERROR by default, etc...
+  // set run-time logging level changes, etc...
 
-  if (severity < ERROR)
+  if (severity < MIN_LOGGING_LEVEL)
     return;
 
   std::ostream stream(std::cerr.rdbuf());

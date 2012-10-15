@@ -22,6 +22,7 @@
 #include "crypto.h"
 #include <openssl/engine.h>
 #include "openssl_aes.h"
+#include "logger.h"
 
 /*static*/ bool Crypto::ExtractPublicRSAKey(RSA* rsa, RSAKey& public_key)
 {
@@ -314,12 +315,20 @@
   EncryptedMessage& encrypted_message, std::string& decrypted)
 {
   // verify that RSA key parameter is that of recipient of message
+
   RSAKey private_key;
   if (!ExtractPrivateRSAKey(rsa, private_key))
+  {
+    Logger::LogMessage(ERROR, "Crypto", "ExtractPrivateRSAKey failed");
     return false; // failure
+  }
+
   if (encrypted_message.recipient().e() != private_key.e() // e usually smaller
     || encrypted_message.recipient().n() != private_key.n())
-    return false; // recipient key mismatch / not intended for this recipient
+  {
+    Logger::LogMessage(INFO, "Crypto", "Message is not for this recipient");
+    return false; // failure
+  }
 
   // decrypt the message contents
 
@@ -367,5 +376,11 @@
   EVP_CIPHER_CTX_cleanup(&en);
   EVP_CIPHER_CTX_cleanup(&de);
 
-  return decrypted.length() > 0;
+  if (decrypted.length() <= 0)
+  {
+    Logger::LogMessage(INFO, "Crypto", "Decryption failure");
+    return false; // failure
+  }
+
+  return true; // success
 }

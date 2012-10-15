@@ -22,6 +22,8 @@
 #ifndef LOGGER_H_
 #define LOGGER_H_
 
+#define MIN_LOGGING_LEVEL ERROR
+
 #include <string>
 #include <sstream>
 
