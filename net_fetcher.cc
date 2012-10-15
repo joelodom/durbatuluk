@@ -23,7 +23,8 @@
 #include <curl/curl.h>
 #include "logger.h"
 
-/*static*/ bool NetFetcher::FetchURL(std::string& url, std::string& contents)
+/*static*/ bool NetFetcher::FetchURL(
+  const std::string& url, std::string& contents)
 {
   CURLcode error;
 

@@ -27,6 +27,7 @@
 #include "keyfile.h"
 #include "message_handler.h"
 #include "processing_engine.h"
+#include "net_fetcher.h"
 
 // leave as EXIT_FAILURE until handler function is sure of success
 int final_return_value = EXIT_FAILURE;
@@ -45,6 +46,8 @@ void usage()
     "sender_signing_key (command text read from stdin)" << std::endl;
   std::cout << "  durbatuluk --process-command recipient_encryption_key "
     "(encoded command read from stdin)" << std::endl;
+  std::cout << "  durbatuluk --fetch-commands-from-url url "
+    "recipient_encryption_key" << std::endl;
 
   std::cout << std::endl;
 
@@ -167,6 +170,7 @@ bool process_command(int argc, char **argv)
   std::cin >> encoded;
 
   // read the recipient encryption key
+
   RSAKey recipient_private_key;
   if (!KeyFile::ReadPrivateKeyFile(argv[2], recipient_private_key))
   {
@@ -204,6 +208,99 @@ bool process_command(int argc, char **argv)
   return true; // handled
 }
 
+bool fetch_commands_from_url(int argc, char **argv)
+{
+  if (argc != 4 || strcmp(argv[1], "--fetch-commands-from-url") != 0)
+    return false; // not handled
+
+  // read the recipient encryption key
+
+  RSAKey recipient_private_key;
+  if (!KeyFile::ReadPrivateKeyFile(argv[3], recipient_private_key))
+  {
+    Logger::LogMessage(ERROR, "fetch_commands_from_url",
+      "ReadPrivateKeyFile failed");
+    return true; // handled
+  }
+
+  RSA* rsa = RSA_new();
+  if (rsa == nullptr)
+  {
+    Logger::LogMessage(ERROR, "fetch_commands_from_url", "RSA_new failed");
+    return true; // handled
+  }
+
+  if (!Crypto::ImportRSAKey(recipient_private_key, rsa))
+  {
+    Logger::LogMessage(ERROR, "fetch_commands_from_url", "ImportRSAKey failed");
+    RSA_free(rsa);
+    return true; // handled
+  }
+
+  // fetch the URL
+
+  std::stringstream ss;
+  std::string url_contents;
+
+  ss << "Attempting to fetch " << argv[2];
+  Logger::LogMessage(DEBUG, "fetch_commands_from_url", ss);
+
+  if (!NetFetcher::FetchURL(argv[2], url_contents))
+  {
+    Logger::LogMessage(ERROR, "fetch_commands_from_url", "FetchURL failed");
+    RSA_free(rsa);
+    return true; // handled
+  }
+
+  // process each commind in the URL, one by one
+
+  size_t start_tag_pos = url_contents.find("<durbatuluk>");
+  int message_num = 0;
+  int messages_successfully_processed = 0;
+
+  while (start_tag_pos != url_contents.npos)
+  {
+    ++message_num; // one indexed
+
+    // find the next <durbatuluk>...</durbatuluk>
+    size_t end_tag_pos = url_contents.find("</durbatuluk>", start_tag_pos + 11);
+    if (end_tag_pos == url_contents.npos)
+      break; // done processing (no end tag found)
+    size_t len = end_tag_pos - start_tag_pos + 13;
+
+    // process the encoded command
+
+    std::string encoded(url_contents, start_tag_pos, len);
+    DurbatulukMessage output;
+
+    if (ProcessingEngine::HandleIncomingEncodedMessage(encoded, rsa, output))
+    {
+      messages_successfully_processed++;
+      ss << "message #" << message_num << " processed successfully";
+      Logger::LogMessage(INFO, "fetch_commands_from_url", ss);
+    }
+    else
+    {
+      ss << "could not process message #" << message_num;
+      Logger::LogMessage(INFO, "fetch_commands_from_url", ss);
+    }
+
+    std::cout << output.contents() << std::endl;
+
+    start_tag_pos = url_contents.find("<durbatuluk>", end_tag_pos + 12);
+  }
+
+  ss << messages_successfully_processed << " of " << message_num
+    << " messages processed successfully";
+  Logger::LogMessage(INFO, "fetch_commands_from_url", ss);
+
+  RSA_free(rsa);
+  std::cout << "Processed " << messages_successfully_processed << " commands."
+    << std::endl;
+  final_return_value = EXIT_SUCCESS;
+  return true; // handled
+}
+
 int main(int argc, char **argv)
 {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -214,7 +311,8 @@ int main(int argc, char **argv)
     tests(argc, argv) ||
     generate_keyfiles(argc, argv) ||
     generate_command(argc, argv) ||
-    process_command(argc, argv)
+    process_command(argc, argv) ||
+    fetch_commands_from_url(argc, argv)
     ))
     usage();
 

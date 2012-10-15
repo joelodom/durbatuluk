@@ -27,7 +27,7 @@
 class NetFetcher
 {
 public:
-  static bool FetchURL(std::string& url, std::string& contents);
+  static bool FetchURL(const std::string& url, std::string& contents);
 
 private:
   static size_t FetchToString(void* ptr, size_t size, size_t nmemb, void* user);
