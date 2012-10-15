@@ -30,15 +30,10 @@ class Command(db.Model):
 
 class MainPage(webapp2.RequestHandler):
   def get(self):
-    self.response.out.write('''
-      <html>
-        <body>
-          <form action="/post" method="post">
-            <div><textarea name="command" rows="20" cols="60"></textarea></div>
-            <div><input type="submit" value="Add Command"></div>
-          </form>
-        </body>
-      </html>''')
+    self.response.out.write('<html><body><form action="/post" method="post">'
+      '<div><textarea name="command" rows="20" cols="60"></textarea></div>'
+      '<div><input type="submit" value="Add Command"></div>'
+      '</form></body></html>')
 
 class CommandPost(webapp2.RequestHandler):
   def get(self):
@@ -47,7 +42,7 @@ class CommandPost(webapp2.RequestHandler):
   def post(self):
     # validate the command
     content = self.request.get('command')
-    if not re.match('<durbatuluk>[a-z0-9A-Z+/]+</durbatuluk>', content):
+    if not re.match('<durbatuluk>[A-Za-z0-9\+\/]+</durbatuluk>$', content):
       # refuse this command
       self.error(403)
       return

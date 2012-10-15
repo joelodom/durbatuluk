@@ -46,7 +46,7 @@
       break;
   }
 
-  stream << component << ": " << message << std::endl;
+  stream << component << ": " << message;
 }
 
 /*static*/ void Logger::LogMessage(LoggerSeverity severity,
