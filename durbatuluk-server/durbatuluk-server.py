@@ -20,6 +20,13 @@
 # SOFTWARE.
 
 import webapp2
+import re
+from google.appengine.ext import db
+import datetime
+
+class Command(db.Model):
+  content = db.TextProperty()
+  datetime = db.DateTimeProperty(auto_now_add = True)
 
 class MainPage(webapp2.RequestHandler):
   def get(self):
@@ -38,13 +45,27 @@ class CommandPost(webapp2.RequestHandler):
     self.redirect('/')
 
   def post(self):
-    self.response.headers['Content-Type'] = 'text/plain'
-    self.response.write(self.request.body)
+    # validate the command
+    content = self.request.get('command')
+    if not re.match('<durbatuluk>[a-z0-9A-Z+/]+</durbatuluk>', content):
+      # refuse this command
+      self.error(403)
+      return
+
+    # save the command
+    command = Command()
+    command.content = content
+    command.put()
 
 class CommandLog(webapp2.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
-    self.response.write('Durbatuluk')
+
+    # fetch all commands posted within the last five minutes
+    commands = db.GqlQuery("SELECT * FROM Command WHERE datetime > :cutoff",
+      cutoff = datetime.datetime.now() + datetime.timedelta(minutes = -5))
+    for command in commands:
+      self.response.write(command.content)
 
 app = webapp2.WSGIApplication([
   ('/', MainPage),
