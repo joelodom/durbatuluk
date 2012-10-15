@@ -19,9 +19,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef DURBATULUK_H_
-#define DURBATULUK_H_
+#ifndef NET_FETCHER_H_
+#define NET_FETCHER_H_
 
-// world's most boring header file
+#include <string>
 
-#endif // #ifndef DURBATULUK_H_
+class NetFetcher
+{
+public:
+  static bool FetchURL(std::string& url, std::string& contents);
+
+private:
+  static size_t FetchToString(void* ptr, size_t size, size_t nmemb, void* user);
+};
+
+#endif // #ifndef NET_FETCHER_H_

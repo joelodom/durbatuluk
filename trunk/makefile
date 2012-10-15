@@ -26,11 +26,14 @@ SRCS += processing_engine_tests.cc
 SRCS += logger.cc
 SRCS += keyfile.cc
 SRCS += keyfile_tests.cc
+SRCS += net_fetcher.cc
+SRCS += net_fetcher_tests.cc
 
 LIBS = -lpthread
 LIBS += -lcrypto
 LIBS += -lssl
 LIBS += -lprotobuf
+LIBS += -lcurl
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(INCLUDES) -Wall -std=c++0x $(SRCS) -o durbatuluk $(LIBS)
