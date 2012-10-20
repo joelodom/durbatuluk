@@ -28,6 +28,8 @@ SRCS += keyfile.cc
 SRCS += keyfile_tests.cc
 SRCS += net_fetcher.cc
 SRCS += net_fetcher_tests.cc
+SRCS += sequence_manager.cc
+SRCS += sequence_manager_tests.cc
 
 LIBS = -lpthread
 LIBS += -lcrypto
