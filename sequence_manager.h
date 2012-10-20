@@ -41,12 +41,16 @@
 class SequenceManager
 {
 public:
+  static unsigned long long GetNextSequenceNumber();
+
   // returns true if allowed, false if disallowed or error
   static bool IsSequenceNumberAllowed(unsigned long long n);
 
   static bool SetMinimumAllowedSequenceNumber(unsigned long long n);
   static bool AddToAllowedSequenceNumbers(unsigned long long n);
   static bool RemoveFromAllowedSequenceNumbers(unsigned long long n);
+
+  static bool ResetSequenceNumberFile();
 
 private:
   static bool ReadSequenceNumberFile(unsigned long long& minimum,

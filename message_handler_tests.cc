@@ -21,6 +21,7 @@
 
 #include "message_handler.h"
 #include "gtest/gtest.h"
+#include "sequence_manager.h"
 
 TEST(message_handler_tests, test_shell_exec)
 {
@@ -43,6 +44,7 @@ TEST(message_handler_tests, test_shell_command_message)
   DurbatulukMessage input, output;
   input.set_type(MESSAGE_TYPE_SHELL_EXEC);
   input.set_contents("echo durbatuluk");
+  input.set_sequence_number(SequenceManager::GetNextSequenceNumber());
 
   // send the message to the message handler
   bool rv = MessageHandler::HandleMessage(input, output);
@@ -51,4 +53,31 @@ TEST(message_handler_tests, test_shell_command_message)
   // check the result
   EXPECT_STREQ(output.type().c_str(), MESSAGE_TYPE_SHELL_EXEC_OUTPUT);
   EXPECT_EQ(output.contents().find("durbatuluk"), (size_t)0);
+}
+
+TEST(message_handler_tests, test_shell_command_message_missing_sequence_number)
+{
+  // build the shell command message
+  DurbatulukMessage input, output;
+  input.set_type(MESSAGE_TYPE_SHELL_EXEC);
+  input.set_contents("echo durbatuluk");
+
+  // send the message to the message handler
+  bool rv = MessageHandler::HandleMessage(input, output);
+  EXPECT_FALSE(rv) << "HandleMessage should have failed";
+}
+
+TEST(message_handler_tests, test_shell_command_message_low_sequence_number)
+{
+  ASSERT_TRUE(SequenceManager::SetMinimumAllowedSequenceNumber(314));
+
+  // build the shell command message
+  DurbatulukMessage input, output;
+  input.set_type(MESSAGE_TYPE_SHELL_EXEC);
+  input.set_contents("echo durbatuluk");
+  input.set_sequence_number(31);
+
+  // send the message to the message handler
+  bool rv = MessageHandler::HandleMessage(input, output);
+  EXPECT_FALSE(rv) << "HandleMessage should have failed";
 }

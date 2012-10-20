@@ -23,6 +23,7 @@
 #include "gtest/gtest.h"
 #include "message_handler.h"
 #include "encoding.h"
+#include "sequence_manager.h"
 
 TEST(durbatuluk_tests, test_gtest)
 {
@@ -41,6 +42,7 @@ TEST(durbatuluk_tests, test_command_from_encoded)
   DurbatulukMessage input, parsed, output;
   input.set_type(MESSAGE_TYPE_SHELL_EXEC);
   input.set_contents("echo durbatuluk");
+  input.set_sequence_number(SequenceManager::GetNextSequenceNumber());
 
   // encode the message
   input.SerializeToString(&serialized);

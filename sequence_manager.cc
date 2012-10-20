@@ -26,6 +26,20 @@
 #include "logger.h"
 #include <fstream>
 
+/*static*/ unsigned long long SequenceManager::GetNextSequenceNumber()
+{
+  // reasonable implementation for now
+
+  // Will fail if more than one message per second is generated and
+  // may cause problems if clients clock incorrect.
+
+  // !
+  // !If I change this, I have to change ResetSequenceNumberFile!
+  // !
+
+  return (unsigned long long)time(nullptr);
+}
+
 /*static*/ bool SequenceManager::IsSequenceNumberAllowed(unsigned long long n)
 {
   unsigned long long minimum;
@@ -132,6 +146,21 @@
         "SequenceManager", "WriteSequenceNumberFile failed");
       return false; // failure
     }
+  }
+
+  return true; // success
+}
+
+/*static*/ bool SequenceManager::ResetSequenceNumberFile()
+{
+  std::set<unsigned long long> allowed_numbers;
+
+  if (!SequenceManager::WriteSequenceNumberFile(
+    SequenceManager::GetNextSequenceNumber(), allowed_numbers))
+  {
+    Logger::LogMessage(ERROR,
+      "SequenceManager", "WriteSequenceNumberFile failed");
+    return false; // failure
   }
 
   return true; // success
