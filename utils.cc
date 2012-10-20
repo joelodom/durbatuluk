@@ -19,39 +19,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include "utils.h"
 #include "logger.h"
-#include <iostream>
+#include <fstream>
 
-/*static*/ void Logger::LogMessage(LoggerSeverity severity,
-  const std::string& component, const std::string& message)
+/*static*/ bool Utils::WriteToFile(
+  const std::string& file_name, const std::string& data)
 {
-  // TODO: make stream a static object so that we don't recreate every time,
-  // set run-time logging level changes, etc...
+  std::ofstream out_file;
 
-  if (severity < MIN_LOGGING_LEVEL)
-    return;
-
-  std::ostream stream(std::cerr.rdbuf());
-
-  switch (severity)
+  out_file.open(file_name);
+  if (out_file.fail())
   {
-    case DEBUG:
-      stream << "DEBUG: ";
-      break;
-    case INFO:
-      stream << "INFO: ";
-      break;
-    case ERROR:
-      stream << "ERROR: ";
-      break;
+    Logger::LogMessage(ERROR, "Utils", "failed to open output file");
+    return false; // failure
   }
 
-  stream << component << ": " << message << std::endl;
-}
+  out_file << data;
+  if (out_file.fail())
+  {
+    Logger::LogMessage(ERROR, "Utils", "failed to write to output file");
+    return false; // failure
+  }
 
-/*static*/ void Logger::LogMessage(LoggerSeverity severity,
-    const std::string& component, std::stringstream& message)
-{
-  LogMessage(severity, component, message.str());
-  message.str("");
+  out_file.close();
+  if (out_file.fail())
+  {
+    Logger::LogMessage(ERROR, "Utils", "failed to close output file");
+    return false; // failure
+  }
+
+  return true; // success
 }

@@ -56,3 +56,8 @@ message DurbatulukMessage { // usually encapsulated in an EncryptedMessage
   optional string contents = 2;
   optional uint64 sequence_number = 3;
 }
+
+message AllowedSequenceNumbers {
+  optional uint64 minimum = 1; // defaults to SEQUENCE_NUMBER_MAX
+  repeated uint64 allowed = 2;
+}

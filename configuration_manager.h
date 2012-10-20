@@ -19,39 +19,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "logger.h"
-#include <iostream>
+#ifndef CONFIGURATION_MANAGER_H_
+#define CONFIGURATION_MANAGER_H_
 
-/*static*/ void Logger::LogMessage(LoggerSeverity severity,
-  const std::string& component, const std::string& message)
+#include <string>
+
+class ConfigurationManager
 {
-  // TODO: make stream a static object so that we don't recreate every time,
-  // set run-time logging level changes, etc...
-
-  if (severity < MIN_LOGGING_LEVEL)
-    return;
-
-  std::ostream stream(std::cerr.rdbuf());
-
-  switch (severity)
+public:
+  static bool GetSequenceNumberFileName(std::string& file_name)
   {
-    case DEBUG:
-      stream << "DEBUG: ";
-      break;
-    case INFO:
-      stream << "INFO: ";
-      break;
-    case ERROR:
-      stream << "ERROR: ";
-      break;
+    file_name = "sequence_file";
+    return true; // success
   }
+};
 
-  stream << component << ": " << message << std::endl;
-}
-
-/*static*/ void Logger::LogMessage(LoggerSeverity severity,
-    const std::string& component, std::stringstream& message)
-{
-  LogMessage(severity, component, message.str());
-  message.str("");
-}
+#endif // #ifndef CONFIGURATION_MANAGER_H_

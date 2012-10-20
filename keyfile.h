@@ -33,8 +33,6 @@ public:
   static bool ReadPrivateKeyFile(const std::string& key_name, RSAKey& key);
 
 private:
-  static bool WriteToFile(
-    const std::string& file_name, const std::string& data);
   static bool ReadKeyFile(const std::string& file_name, RSAKey& key);
 };
 

@@ -41,17 +41,17 @@
 class SequenceManager
 {
 public:
+  // returns true if allowed, false if disallowed or error
   static bool IsSequenceNumberAllowed(unsigned long long n);
+
   static bool SetMinimumAllowedSequenceNumber(unsigned long long n);
   static bool AddToAllowedSequenceNumbers(unsigned long long n);
   static bool RemoveFromAllowedSequenceNumbers(unsigned long long n);
 
 private:
-  static bool ReadSequenceNumberFile(
-    std::string& filename, unsigned long long& minimum,
+  static bool ReadSequenceNumberFile(unsigned long long& minimum,
     std::set<unsigned long long>& allowed_numbers);
-  static bool WriteSequenceNumberFile(
-    std::string& filename, unsigned long long minimum,
+  static bool WriteSequenceNumberFile(unsigned long long minimum,
     std::set<unsigned long long>& allowed_numbers);
 };
 
