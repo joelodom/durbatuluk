@@ -19,39 +19,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "logger.h"
-#include <iostream>
+#ifndef UTILS_H_
+#define UTILS_H_
 
-/*static*/ void Logger::LogMessage(LoggerSeverity severity,
-  const std::string& component, const std::string& message)
+#include <string>
+
+class Utils
 {
-  // TODO: make stream a static object so that we don't recreate every time,
-  // set run-time logging level changes, etc...
+public:
+  static bool WriteToFile(
+    const std::string& file_name, const std::string& data);
+};
 
-  if (severity < MIN_LOGGING_LEVEL)
-    return;
-
-  std::ostream stream(std::cerr.rdbuf());
-
-  switch (severity)
-  {
-    case DEBUG:
-      stream << "DEBUG: ";
-      break;
-    case INFO:
-      stream << "INFO: ";
-      break;
-    case ERROR:
-      stream << "ERROR: ";
-      break;
-  }
-
-  stream << component << ": " << message << std::endl;
-}
-
-/*static*/ void Logger::LogMessage(LoggerSeverity severity,
-    const std::string& component, std::stringstream& message)
-{
-  LogMessage(severity, component, message.str());
-  message.str("");
-}
+#endif // #ifndef UTILS_H_

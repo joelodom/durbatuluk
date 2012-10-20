@@ -34,6 +34,7 @@ class RSAKey;
 class SignedMessage;
 class EncryptedMessage;
 class DurbatulukMessage;
+class AllowedSequenceNumbers;
 
 // ===================================================================
 
@@ -550,6 +551,101 @@ class DurbatulukMessage : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static DurbatulukMessage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class AllowedSequenceNumbers : public ::google::protobuf::Message {
+ public:
+  AllowedSequenceNumbers();
+  virtual ~AllowedSequenceNumbers();
+  
+  AllowedSequenceNumbers(const AllowedSequenceNumbers& from);
+  
+  inline AllowedSequenceNumbers& operator=(const AllowedSequenceNumbers& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AllowedSequenceNumbers& default_instance();
+  
+  void Swap(AllowedSequenceNumbers* other);
+  
+  // implements Message ----------------------------------------------
+  
+  AllowedSequenceNumbers* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const AllowedSequenceNumbers& from);
+  void MergeFrom(const AllowedSequenceNumbers& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional uint64 minimum = 1;
+  inline bool has_minimum() const;
+  inline void clear_minimum();
+  static const int kMinimumFieldNumber = 1;
+  inline ::google::protobuf::uint64 minimum() const;
+  inline void set_minimum(::google::protobuf::uint64 value);
+  
+  // repeated uint64 allowed = 2;
+  inline int allowed_size() const;
+  inline void clear_allowed();
+  static const int kAllowedFieldNumber = 2;
+  inline ::google::protobuf::uint64 allowed(int index) const;
+  inline void set_allowed(int index, ::google::protobuf::uint64 value);
+  inline void add_allowed(::google::protobuf::uint64 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint64 >&
+      allowed() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint64 >*
+      mutable_allowed();
+  
+  // @@protoc_insertion_point(class_scope:AllowedSequenceNumbers)
+ private:
+  inline void set_has_minimum();
+  inline void clear_has_minimum();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::uint64 minimum_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint64 > allowed_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_durbatuluk_2eproto();
+  friend void protobuf_AssignDesc_durbatuluk_2eproto();
+  friend void protobuf_ShutdownFile_durbatuluk_2eproto();
+  
+  void InitAsDefaultInstance();
+  static AllowedSequenceNumbers* default_instance_;
 };
 // ===================================================================
 
@@ -1460,6 +1556,57 @@ inline ::google::protobuf::uint64 DurbatulukMessage::sequence_number() const {
 inline void DurbatulukMessage::set_sequence_number(::google::protobuf::uint64 value) {
   set_has_sequence_number();
   sequence_number_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// AllowedSequenceNumbers
+
+// optional uint64 minimum = 1;
+inline bool AllowedSequenceNumbers::has_minimum() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void AllowedSequenceNumbers::set_has_minimum() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void AllowedSequenceNumbers::clear_has_minimum() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void AllowedSequenceNumbers::clear_minimum() {
+  minimum_ = GOOGLE_ULONGLONG(0);
+  clear_has_minimum();
+}
+inline ::google::protobuf::uint64 AllowedSequenceNumbers::minimum() const {
+  return minimum_;
+}
+inline void AllowedSequenceNumbers::set_minimum(::google::protobuf::uint64 value) {
+  set_has_minimum();
+  minimum_ = value;
+}
+
+// repeated uint64 allowed = 2;
+inline int AllowedSequenceNumbers::allowed_size() const {
+  return allowed_.size();
+}
+inline void AllowedSequenceNumbers::clear_allowed() {
+  allowed_.Clear();
+}
+inline ::google::protobuf::uint64 AllowedSequenceNumbers::allowed(int index) const {
+  return allowed_.Get(index);
+}
+inline void AllowedSequenceNumbers::set_allowed(int index, ::google::protobuf::uint64 value) {
+  allowed_.Set(index, value);
+}
+inline void AllowedSequenceNumbers::add_allowed(::google::protobuf::uint64 value) {
+  allowed_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint64 >&
+AllowedSequenceNumbers::allowed() const {
+  return allowed_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint64 >*
+AllowedSequenceNumbers::mutable_allowed() {
+  return &allowed_;
 }
 
 

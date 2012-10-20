@@ -35,3 +35,25 @@ TEST(sequence_manager_tests, test_set_get_minimum_allowed_sequence_number)
   EXPECT_FALSE(SequenceManager::IsSequenceNumberAllowed(N));
 }
 
+TEST(sequence_manager_tests, test_add_remove_allowed_sequence_number)
+{
+  const size_t TRIALS = 100;
+  const unsigned long long A = 0x000000000000Fe02; // rusty
+  const unsigned long long B = 0x0000000000058008; // a bit juvenile
+  const unsigned long long M = 0x0011340113401134; //is there anybody out there?
+  unsigned long long x = 3141;
+
+  for (size_t i = 0; i < TRIALS; i++)
+  {
+    ASSERT_TRUE(SequenceManager::AddToAllowedSequenceNumbers(x));
+    EXPECT_TRUE(SequenceManager::IsSequenceNumberAllowed(x));
+
+    if (i % 7 == 0)
+    {
+      ASSERT_TRUE(SequenceManager::RemoveFromAllowedSequenceNumbers(x));
+      EXPECT_FALSE(SequenceManager::IsSequenceNumberAllowed(x));
+    }
+
+    x = (A*x + B) % M;
+  }
+}

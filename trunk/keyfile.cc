@@ -21,6 +21,7 @@
 
 #include "keyfile.h"
 #include "logger.h"
+#include "utils.h"
 #include <fstream>
 
 /*static*/ bool KeyFile::WriteKeyFiles(const std::string& key_name, RSA* rsa)
@@ -58,7 +59,7 @@
 
   // write the public key to a file
 
-  if (!WriteToFile(key_name + ".public", public_serialized))
+  if (!Utils::WriteToFile(key_name + ".public", public_serialized))
   {
     Logger::LogMessage(ERROR, "KeyFile", "WriteToFile failed");
     return false; // failure
@@ -66,38 +67,9 @@
 
   // write the private key to a file
 
-  if (!WriteToFile(key_name + ".private", private_serialized))
+  if (!Utils::WriteToFile(key_name + ".private", private_serialized))
   {
     Logger::LogMessage(ERROR, "KeyFile", "WriteToFile failed");
-    return false; // failure
-  }
-
-  return true; // success
-}
-
-/*static*/ bool KeyFile::WriteToFile(
-  const std::string& file_name, const std::string& data)
-{
-  std::ofstream out_file;
-
-  out_file.open(file_name);
-  if (out_file.fail())
-  {
-    Logger::LogMessage(ERROR, "KeyFile", "failed to open output file");
-    return false; // failure
-  }
-
-  out_file << data;
-  if (out_file.fail())
-  {
-    Logger::LogMessage(ERROR, "KeyFile", "failed to write to output file");
-    return false; // failure
-  }
-
-  out_file.close();
-  if (out_file.fail())
-  {
-    Logger::LogMessage(ERROR, "KeyFile", "failed to close output file");
     return false; // failure
   }
 
