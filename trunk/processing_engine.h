@@ -31,7 +31,8 @@ public:
   // method to generate a DurbatulukMessage
   static bool GenerateEncodedDurbatulukMessage(const std::string& type,
     const std::string& contents, RSAKey& recipient_public_key,
-    RSA* sender_signing_key, std::string& encoded_message);
+    RSA* sender_signing_key, std::string& encoded_message,
+    unsigned long long& sequence_number);
 
   // method to handle an encoded message with message handler
   // (doesn't generate encoded response, but passes on message handler output

@@ -28,6 +28,7 @@
 #include "message_handler.h"
 #include "processing_engine.h"
 #include "net_fetcher.h"
+#include "sequence_manager.h"
 
 // leave as EXIT_FAILURE until handler function is sure of success
 int final_return_value = EXIT_FAILURE;
@@ -48,6 +49,7 @@ void usage()
     "(encoded command read from stdin)" << std::endl;
   std::cout << "  durbatuluk --fetch-commands-from-url url "
     "recipient_encryption_key" << std::endl;
+  std::cout << "  durbatuluk --reset-sequence-numbers" << std::endl;
 
   std::cout << std::endl;
 
@@ -58,9 +60,17 @@ bool tests(int argc, char **argv)
 {
   if (argc == 2 && strcmp(argv[1], "--tests") == 0)
   {
-    ::testing::InitGoogleTest(&argc, argv);
-    final_return_value = RUN_ALL_TESTS();
-    return true; // handled
+    if (SequenceManager::ResetSequenceNumberFile())
+    {
+      std::cout << "Sequence number file reset." << std::endl;
+      ::testing::InitGoogleTest(&argc, argv);
+      final_return_value = RUN_ALL_TESTS();
+      return true; // handled
+    }
+    else
+    {
+      std::cout << "Failed to reset sequence number file." << std::endl;
+    }
   }
 
   return false; // not handled
@@ -143,18 +153,29 @@ bool generate_command(int argc, char **argv)
   }
 
   // generate the message
+
   std::string encoded_message;
-  if (!ProcessingEngine::GenerateEncodedDurbatulukMessage(
+  unsigned long long sequence_number;
+  bool rv = ProcessingEngine::GenerateEncodedDurbatulukMessage(
     MESSAGE_TYPE_SHELL_EXEC, command,
-    recipient_public_key, rsa, encoded_message))
+    recipient_public_key, rsa, encoded_message, sequence_number);
+  RSA_free(rsa);
+
+  if (!rv)
   {
     Logger::LogMessage(
       ERROR, "generate_command", "GenerateEncodedDurbatulukMessage failed");
-    RSA_free(rsa);
     return true; // handled
   }
 
-  RSA_free(rsa);
+  // save the sequence number so that we can process the response
+  if (!SequenceManager::AddToAllowedSequenceNumbers(sequence_number))
+  {
+    Logger::LogMessage(
+      ERROR, "generate_command", "AddToAllowedSequenceNumbers failed");
+    return true; // handled
+  }
+
   std::cout << encoded_message;
   final_return_value = EXIT_SUCCESS;
   return true; // handled
@@ -301,6 +322,20 @@ bool fetch_commands_from_url(int argc, char **argv)
   return true; // handled
 }
 
+bool reset_sequence_numbers(int argc, char **argv)
+{
+  if (argc != 2 || strcmp(argv[1], "--reset-sequence-numbers") != 0)
+    return false; // not handled
+
+  if (SequenceManager::ResetSequenceNumberFile())
+    std::cout << "Sequence number file reset." << std::endl;
+  else
+    std::cout << "Failed to reset sequence number file." << std::endl;
+
+  final_return_value = EXIT_SUCCESS;
+  return true; // handled
+}
+
 int main(int argc, char **argv)
 {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -312,7 +347,8 @@ int main(int argc, char **argv)
     generate_keyfiles(argc, argv) ||
     generate_command(argc, argv) ||
     process_command(argc, argv) ||
-    fetch_commands_from_url(argc, argv)
+    fetch_commands_from_url(argc, argv) ||
+    reset_sequence_numbers(argc, argv)
     ))
     usage();
 

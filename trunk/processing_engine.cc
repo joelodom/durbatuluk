@@ -23,15 +23,20 @@
 #include "encoding.h"
 #include "message_handler.h"
 #include "logger.h"
+#include "sequence_manager.h"
 
 /*static*/ bool ProcessingEngine::GenerateEncodedDurbatulukMessage(
   const std::string& type, const std::string& contents,
   RSAKey& recipient_public_key,
-  RSA* sender_signing_key, std::string& encoded_message)
+  RSA* sender_signing_key, std::string& encoded_message,
+  unsigned long long& sequence_number)
 {
+  sequence_number = SequenceManager::GetNextSequenceNumber();
+
   DurbatulukMessage durbatuluk_message;
   durbatuluk_message.set_type(type);
   durbatuluk_message.set_contents(contents);
+  durbatuluk_message.set_sequence_number(sequence_number);
 
   std::string serialized;
   if (!durbatuluk_message.SerializeToString(&serialized))

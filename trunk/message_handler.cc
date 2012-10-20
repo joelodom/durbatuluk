@@ -21,6 +21,7 @@
 
 #include "logger.h"
 #include "message_handler.h"
+#include "sequence_manager.h"
 
 /*static*/ bool MessageHandler::HandleMessage(
   const DurbatulukMessage& input, DurbatulukMessage& output,
@@ -29,6 +30,35 @@
   std::stringstream ss;
   ss << "Entering HandleMessage (type " << input.type() << ")";
   Logger::LogMessage(INFO, "MessageHandler", ss);
+
+  // check the sequence number
+  if (!input.has_sequence_number()
+    || !SequenceManager::IsSequenceNumberAllowed(input.sequence_number()))
+  {
+    Logger::LogMessage(ERROR, "MessageHandler",
+      "Dropping message due to sequence number problem.");
+    return false;
+  }
+
+  // update the minimum sequence number
+  if (!SequenceManager::SetMinimumAllowedSequenceNumber(
+    input.sequence_number() + 1))
+  {
+    Logger::LogMessage(ERROR, "MessageHandler",
+      "SetMinimumAllowedSequenceNumber failed");
+    return false;
+  }
+
+  // remove if it was an allowed sequence number
+  if (!SequenceManager::RemoveFromAllowedSequenceNumbers(
+    input.sequence_number()))
+  {
+    Logger::LogMessage(ERROR, "MessageHandler",
+      "RemoveFromAllowedSequenceNumbers failed");
+    return false;
+  }
+
+  // handle the message
 
   if (input.type() == MESSAGE_TYPE_SHELL_EXEC)
   {
@@ -43,6 +73,7 @@
 
       output.set_type(MESSAGE_TYPE_SHELL_EXEC_OUTPUT);
       output.set_contents(shell_exec_output);
+      output.set_sequence_number(input.sequence_number());
       return true; // success
     }
 
