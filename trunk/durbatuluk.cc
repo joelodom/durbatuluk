@@ -29,13 +29,19 @@
 #include "processing_engine.h"
 #include "net_fetcher.h"
 #include "sequence_manager.h"
+#include <openssl/engine.h>
 
 // leave as EXIT_FAILURE until handler function is sure of success
 int final_return_value = EXIT_FAILURE;
 
 void usage()
 {
-  std::cout << "Durbatuluk is Copyright (c) 2012 Joel Odom" << std::endl;
+  std::cout << std::endl << "Durbatuluk " << MAJOR_VERSION << "."
+    << MINOR_VERSION << "." << MICRO_VERSION << " " << DEVELOPMENT_PHASE
+    << std::endl << std::endl;
+
+  std::cout << "Durbatuluk is Copyright (c) 2012 Joel Odom Marietta, GA"
+    << std::endl;
   std::cout << "See legal.txt for license details" << std::endl;
   std::cout << "http://durbatuluk.googlecode.com/" << std::endl;
   std::cout << std::endl;
@@ -340,18 +346,29 @@ int main(int argc, char **argv)
 {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-  // TODO: initialize PRNG here
+  if (RAND_status() == 1)
+  {
+    if (!(
+      tests(argc, argv) ||
+      generate_keyfiles(argc, argv) ||
+      generate_command(argc, argv) ||
+      process_command(argc, argv) ||
+      fetch_commands_from_url(argc, argv) ||
+      reset_sequence_numbers(argc, argv)
+      ))
+      usage();
+  }
+  else
+  {
+    // This could happen on systems without OS-provided randomness,
+    // in which case additional features are required to initialize
+    // the PRNG.
 
-  if (!(
-    tests(argc, argv) ||
-    generate_keyfiles(argc, argv) ||
-    generate_command(argc, argv) ||
-    process_command(argc, argv) ||
-    fetch_commands_from_url(argc, argv) ||
-    reset_sequence_numbers(argc, argv)
-    ))
-    usage();
+    std::cout << "PRNG not initialized properly." << std::endl;
+  }
 
+  RAND_cleanup();
   google::protobuf::ShutdownProtobufLibrary();
+
   return final_return_value;
 }
