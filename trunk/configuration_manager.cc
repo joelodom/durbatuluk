@@ -21,8 +21,11 @@
 
 #include "configuration_manager.h"
 #include "logger.h"
+#include "crypto.h"
 #include <fstream>
-#include <iostream>
+
+/*static*/ std::map<std::string, std::string>
+  ConfigurationManager::allowed_messages;
 
 /*static*/ bool ConfigurationManager::ReadConfigurationFile(
   std::string& config_file_name)
@@ -37,6 +40,26 @@
     std::string line;
     while (!config_file.eof() && std::getline(config_file, line))
     {
+      // amateurish parsing algorithm will do for now
+
+      if (line.length() < 17 || line[0] == '#')
+        continue;
+
+      if (line.find("allow_message ") == 0)
+      {
+        size_t second_space = line.rfind(" ");
+        if (second_space == line.npos)
+          continue;
+
+        std::string type = line.substr(14, second_space - 14);
+        std::string sender = line.substr(second_space + 1);
+
+        std::stringstream ss;
+        ss << "Type: " << type << " Sender: " << sender;
+        Logger::LogMessage(DEBUG, "ConfigurationManager", ss);
+
+        allowed_messages[sender] = type;
+      }
     }
 
     config_file.close();
@@ -46,8 +69,52 @@
   {
     std::stringstream ss;
     ss << "Failed to read configuration file (" << ex.what() << ").";
-    Logger::LogMessage(ERROR, "ReadConfigurationFile", ss);
+    Logger::LogMessage(ERROR, "ConfigurationManager", ss);
   }
 
   return false; // failure
+}
+
+/*static*/ bool ConfigurationManager::IsSenderAllowed(const RSAKey& sender)
+{
+  std::string hashed;
+  if (!Crypto::HashRSAKey(sender, hashed))
+  {
+    Logger::LogMessage(ERROR, "ConfigurationManager", "HashRSAKey failed");
+    return false;
+  }
+
+  return allowed_messages.find(hashed) != allowed_messages.end();
+}
+
+/*static*/ bool ConfigurationManager::IsSenderAllowedToSendMessageType(
+  const RSAKey& sender, const std::string& type)
+{
+  return false; // under construction
+}
+
+/*static*/ bool ConfigurationManager::AllowSender(
+  RSA* rsa, const std::string& type)
+{
+  // extract the public key from
+  RSAKey public_key;
+  if (!Crypto::ExtractPublicRSAKey(rsa, public_key))
+  {
+    Logger::LogMessage(ERROR, "ConfigurationManager",
+      "ExtractPublicRSAKey failed");
+    return false;
+  }
+
+  // hash the key
+  std::string hashed;
+  if (!Crypto::HashRSAKey(public_key, hashed))
+  {
+    Logger::LogMessage(ERROR, "ConfigurationManager", "HashRSAKey failed");
+    return false;
+  }
+
+  // add it
+  allowed_messages[hashed] = type;
+
+  return true;
 }

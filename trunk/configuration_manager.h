@@ -23,12 +23,15 @@
 #define CONFIGURATION_MANAGER_H_
 
 #include "durbatuluk.pb.h"
+#include <openssl/rsa.h>
 #include <string>
 #include <map>
 
 class ConfigurationManager
 {
 public:
+  static bool ReadConfigurationFile(std::string& config_file_name);
+
   static bool GetSequenceNumberFileName(std::string& file_name)
   {
     // TODO: make configurable
@@ -43,20 +46,20 @@ public:
     return true; // success
   }
 
-  static bool ReadConfigurationFile(std::string& config_file_name);
-
-  // Under Construction Here.  The idea is to allow an initial check of the
-  // sender, followed by a check of the sender and message type pair.  This
-  // double check reduces attack surface.
-
-  static bool IsSenderAllowed(RSAKey& sender);
+  // The idea is to allow an initial check of the sender, followed
+  // by a check of the sender and message type pair.  This double
+  // check reduces attack surface.
+  static bool IsSenderAllowed(const RSAKey& sender);
   static bool IsSenderAllowedToSendMessageType(
-    RSAKey& sender, std::string& type);
+    const RSAKey& sender, const std::string& type);
+
+  // AllowSender is mostly for testing purposes
+  static bool AllowSender(RSA* rsa, const std::string& type);
 
 private:
   // The map key is the hash of the sender public key.  The map value
   // is the message type allowed.  See the sample configuration file.
-  std::map<std::string, std::string> allowed_messages;
+  static std::map<std::string, std::string> allowed_messages;
 };
 
 #endif // #ifndef CONFIGURATION_MANAGER_H_

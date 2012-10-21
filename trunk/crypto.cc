@@ -386,7 +386,7 @@
   return true; // success
 }
 
-/*static*/ bool Crypto::HashRSAKey(RSAKey& key, std::string& encoded_hash)
+/*static*/ bool Crypto::HashRSAKey(const RSAKey& key, std::string& encoded_hash)
 {
   // serialize the key
   std::string serialized;

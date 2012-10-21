@@ -24,6 +24,7 @@
 #include "message_handler.h"
 #include "logger.h"
 #include "sequence_manager.h"
+#include "configuration_manager.h"
 
 /*static*/ bool ProcessingEngine::GenerateEncodedDurbatulukMessage(
   const std::string& type, const std::string& contents,
@@ -125,7 +126,12 @@
     return false; // failure
   }
 
-  // TODO: verify here that the sender is authorized
+  // verify that this sender is known at all
+  if (!ConfigurationManager::IsSenderAllowed(signed_message.sender()))
+  {
+    Logger::LogMessage(INFO, "ProcessingEngine", "unknown sender");
+    return false; // failure
+  }
 
   // verify the message signature
 
