@@ -23,6 +23,7 @@
 #include "gtest/gtest.h"
 #include "message_handler.h"
 #include "sequence_manager.h"
+#include "configuration_manager.h"
 
 TEST(processing_engine_tests, test_full_circle_of_string_message)
 {
@@ -45,10 +46,19 @@ TEST(processing_engine_tests, test_full_circle_of_string_message)
   std::string encoded;
   ASSERT_TRUE(ProcessingEngine::EncryptSignAndEncode(
     message, rsa_recipient_encryption_public_key, rsa_sender_signing, encoded));
-  RSA_free(rsa_sender_signing);
 
   // decode, verify and decrypt the encoded message
   std::string message2;
+  EXPECT_FALSE(ProcessingEngine::DecodeVerifyAndDecrypt(
+    encoded, rsa_recipient_encryption, message2))
+    << "expected to fail because sender not yet allowed";
+
+  // add sender to allowed senders
+  ASSERT_TRUE(ConfigurationManager::AllowSender(
+    rsa_sender_signing, "not needed for test"));
+  RSA_free(rsa_sender_signing);
+
+  // decode, verify and decrypt the encoded message
   ASSERT_TRUE(ProcessingEngine::DecodeVerifyAndDecrypt(
     encoded, rsa_recipient_encryption, message2));
   RSA_free(rsa_recipient_encryption);
@@ -62,6 +72,10 @@ TEST(processing_engine_tests, test_full_circle_of_shell_command)
   RSA* rsa_sender_signing
     = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
   ASSERT_TRUE(rsa_sender_signing != nullptr);
+
+  // add sender to allowed senders
+  ASSERT_TRUE(ConfigurationManager::AllowSender(
+    rsa_sender_signing, MESSAGE_TYPE_SHELL_EXEC));
 
   // generate recipient key
   RSA* rsa_recipient_encryption

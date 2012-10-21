@@ -49,7 +49,7 @@ public:
     std::string& decrypted);
 
   // method to extract a hash of a public key
-  static bool HashRSAKey(RSAKey& key, std::string& encoded_hash);
+  static bool HashRSAKey(const RSAKey& key, std::string& encoded_hash);
 private:
   static unsigned char* AllocateForRSAExtraction(RSA* rsa);
   static void ExtractBIGNUM(std::string s, BIGNUM** bn);
