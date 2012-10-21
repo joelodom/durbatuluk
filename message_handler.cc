@@ -32,8 +32,7 @@
   Logger::LogMessage(INFO, "MessageHandler", ss);
 
   // check the sequence number
-  if (!input.has_sequence_number()
-    || !SequenceManager::IsSequenceNumberAllowed(input.sequence_number()))
+  if (!SequenceManager::IsSequenceNumberAllowed(input.sequence_number()))
   {
     Logger::LogMessage(ERROR, "MessageHandler",
       "Dropping message due to sequence number problem.");

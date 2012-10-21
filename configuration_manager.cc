@@ -90,7 +90,15 @@
 /*static*/ bool ConfigurationManager::IsSenderAllowedToSendMessageType(
   const RSAKey& sender, const std::string& type)
 {
-  return false; // under construction
+  std::string hashed;
+  if (!Crypto::HashRSAKey(sender, hashed))
+  {
+    Logger::LogMessage(ERROR, "ConfigurationManager", "HashRSAKey failed");
+    return false;
+  }
+
+  auto it = allowed_messages.find(hashed);
+  return (it != allowed_messages.end()) && ((*it).second == type);
 }
 
 /*static*/ bool ConfigurationManager::AllowSender(

@@ -51,23 +51,17 @@
   std::string& encoded_incoming, RSA* recipient_private_encryption_key,
   DurbatulukMessage& output, MessageHandlerCallback callback /*= nullptr*/)
 {
-  std::string decoded_message;
+  // decode, verify and decrypt
+  DurbatulukMessage input;
   if (!DecodeVerifyAndDecrypt(
-    encoded_incoming, recipient_private_encryption_key, decoded_message))
+    encoded_incoming, recipient_private_encryption_key, input))
   {
     Logger::LogMessage(ERROR, "ProcessingEngine",
       "DecodeVerifyAndDecrypt failed");
     return false; // failure
   }
 
-  DurbatulukMessage input;
-  if (!input.ParseFromString(decoded_message))
-  {
-    Logger::LogMessage(ERROR, "ProcessingEngine",
-      "ParseFromString failed");
-    return false; // failure
-  }
-
+  // handle
   if (!MessageHandler::HandleMessage(input, output, callback))
   {
     Logger::LogMessage(ERROR, "ProcessingEngine",
@@ -107,7 +101,7 @@
 }
 
 /*static*/ bool ProcessingEngine::DecodeVerifyAndDecrypt(std::string& encoded,
-    RSA* recipient_private_encryption_key, std::string& message)
+    RSA* recipient_private_encryption_key, DurbatulukMessage& message)
 {
   // decode the message
 
@@ -152,9 +146,24 @@
   // decrypt the message
   std::string decrypted;
   if (!Crypto::DecryptMessage(
-    recipient_private_encryption_key, encrypted_message, message))
+    recipient_private_encryption_key, encrypted_message, decrypted))
   {
     Logger::LogMessage(ERROR, "ProcessingEngine", "DecryptMessage failed");
+    return false; // failure
+  }
+
+  // verify that the sender may send this type of message
+  if (!message.ParseFromString(decrypted))
+  {
+    Logger::LogMessage(ERROR, "ProcessingEngine", "ParseFromString failed");
+    return false; // failure
+  }
+
+  if (!ConfigurationManager::IsSenderAllowedToSendMessageType(
+    signed_message.sender(), message.type()))
+  {
+    Logger::LogMessage(INFO, "ProcessingEngine",
+      "sender not allowed to send message type");
     return false; // failure
   }
 

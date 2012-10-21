@@ -27,7 +27,10 @@
 
 TEST(processing_engine_tests, test_full_circle_of_string_message)
 {
-  std::string message("this tests the full circle message");
+  DurbatulukMessage message;
+  message.set_type(MESSAGE_TYPE_SHELL_EXEC_OUTPUT);
+  message.set_contents("We were born without time.");
+  message.set_sequence_number(0);
 
   // generate sender key
   RSA* rsa_sender_signing
@@ -42,20 +45,34 @@ TEST(processing_engine_tests, test_full_circle_of_string_message)
   ASSERT_TRUE(Crypto::ExtractPublicRSAKey(
     rsa_recipient_encryption, rsa_recipient_encryption_public_key));
 
+  // serialize the message
+  std::string serialized;
+  ASSERT_TRUE(message.SerializeToString(&serialized));
+
   // encrypt, sign and encode the message
   std::string encoded;
   ASSERT_TRUE(ProcessingEngine::EncryptSignAndEncode(
-    message, rsa_recipient_encryption_public_key, rsa_sender_signing, encoded));
+    serialized, rsa_recipient_encryption_public_key,
+    rsa_sender_signing, encoded));
 
   // decode, verify and decrypt the encoded message
-  std::string message2;
+  DurbatulukMessage message2;
   EXPECT_FALSE(ProcessingEngine::DecodeVerifyAndDecrypt(
     encoded, rsa_recipient_encryption, message2))
     << "expected to fail because sender not yet allowed";
 
   // add sender to allowed senders
   ASSERT_TRUE(ConfigurationManager::AllowSender(
-    rsa_sender_signing, "not needed for test"));
+    rsa_sender_signing, "WRONG TYPE"));
+
+  // decode, verify and decrypt the encoded message
+  EXPECT_FALSE(ProcessingEngine::DecodeVerifyAndDecrypt(
+    encoded, rsa_recipient_encryption, message2))
+    << "expected to fail because sender not yet allowed to send type";
+
+  // add sender to allowed senders
+  ASSERT_TRUE(ConfigurationManager::AllowSender(
+    rsa_sender_signing, MESSAGE_TYPE_SHELL_EXEC_OUTPUT));
   RSA_free(rsa_sender_signing);
 
   // decode, verify and decrypt the encoded message
@@ -63,7 +80,7 @@ TEST(processing_engine_tests, test_full_circle_of_string_message)
     encoded, rsa_recipient_encryption, message2));
   RSA_free(rsa_recipient_encryption);
 
-  EXPECT_STREQ(message.c_str(), message2.c_str());
+  EXPECT_STREQ(message.contents().c_str(), message2.contents().c_str());
 }
 
 TEST(processing_engine_tests, test_full_circle_of_shell_command)
@@ -114,6 +131,10 @@ TEST(processing_engine_tests, test_full_circle_of_shell_command)
   ASSERT_TRUE(output.SerializeToString(&output_str));
   ASSERT_TRUE(ProcessingEngine::EncryptSignAndEncode(output_str,
     rsa_recipient_encryption_public_key, rsa_sender_signing, encoded_message));
+
+  // add sender to allowed senders (changing type)
+  ASSERT_TRUE(ConfigurationManager::AllowSender(
+    rsa_sender_signing, MESSAGE_TYPE_SHELL_EXEC_OUTPUT));
   RSA_free(rsa_sender_signing);
 
   // a lambda function for handling the callback from the message handler

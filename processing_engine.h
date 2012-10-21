@@ -46,7 +46,7 @@ public:
     RSAKey& recipient_public_key, RSA* sender_signing_key,
     std::string& encoded);
   static bool DecodeVerifyAndDecrypt(std::string& encoded,
-    RSA* recipient_private_encryption_key, std::string& message);
+    RSA* recipient_private_encryption_key, DurbatulukMessage& message);
 };
 
 #endif // #ifndef PROCESSING_ENGINE_H_
