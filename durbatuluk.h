@@ -22,6 +22,11 @@
 #ifndef DURBATULUK_H_
 #define DURBATULUK_H_
 
-// world's most boring header file
+#define MAJOR_VERSION 0
+#define MINOR_VERSION 0
+#define MICRO_VERSION 0
+
+// "Pre-Alpha", "Alpha", "Beta", "Final"
+#define DEVELOPMENT_PHASE "Pre-Alpha"
 
 #endif // #ifndef DURBATULUK_H_
