@@ -31,6 +31,7 @@ SRCS += net_fetcher_tests.cc
 SRCS += sequence_manager.cc
 SRCS += sequence_manager_tests.cc
 SRCS += utils.cc
+SRCS += configuration_manager.cc
 
 LIBS = -lpthread
 LIBS += -lcrypto

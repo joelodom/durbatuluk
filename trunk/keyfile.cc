@@ -105,7 +105,7 @@
 {
   std::ifstream in_file;
 
-  in_file.open(file_name);
+  in_file.open(file_name, std::ios_base::in);
   if (in_file.fail())
   {
     Logger::LogMessage(ERROR, "KeyFile", "failed to open input file");

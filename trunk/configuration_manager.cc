@@ -19,44 +19,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef CONFIGURATION_MANAGER_H_
-#define CONFIGURATION_MANAGER_H_
+#include "configuration_manager.h"
+#include "logger.h"
+#include <fstream>
+#include <iostream>
 
-#include "durbatuluk.pb.h"
-#include <string>
-#include <map>
-
-class ConfigurationManager
+/*static*/ bool ConfigurationManager::ReadConfigurationFile(
+  std::string& config_file_name)
 {
-public:
-  static bool GetSequenceNumberFileName(std::string& file_name)
+  std::ifstream config_file;
+  config_file.exceptions(std::ios::failbit); // throw on failure
+
+  try
   {
-    // TODO: make configurable
-    file_name = "sequence_file";
+    config_file.open(config_file_name, std::ios_base::in);
+
+    std::string line;
+    while (!config_file.eof() && std::getline(config_file, line))
+    {
+    }
+
+    config_file.close();
     return true; // success
   }
-
-  static bool GetConfigurationFileName(std::string& file_name)
+  catch (const std::exception& ex)
   {
-    // TODO: make configurable
-    file_name = "durbatuluk.conf";
-    return true; // success
+    std::stringstream ss;
+    ss << "Failed to read configuration file (" << ex.what() << ").";
+    Logger::LogMessage(ERROR, "ReadConfigurationFile", ss);
   }
 
-  static bool ReadConfigurationFile(std::string& config_file_name);
-
-  // Under Construction Here.  The idea is to allow an initial check of the
-  // sender, followed by a check of the sender and message type pair.  This
-  // double check reduces attack surface.
-
-  static bool IsSenderAllowed(RSAKey& sender);
-  static bool IsSenderAllowedToSendMessageType(
-    RSAKey& sender, std::string& type);
-
-private:
-  // The map key is the hash of the sender public key.  The map value
-  // is the message type allowed.  See the sample configuration file.
-  std::map<std::string, std::string> allowed_messages;
-};
-
-#endif // #ifndef CONFIGURATION_MANAGER_H_
+  return false; // failure
+}

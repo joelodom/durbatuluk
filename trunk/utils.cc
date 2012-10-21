@@ -28,7 +28,7 @@
 {
   std::ofstream out_file;
 
-  out_file.open(file_name);
+  out_file.open(file_name, std::ios_base::out);
   if (out_file.fail())
   {
     Logger::LogMessage(ERROR, "Utils", "failed to open output file");
