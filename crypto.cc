@@ -20,9 +20,10 @@
 // SOFTWARE.
 
 #include "crypto.h"
-#include <openssl/engine.h>
 #include "openssl_aes.h"
 #include "logger.h"
+#include "base64.h"
+#include <openssl/engine.h>
 
 /*static*/ bool Crypto::ExtractPublicRSAKey(RSA* rsa, RSAKey& public_key)
 {
@@ -381,6 +382,26 @@
     Logger::LogMessage(INFO, "Crypto", "Decryption failure");
     return false; // failure
   }
+
+  return true; // success
+}
+
+/*static*/ bool Crypto::HashRSAKey(RSAKey& key, std::string& encoded_hash)
+{
+  // serialize the key
+  std::string serialized;
+  if (!key.SerializeToString(&serialized))
+  {
+    Logger::LogMessage(ERROR, "Crypto", "SerializeToString failed");
+    return false; // failure
+  }
+
+  // hash the key
+  unsigned char digest[SHA_DIGEST_LENGTH];
+  SHA1((const unsigned char*)serialized.c_str(), serialized.length(), digest);
+
+  // encode the hash
+  encoded_hash = base64_encode(digest, SHA_DIGEST_LENGTH);
 
   return true; // success
 }

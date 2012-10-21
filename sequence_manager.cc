@@ -193,7 +193,7 @@
 
   try
   {
-    in_file.open(sequence_file_name);
+    in_file.open(sequence_file_name, std::ios_base::in);
   }
   catch (const std::exception& ex)
   {

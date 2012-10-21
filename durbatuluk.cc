@@ -29,6 +29,8 @@
 #include "processing_engine.h"
 #include "net_fetcher.h"
 #include "sequence_manager.h"
+#include "configuration_manager.h"
+#include "base64.h"
 #include <openssl/engine.h>
 
 // leave as EXIT_FAILURE until handler function is sure of success
@@ -49,6 +51,7 @@ void usage()
   std::cout << "Usage:" << std::endl;
   std::cout << "  durbatuluk --tests" << std::endl;
   std::cout << "  durbatuluk --generate-keyfiles key_name" << std::endl;
+  std::cout << "  durbatuluk --extract-public key_name" << std::endl;
   std::cout << "  durbatuluk --generate-command recipient_encryption_key "
     "sender_signing_key (command text read from stdin)" << std::endl;
   std::cout << "  durbatuluk --process-command recipient_encryption_key "
@@ -109,6 +112,32 @@ bool generate_keyfiles(int argc, char **argv)
 
   RSA_free(rsa);
   std::cout << "Key files generated." << std::endl << std::endl;
+  final_return_value = EXIT_SUCCESS;
+  return true; // handled
+}
+
+bool extract_public(int argc, char **argv)
+{
+  if (argc != 3 || strcmp(argv[1], "--extract-public") != 0)
+    return false; // not handled
+
+  // read the key
+  RSAKey public_key;
+  if (!KeyFile::ReadPublicKeyFile(argv[2], public_key))
+  {
+    Logger::LogMessage(ERROR, "extract_public", "ReadPublicKeyFile failed");
+    return true; // handled
+  }
+
+  // hash and encode
+  std::string encoded;
+  if (!Crypto::HashRSAKey(public_key, encoded))
+  {
+    Logger::LogMessage(ERROR, "extract_public", "HashRSAKey failed");
+    return true; // handled
+  }
+
+  std::cout << encoded;
   final_return_value = EXIT_SUCCESS;
   return true; // handled
 }
@@ -346,26 +375,36 @@ int main(int argc, char **argv)
 {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-  if (RAND_status() == 1)
+  std::string config_file_name;
+
+  if (!ConfigurationManager::GetConfigurationFileName(config_file_name))
   {
-    if (!(
-      tests(argc, argv) ||
-      generate_keyfiles(argc, argv) ||
-      generate_command(argc, argv) ||
-      process_command(argc, argv) ||
-      fetch_commands_from_url(argc, argv) ||
-      reset_sequence_numbers(argc, argv)
-      ))
-      usage();
+    Logger::LogMessage(ERROR, "main", "GetConfigurationFileName failed");
   }
-  else
+  else if (!ConfigurationManager::ReadConfigurationFile(config_file_name))
+  {
+    std::stringstream ss;
+    ss << "Failed to read " << config_file_name;
+    Logger::LogMessage(ERROR, "main", ss);
+  }
+  else if (RAND_status() != 1)
   {
     // This could happen on systems without OS-provided randomness,
     // in which case additional features are required to initialize
     // the PRNG.
 
-    std::cout << "PRNG not initialized properly." << std::endl;
+    Logger::LogMessage(ERROR, "main", "PRNG not initialized.");
   }
+  else if (!(
+    tests(argc, argv) ||
+    generate_keyfiles(argc, argv) ||
+    extract_public(argc, argv) ||
+    generate_command(argc, argv) ||
+    process_command(argc, argv) ||
+    fetch_commands_from_url(argc, argv) ||
+    reset_sequence_numbers(argc, argv)
+    ))
+    usage();
 
   RAND_cleanup();
   google::protobuf::ShutdownProtobufLibrary();
