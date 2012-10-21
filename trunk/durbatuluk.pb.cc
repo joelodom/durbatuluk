@@ -183,8 +183,8 @@ void protobuf_AddDesc_durbatuluk_2eproto() {
     " \002(\014\"a\n\020EncryptedMessage\022\032\n\trecipient\030\001 "
     "\002(\0132\007.RSAKey\022\025\n\rencrypted_key\030\002 \002(\014\022\032\n\022e"
     "ncrypted_contents\030\003 \002(\014\"L\n\021DurbatulukMes"
-    "sage\022\014\n\004type\030\001 \001(\t\022\020\n\010contents\030\002 \001(\t\022\027\n\017"
-    "sequence_number\030\003 \001(\004\":\n\026AllowedSequence"
+    "sage\022\014\n\004type\030\001 \002(\t\022\020\n\010contents\030\002 \002(\t\022\027\n\017"
+    "sequence_number\030\003 \002(\004\":\n\026AllowedSequence"
     "Numbers\022\017\n\007minimum\030\001 \001(\004\022\017\n\007allowed\030\002 \003("
     "\004", 441);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
@@ -1475,7 +1475,7 @@ bool DurbatulukMessage::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional string type = 1;
+      // required string type = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -1491,7 +1491,7 @@ bool DurbatulukMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // optional string contents = 2;
+      // required string contents = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -1508,7 +1508,7 @@ bool DurbatulukMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // optional uint64 sequence_number = 3;
+      // required uint64 sequence_number = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -1542,7 +1542,7 @@ bool DurbatulukMessage::MergePartialFromCodedStream(
 
 void DurbatulukMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // optional string type = 1;
+  // required string type = 1;
   if (has_type()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->type().data(), this->type().length(),
@@ -1551,7 +1551,7 @@ void DurbatulukMessage::SerializeWithCachedSizes(
       1, this->type(), output);
   }
   
-  // optional string contents = 2;
+  // required string contents = 2;
   if (has_contents()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->contents().data(), this->contents().length(),
@@ -1560,7 +1560,7 @@ void DurbatulukMessage::SerializeWithCachedSizes(
       2, this->contents(), output);
   }
   
-  // optional uint64 sequence_number = 3;
+  // required uint64 sequence_number = 3;
   if (has_sequence_number()) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt64(3, this->sequence_number(), output);
   }
@@ -1573,7 +1573,7 @@ void DurbatulukMessage::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* DurbatulukMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // optional string type = 1;
+  // required string type = 1;
   if (has_type()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->type().data(), this->type().length(),
@@ -1583,7 +1583,7 @@ void DurbatulukMessage::SerializeWithCachedSizes(
         1, this->type(), target);
   }
   
-  // optional string contents = 2;
+  // required string contents = 2;
   if (has_contents()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->contents().data(), this->contents().length(),
@@ -1593,7 +1593,7 @@ void DurbatulukMessage::SerializeWithCachedSizes(
         2, this->contents(), target);
   }
   
-  // optional uint64 sequence_number = 3;
+  // required uint64 sequence_number = 3;
   if (has_sequence_number()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(3, this->sequence_number(), target);
   }
@@ -1609,21 +1609,21 @@ int DurbatulukMessage::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // optional string type = 1;
+    // required string type = 1;
     if (has_type()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->type());
     }
     
-    // optional string contents = 2;
+    // required string contents = 2;
     if (has_contents()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->contents());
     }
     
-    // optional uint64 sequence_number = 3;
+    // required uint64 sequence_number = 3;
     if (has_sequence_number()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::UInt64Size(
@@ -1683,6 +1683,7 @@ void DurbatulukMessage::CopyFrom(const DurbatulukMessage& from) {
 }
 
 bool DurbatulukMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
   
   return true;
 }

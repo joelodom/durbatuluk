@@ -498,7 +498,7 @@ class DurbatulukMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // optional string type = 1;
+  // required string type = 1;
   inline bool has_type() const;
   inline void clear_type();
   static const int kTypeFieldNumber = 1;
@@ -509,7 +509,7 @@ class DurbatulukMessage : public ::google::protobuf::Message {
   inline ::std::string* mutable_type();
   inline ::std::string* release_type();
   
-  // optional string contents = 2;
+  // required string contents = 2;
   inline bool has_contents() const;
   inline void clear_contents();
   static const int kContentsFieldNumber = 2;
@@ -520,7 +520,7 @@ class DurbatulukMessage : public ::google::protobuf::Message {
   inline ::std::string* mutable_contents();
   inline ::std::string* release_contents();
   
-  // optional uint64 sequence_number = 3;
+  // required uint64 sequence_number = 3;
   inline bool has_sequence_number() const;
   inline void clear_sequence_number();
   static const int kSequenceNumberFieldNumber = 3;
@@ -1420,7 +1420,7 @@ inline ::std::string* EncryptedMessage::release_encrypted_contents() {
 
 // DurbatulukMessage
 
-// optional string type = 1;
+// required string type = 1;
 inline bool DurbatulukMessage::has_type() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1478,7 +1478,7 @@ inline ::std::string* DurbatulukMessage::release_type() {
   }
 }
 
-// optional string contents = 2;
+// required string contents = 2;
 inline bool DurbatulukMessage::has_contents() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -1536,7 +1536,7 @@ inline ::std::string* DurbatulukMessage::release_contents() {
   }
 }
 
-// optional uint64 sequence_number = 3;
+// required uint64 sequence_number = 3;
 inline bool DurbatulukMessage::has_sequence_number() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
