@@ -27,6 +27,7 @@
 /*static*/ std::map<std::string, std::string>
   ConfigurationManager::allowed_messages_;
 /*static*/ std::string ConfigurationManager::post_message_url_;
+/*static*/ std::string ConfigurationManager::fetch_message_url_;
 /*static*/ std::string ConfigurationManager::my_signing_key_name_;
 /*static*/ std::string ConfigurationManager::my_encryption_key_name_;
 
@@ -82,6 +83,10 @@
       else if (line.find("post_message_url ") == 0)
       {
         post_message_url_ = line.substr(17);
+      }
+      else if (line.find("fetch_message_url ") == 0)
+      {
+        fetch_message_url_ = line.substr(18);
       }
       else if (line.find("my_signing_key_name ") == 0)
       {

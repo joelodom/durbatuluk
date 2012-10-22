@@ -52,7 +52,7 @@ class MessagePost(webapp2.RequestHandler):
     message.content = content
     message.put()
 
-class MessageLog(webapp2.RequestHandler):
+class MessageFetch(webapp2.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
 
@@ -64,6 +64,6 @@ class MessageLog(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([
   ('/', MainPage),
-  ('/log', MessageLog),
+  ('/fetch', MessageFetch),
   ('/post', MessagePost),
   ], debug=True)

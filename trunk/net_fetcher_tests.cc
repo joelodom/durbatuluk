@@ -48,7 +48,7 @@ TEST(net_fetcher_tests, test_post_message_to_url)
 
   // check log that post went through
   std::string contents;
-  ASSERT_TRUE(NetFetcher::FetchURL("http://durbatuluk-server.appspot.com/log",
+  ASSERT_TRUE(NetFetcher::FetchURL("http://durbatuluk-server.appspot.com/fetch",
     contents));
   EXPECT_TRUE(contents.find(time_str) != contents.npos);
 }

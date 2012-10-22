@@ -52,6 +52,12 @@ public:
     return true; // success
   }
 
+  static bool GetFetchMessageURL(std::string& url)
+  {
+    url = fetch_message_url_;
+    return true; // success
+  }
+
   static bool GetMySigningKeyName(std::string& name)
   {
     name = my_signing_key_name_;
@@ -81,6 +87,7 @@ private:
 
   // etc...
   static std::string post_message_url_;
+  static std::string fetch_message_url_;
   static std::string my_signing_key_name_;
   static std::string my_encryption_key_name_;
 };
