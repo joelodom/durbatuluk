@@ -54,6 +54,9 @@ void usage()
   std::cout << "  durbatuluk --extract-public key_name" << std::endl;
   std::cout << "  durbatuluk --generate-command recipient_encryption_key "
     "sender_signing_key (command text read from stdin)" << std::endl;
+  std::cout << "  durbatuluk --post-command recipient_encryption_key "
+    "(command text read from stdin, rest read from configuration file)"
+    << std::endl;
   std::cout << "  durbatuluk --process-command recipient_encryption_key "
     "(encoded command read from stdin)" << std::endl;
   std::cout << "  durbatuluk --fetch-commands-from-url url "
@@ -212,6 +215,102 @@ bool generate_command(int argc, char **argv)
   }
 
   std::cout << encoded_message;
+  final_return_value = EXIT_SUCCESS;
+  return true; // handled
+}
+
+bool post_command(int argc, char **argv)
+{
+  if (argc != 3 || strcmp(argv[1], "--post-command") != 0)
+    return false; // not handled
+
+  // read the command from stdin
+
+  std::string command;
+  std::getline(std::cin, command);
+
+  std::stringstream ss;
+  ss << "command: " << command;
+  Logger::LogMessage(DEBUG, "post_command", ss);
+
+  // read the recipient encryption key
+  RSAKey recipient_public_key;
+  if (!KeyFile::ReadPublicKeyFile(argv[2], recipient_public_key))
+  {
+    Logger::LogMessage(ERROR, "post_command", "ReadPublicKeyFile failed");
+    return true; // handled
+  }
+
+  // read the sender signing key
+
+  std::string signing_key_name;
+  if (!ConfigurationManager::GetMySigningKeyName(signing_key_name))
+  {
+    Logger::LogMessage(ERROR, "post_command", "GetMySigningKeyName failed");
+    return true; // handled
+  }
+
+  RSAKey sender_signing_rsa;
+  if (!KeyFile::ReadPrivateKeyFile(signing_key_name, sender_signing_rsa))
+  {
+    Logger::LogMessage(ERROR, "post_command", "ReadPrivateKeyFile failed");
+    return true; // handled
+  }
+
+  RSA* rsa = RSA_new();
+  if (rsa == nullptr)
+  {
+    Logger::LogMessage(ERROR, "post_command", "RSA_new failed");
+    return true; // handled
+  }
+
+  if (!Crypto::ImportRSAKey(sender_signing_rsa, rsa))
+  {
+    Logger::LogMessage(ERROR, "post_command", "ImportRSAKey failed");
+    RSA_free(rsa);
+    return true; // handled
+  }
+
+  // generate the message
+
+  std::string encoded_message;
+  unsigned long long sequence_number;
+  bool rv = ProcessingEngine::GenerateEncodedDurbatulukMessage(
+    MESSAGE_TYPE_SHELL_EXEC, command,
+    recipient_public_key, rsa, encoded_message, sequence_number);
+  RSA_free(rsa);
+
+  if (!rv)
+  {
+    Logger::LogMessage(
+      ERROR, "post_command", "GenerateEncodedDurbatulukMessage failed");
+    return true; // handled
+  }
+
+  // post
+
+  std::string url;
+  if (!ConfigurationManager::GetPostCommandURL(url))
+  {
+    Logger::LogMessage(ERROR, "post_command", "GetPostCommandURL failed");
+    return true; // handled
+  }
+
+  if (!NetFetcher::PostCommandToURL(url, encoded_message))
+  {
+    Logger::LogMessage(ERROR, "post_command", "PostCommandToURL failed");
+    return true; // handled
+  }
+
+  // save the sequence number so that we can process the response
+  if (!SequenceManager::AddToAllowedSequenceNumbers(sequence_number))
+  {
+    Logger::LogMessage(
+      ERROR, "post_command", "AddToAllowedSequenceNumbers failed");
+    return true; // handled
+  }
+
+  std::cout << "Command posted." << std::endl;
   final_return_value = EXIT_SUCCESS;
   return true; // handled
 }
@@ -400,6 +499,7 @@ int main(int argc, char **argv)
     generate_keyfiles(argc, argv) ||
     extract_public(argc, argv) ||
     generate_command(argc, argv) ||
+    post_command(argc, argv) ||
     process_command(argc, argv) ||
     fetch_commands_from_url(argc, argv) ||
     reset_sequence_numbers(argc, argv)
