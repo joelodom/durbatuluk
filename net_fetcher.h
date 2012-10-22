@@ -32,9 +32,9 @@ public:
   // Input command should not be escaped.  For example,
   // <durbatuluk>Cog/5+8/sFo==</durbatuluk> as input command
   // will be posted as
-  // command=%3Cdurbatuluk%3ECog%2F5%2B8%2FsFo%3D%3D%3C%2Fdurbatuluk%3E
-  static bool PostCommandToURL(
-    const std::string& url, const std::string& command);
+  // message=%3Cdurbatuluk%3ECog%2F5%2B8%2FsFo%3D%3D%3C%2Fdurbatuluk%3E
+  static bool PostMessageToURL(
+    const std::string& url, const std::string& message);
 
 private:
   static size_t FetchToString(void* ptr, size_t size, size_t nmemb, void* user);

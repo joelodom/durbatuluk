@@ -61,7 +61,7 @@
 
   if (input.type() == MESSAGE_TYPE_SHELL_EXEC)
   {
-    ss << "ShellExec command: " << input.contents();
+    ss << "ShellExec contents: " << input.contents();
     Logger::LogMessage(INFO, "MessageHandler", ss);
 
     std::string shell_exec_output;

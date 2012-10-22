@@ -26,8 +26,9 @@
 
 /*static*/ std::map<std::string, std::string>
   ConfigurationManager::allowed_messages_;
-/*static*/ std::string ConfigurationManager::post_command_url_;
+/*static*/ std::string ConfigurationManager::post_message_url_;
 /*static*/ std::string ConfigurationManager::my_signing_key_name_;
+/*static*/ std::string ConfigurationManager::my_encryption_key_name_;
 
 /*static*/ bool ConfigurationManager::ReadConfigurationFile(
   std::string& config_file_name)
@@ -78,13 +79,17 @@
         else
           Logger::SetMinLoggingSeverity(ERROR);
       }
-      else if (line.find("post_command_url ") == 0)
+      else if (line.find("post_message_url ") == 0)
       {
-        post_command_url_ = line.substr(17);
+        post_message_url_ = line.substr(17);
       }
       else if (line.find("my_signing_key_name ") == 0)
       {
         my_signing_key_name_ = line.substr(20);
+      }
+      else if (line.find("my_encryption_key_name ") == 0)
+      {
+        my_encryption_key_name_ = line.substr(23);
       }
     }
 

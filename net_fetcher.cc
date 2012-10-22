@@ -75,8 +75,8 @@
   return true; // success
 }
 
-/*static*/ bool NetFetcher::PostCommandToURL(
-  const std::string& url, const std::string& command)
+/*static*/ bool NetFetcher::PostMessageToURL(
+  const std::string& url, const std::string& message)
 {
   CURLcode error;
   std::stringstream ss;
@@ -114,14 +114,14 @@
     return false; // failure
   }
 
-  char* escaped = curl_easy_escape(curl, command.c_str(), command.length());
+  char* escaped = curl_easy_escape(curl, message.c_str(), message.length());
   if (escaped == nullptr)
   {
     Logger::LogMessage(ERROR, "NetFetcher", "curl_easy_escape failed");
     return false; // failure
   }
 
-  std::string postdata("command=");
+  std::string postdata("message=");
   postdata += escaped;
   curl_free(escaped);
 
