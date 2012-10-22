@@ -26,7 +26,7 @@
 #define MINOR_VERSION 0
 #define MICRO_VERSION 0
 
-// "Pre-Alpha", "Alpha", "Beta", "Final"
+// "Pre-Alpha", "Alpha", "Beta", "Final", etc...
 #define DEVELOPMENT_PHASE "Pre-Alpha"
 
 #endif // #ifndef DURBATULUK_H_

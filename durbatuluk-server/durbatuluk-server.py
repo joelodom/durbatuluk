@@ -42,7 +42,7 @@ class CommandPost(webapp2.RequestHandler):
   def post(self):
     # validate the command
     content = self.request.get('command')
-    if not re.match('<durbatuluk>[A-Za-z0-9\+\/]+</durbatuluk>$', content):
+    if not re.match('<durbatuluk>[A-Za-z0-9=+/]+</durbatuluk>$', content):
       # refuse this command
       self.error(403)
       return
