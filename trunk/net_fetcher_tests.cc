@@ -21,10 +21,34 @@
 
 #include "net_fetcher.h"
 #include "gtest/gtest.h"
+#include <sstream>
 
 TEST(net_fetcher_tests, test_fetch_url)
 {
   std::string url("http://durbatuluk-server.appspot.com/"), contents;
   ASSERT_TRUE(NetFetcher::FetchURL(url, contents));
   EXPECT_TRUE(contents.find("<html>") != contents.npos);
+}
+
+TEST(net_fetcher_tests, test_post_command_to_url)
+{
+  std::string url("http://durbatuluk-server.appspot.com/post");
+
+  std::stringstream ss;
+  ss << time(nullptr);
+  std::string time_str(ss.str());
+
+  // stringstream giving strange results, so use inefficient string handling
+  std::string command("<durbatuluk>joelwashere");
+  command += time_str;
+  command += "/+=</durbatuluk>";
+
+  // post
+  ASSERT_TRUE(NetFetcher::PostCommandToURL(url, command));
+
+  // check log that post went through
+  std::string contents;
+  ASSERT_TRUE(NetFetcher::FetchURL("http://durbatuluk-server.appspot.com/log",
+    contents));
+  EXPECT_TRUE(contents.find(time_str) != contents.npos);
 }

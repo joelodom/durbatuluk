@@ -20,13 +20,14 @@
 // SOFTWARE.
 
 #include "net_fetcher.h"
-#include <curl/curl.h>
 #include "logger.h"
+#include <curl/curl.h>
 
 /*static*/ bool NetFetcher::FetchURL(
   const std::string& url, std::string& contents)
 {
   CURLcode error;
+  std::stringstream ss;
 
   // initialize cURL
 
@@ -40,7 +41,6 @@
   error = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
   if (error != CURLE_OK)
   {
-    std::stringstream ss;
     ss << "curl_easy_setopt returned " << error << " setting URL";
     Logger::LogMessage(ERROR, "NetFetcher", ss);
     return false; // failure
@@ -49,7 +49,6 @@
   error = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, FetchToString);
   if (error != CURLE_OK)
   {
-    std::stringstream ss;
     ss << "curl_easy_setopt returned " << error << " setting callback";
     Logger::LogMessage(ERROR, "NetFetcher", ss);
     return false; // failure
@@ -58,7 +57,6 @@
   error = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &contents);
   if (error != CURLE_OK)
   {
-    std::stringstream ss;
     ss << "curl_easy_setopt returned " << error << " setting user data";
     Logger::LogMessage(ERROR, "NetFetcher", ss);
     return false; // failure
@@ -68,7 +66,86 @@
   error = curl_easy_perform(curl);
   if (error != CURLE_OK)
   {
-    std::stringstream ss;
+    ss << "curl_easy_perform returned " << error;
+    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    return false; // failure
+  }
+
+  curl_easy_cleanup(curl);
+  return true; // success
+}
+
+/*static*/ bool NetFetcher::PostCommandToURL(
+  const std::string& url, const std::string& command)
+{
+  CURLcode error;
+  std::stringstream ss;
+
+  // initialize cURL
+
+  CURL *curl = curl_easy_init();
+  if (curl == nullptr)
+  {
+    Logger::LogMessage(ERROR, "NetFetcher", "curl_easy_init failed");
+    return false; // failure
+  }
+
+  error = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+  if (error != CURLE_OK)
+  {
+    ss << "curl_easy_setopt returned " << error << " setting URL";
+    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    return false; // failure
+  }
+
+  error = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, FetchToString);
+  if (error != CURLE_OK)
+  {
+    ss << "curl_easy_setopt returned " << error << " setting callback";
+    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    return false; // failure
+  }
+
+  error = curl_easy_setopt(curl, CURLOPT_POST, 1);
+  if (error != CURLE_OK)
+  {
+    ss << "curl_easy_setopt returned " << error << " setting callback";
+    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    return false; // failure
+  }
+
+  char* escaped = curl_easy_escape(curl, command.c_str(), command.length());
+  if (escaped == nullptr)
+  {
+    Logger::LogMessage(ERROR, "NetFetcher", "curl_easy_escape failed");
+    return false; // failure
+  }
+
+  std::string postdata("command=");
+  postdata += escaped;
+  curl_free(escaped);
+
+  error = curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postdata.c_str());
+  if (error != CURLE_OK)
+  {
+    ss << "curl_easy_setopt returned " << error << " setting user data";
+    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    return false; // failure
+  }
+
+  error = curl_easy_setopt(
+    curl, CURLOPT_POSTFIELDSIZE, postdata.length());
+  if (error != CURLE_OK)
+  {
+    ss << "curl_easy_setopt returned " << error << " setting user data";
+    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    return false; // failure
+  }
+
+  // perform the fetch
+  error = curl_easy_perform(curl);
+  if (error != CURLE_OK)
+  {
     ss << "curl_easy_perform returned " << error;
     Logger::LogMessage(ERROR, "NetFetcher", ss);
     return false; // failure
