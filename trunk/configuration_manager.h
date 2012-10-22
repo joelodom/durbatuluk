@@ -46,6 +46,18 @@ public:
     return true; // success
   }
 
+  static bool GetPostCommandURL(std::string& url)
+  {
+    url = post_command_url_;
+    return true; // success
+  }
+
+  static bool GetMySigningKeyName(std::string& name)
+  {
+    name = my_signing_key_name_;
+    return true; // success
+  }
+
   // The idea is to allow an initial check of the sender, followed
   // by a check of the sender and message type pair.  This double
   // check reduces attack surface.
@@ -60,6 +72,10 @@ private:
   // The map key is the hash of the sender public key.  The map value
   // is the message type allowed.  See the sample configuration file.
   static std::map<std::string, std::string> allowed_messages_;
+
+  // etc.
+  static std::string post_command_url_;
+  static std::string my_signing_key_name_;
 };
 
 #endif // #ifndef CONFIGURATION_MANAGER_H_
