@@ -38,13 +38,13 @@ int final_return_value = EXIT_FAILURE;
 
 void usage()
 {
-  std::cout << std::endl << "Durbatuluk " << MAJOR_VERSION << "."
+  std::cout << std::endl << " = Durbatuluk " << MAJOR_VERSION << "."
     << MINOR_VERSION << "." << MICRO_VERSION << " " << DEVELOPMENT_PHASE
-    << std::endl << std::endl;
+    << " =" << std::endl << std::endl;
 
-  std::cout << "Durbatuluk is Copyright (c) 2012 Joel Odom Marietta, GA"
+  std::cout << "Durbatuluk is Copyright (c) 2012 Joel Odom, Marietta, GA"
     << std::endl;
-  std::cout << "See legal.txt for license details" << std::endl;
+  std::cout << "See LEGAL.txt for license details." << std::endl;
   std::cout << "http://durbatuluk.googlecode.com/" << std::endl;
   std::cout << std::endl;
 
@@ -60,7 +60,7 @@ void usage()
     << std::endl;
   std::cout << "  durbatuluk --process-message "
     "(encoded command read from stdin)" << std::endl;
-  std::cout << "  durbatuluk --process-messages-from-url <url>" << std::endl;
+  std::cout << "  durbatuluk --process-messages-from-url" << std::endl;
   std::cout << "  durbatuluk --reset-sequence-numbers" << std::endl;
 
   std::cout << std::endl;
@@ -385,7 +385,7 @@ bool process_message(int argc, char **argv)
 
 bool process_messages_from_url(int argc, char **argv)
 {
-  if (argc != 3 || strcmp(argv[1], "--process-messages-from-url") != 0)
+  if (argc != 2 || strcmp(argv[1], "--process-messages-from-url") != 0)
     return false; // not handled
 
   // read the recipient encryption key
@@ -423,13 +423,16 @@ bool process_messages_from_url(int argc, char **argv)
 
   // fetch the URL
 
-  std::stringstream ss;
+  std::string url;
+  if (!ConfigurationManager::GetFetchMessageURL(url))
+  {
+    Logger::LogMessage(
+      ERROR, "process_messages_from_url", "GetFetchMessageURL failed");
+    return true; // handled
+  }
+
   std::string url_contents;
-
-  ss << "Attempting to fetch " << argv[2];
-  Logger::LogMessage(DEBUG, "process_messages_from_url", ss);
-
-  if (!NetFetcher::FetchURL(argv[2], url_contents))
+  if (!NetFetcher::FetchURL(url, url_contents))
   {
     Logger::LogMessage(ERROR, "process_messages_from_url", "FetchURL failed");
     RSA_free(rsa);
@@ -438,6 +441,7 @@ bool process_messages_from_url(int argc, char **argv)
 
   // process each command in the URL, one by one
 
+  std::stringstream ss;
   size_t start_tag_pos = url_contents.find("<durbatuluk>");
   int message_num = 0;
   int messages_successfully_processed = 0;
