@@ -46,15 +46,21 @@ public:
     return true; // success
   }
 
-  static bool GetPostCommandURL(std::string& url)
+  static bool GetPostMessageURL(std::string& url)
   {
-    url = post_command_url_;
+    url = post_message_url_;
     return true; // success
   }
 
   static bool GetMySigningKeyName(std::string& name)
   {
     name = my_signing_key_name_;
+    return true; // success
+  }
+
+  static bool GetMyEncryptionKeyName(std::string& name)
+  {
+    name = my_encryption_key_name_;
     return true; // success
   }
 
@@ -73,9 +79,10 @@ private:
   // is the message type allowed.  See the sample configuration file.
   static std::map<std::string, std::string> allowed_messages_;
 
-  // etc.
-  static std::string post_command_url_;
+  // etc...
+  static std::string post_message_url_;
   static std::string my_signing_key_name_;
+  static std::string my_encryption_key_name_;
 };
 
 #endif // #ifndef CONFIGURATION_MANAGER_H_

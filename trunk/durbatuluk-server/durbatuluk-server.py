@@ -24,46 +24,46 @@ import re
 from google.appengine.ext import db
 import datetime
 
-class Command(db.Model):
+class Message(db.Model):
   content = db.TextProperty()
   datetime = db.DateTimeProperty(auto_now_add = True)
 
 class MainPage(webapp2.RequestHandler):
   def get(self):
     self.response.out.write('<html><body><form action="/post" method="post">'
-      '<div><textarea name="command" rows="20" cols="60"></textarea></div>'
-      '<div><input type="submit" value="Add Command"></div>'
+      '<div><textarea name="message" rows="20" cols="60"></textarea></div>'
+      '<div><input type="submit" value="Add Message"></div>'
       '</form></body></html>')
 
-class CommandPost(webapp2.RequestHandler):
+class MessagePost(webapp2.RequestHandler):
   def get(self):
     self.redirect('/')
 
   def post(self):
-    # validate the command
-    content = self.request.get('command')
+    # validate the message
+    content = self.request.get('message')
     if not re.match('<durbatuluk>[A-Za-z0-9=+/]+</durbatuluk>$', content):
-      # refuse this command
+      # refuse this message
       self.error(403)
       return
 
-    # save the command
-    command = Command()
-    command.content = content
-    command.put()
+    # save the message
+    message = Message()
+    message.content = content
+    message.put()
 
-class CommandLog(webapp2.RequestHandler):
+class MessageLog(webapp2.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
 
-    # fetch all commands posted within the last five minutes
-    commands = db.GqlQuery("SELECT * FROM Command WHERE datetime > :cutoff",
+    # fetch all messages posted within the last five minutes
+    messages = db.GqlQuery("SELECT * FROM Message WHERE datetime > :cutoff",
       cutoff = datetime.datetime.now() + datetime.timedelta(minutes = -5))
-    for command in commands:
-      self.response.write(command.content)
+    for message in messages:
+      self.response.write(message.content)
 
 app = webapp2.WSGIApplication([
   ('/', MainPage),
-  ('/log', CommandLog),
-  ('/post', CommandPost),
+  ('/log', MessageLog),
+  ('/post', MessagePost),
   ], debug=True)

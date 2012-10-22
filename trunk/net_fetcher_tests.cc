@@ -30,7 +30,7 @@ TEST(net_fetcher_tests, test_fetch_url)
   EXPECT_TRUE(contents.find("<html>") != contents.npos);
 }
 
-TEST(net_fetcher_tests, test_post_command_to_url)
+TEST(net_fetcher_tests, test_post_message_to_url)
 {
   std::string url("http://durbatuluk-server.appspot.com/post");
 
@@ -39,12 +39,12 @@ TEST(net_fetcher_tests, test_post_command_to_url)
   std::string time_str(ss.str());
 
   // stringstream giving strange results, so use inefficient string handling
-  std::string command("<durbatuluk>joelwashere");
-  command += time_str;
-  command += "/+=</durbatuluk>";
+  std::string message("<durbatuluk>joelwashere");
+  message += time_str;
+  message += "/+=</durbatuluk>";
 
   // post
-  ASSERT_TRUE(NetFetcher::PostCommandToURL(url, command));
+  ASSERT_TRUE(NetFetcher::PostMessageToURL(url, message));
 
   // check log that post went through
   std::string contents;
