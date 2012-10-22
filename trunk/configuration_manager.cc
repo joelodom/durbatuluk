@@ -25,7 +25,7 @@
 #include <fstream>
 
 /*static*/ std::map<std::string, std::string>
-  ConfigurationManager::allowed_messages;
+  ConfigurationManager::allowed_messages_;
 
 /*static*/ bool ConfigurationManager::ReadConfigurationFile(
   std::string& config_file_name)
@@ -45,6 +45,12 @@
       if (line.length() < 17 || line[0] == '#')
         continue;
 
+      if (line.rfind("\r") == line.length() - 1)
+      {
+        // trim DOS-style line endings
+        line = line.substr(0, line.length() - 1);
+      }
+
       if (line.find("allow_message ") == 0)
       {
         size_t second_space = line.rfind(" ");
@@ -58,7 +64,17 @@
         ss << "Type: " << type << " Sender: " << sender;
         Logger::LogMessage(DEBUG, "ConfigurationManager", ss);
 
-        allowed_messages[sender] = type;
+        allowed_messages_[sender] = type;
+      }
+      else if (line.find("logging_severity ") == 0)
+      {
+        std::string severity_str = line.substr(17);
+        if (severity_str == "DEBUG")
+          Logger::SetMinLoggingSeverity(DEBUG);
+        else if (severity_str == "INFO")
+          Logger::SetMinLoggingSeverity(INFO);
+        else
+          Logger::SetMinLoggingSeverity(ERROR);
       }
     }
 
@@ -84,7 +100,7 @@
     return false;
   }
 
-  return allowed_messages.find(hashed) != allowed_messages.end();
+  return allowed_messages_.find(hashed) != allowed_messages_.end();
 }
 
 /*static*/ bool ConfigurationManager::IsSenderAllowedToSendMessageType(
@@ -97,8 +113,8 @@
     return false;
   }
 
-  auto it = allowed_messages.find(hashed);
-  return (it != allowed_messages.end()) && ((*it).second == type);
+  auto it = allowed_messages_.find(hashed);
+  return (it != allowed_messages_.end()) && ((*it).second == type);
 }
 
 /*static*/ bool ConfigurationManager::AllowSender(
@@ -122,7 +138,7 @@
   }
 
   // add it
-  allowed_messages[hashed] = type;
+  allowed_messages_[hashed] = type;
 
   return true;
 }

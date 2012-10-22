@@ -22,8 +22,6 @@
 #ifndef LOGGER_H_
 #define LOGGER_H_
 
-#define MIN_LOGGING_LEVEL ERROR
-
 #include <string>
 #include <sstream>
 
@@ -38,6 +36,14 @@ public:
   // this version empties the stringstream so that it can be reused
   static void LogMessage(LoggerSeverity severity,
     const std::string& component, std::stringstream& message);
+
+  static void SetMinLoggingSeverity(LoggerSeverity severity)
+  {
+    min_logging_severity_ = severity;
+  }
+
+private:
+  static LoggerSeverity min_logging_severity_;
 };
 
 #endif // #ifndef LOGGER_H_

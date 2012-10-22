@@ -22,13 +22,15 @@
 #include "logger.h"
 #include <iostream>
 
+/*static*/ LoggerSeverity Logger::min_logging_severity_ = ERROR;
+
 /*static*/ void Logger::LogMessage(LoggerSeverity severity,
   const std::string& component, const std::string& message)
 {
   // TODO: make stream a static object so that we don't recreate every time,
   // set run-time logging level changes, etc...
 
-  if (severity < MIN_LOGGING_LEVEL)
+  if (severity < min_logging_severity_)
     return;
 
   std::ostream stream(std::cerr.rdbuf());

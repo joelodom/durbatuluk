@@ -59,7 +59,7 @@ public:
 private:
   // The map key is the hash of the sender public key.  The map value
   // is the message type allowed.  See the sample configuration file.
-  static std::map<std::string, std::string> allowed_messages;
+  static std::map<std::string, std::string> allowed_messages_;
 };
 
 #endif // #ifndef CONFIGURATION_MANAGER_H_
