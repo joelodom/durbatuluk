@@ -25,7 +25,7 @@
 #include <string>
 #include <sstream>
 
-enum LoggerSeverity { DEBUG, INFO, ERROR };
+enum LoggerSeverity { DEBUG, INFO, ERROR, NONE };
 
 class Logger
 {
