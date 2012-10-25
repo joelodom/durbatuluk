@@ -46,6 +46,9 @@
     case ERROR:
       stream << "ERROR: ";
       break;
+    case NONE:
+      // this case here to prevent compiler warnings
+      return;
   }
 
   stream << component << ": " << message << std::endl;

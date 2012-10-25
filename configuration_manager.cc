@@ -34,81 +34,83 @@
 /*static*/ bool ConfigurationManager::ReadConfigurationFile(
   std::string& config_file_name)
 {
+  // amateurish parsing algorithm will do for now
+  // need to add error checking and lots more...
+
   std::ifstream config_file;
-  config_file.exceptions(std::ios::failbit); // throw on failure
-
-  try
-  {
     config_file.open(config_file_name, std::ios_base::in);
+  if (config_file.fail())
+  {
+    Logger::LogMessage(ERROR, "ConfigurationManager",
+      "failed to read configuration file");
+    return false;
+  }
 
-    std::string line;
-    while (!config_file.eof() && std::getline(config_file, line))
+  std::string line;
+  while (!config_file.eof())
+  {
+    if (!std::getline(config_file, line))
     {
-      // amateurish parsing algorithm will do for now
-
-      if (line.length() < 17 || line[0] == '#')
-        continue;
-
-      if (line.rfind("\r") == line.length() - 1)
-      {
-        // trim DOS-style line endings
-        line = line.substr(0, line.length() - 1);
-      }
-
-      if (line.find("allow_message ") == 0)
-      {
-        size_t second_space = line.rfind(" ");
-        if (second_space == line.npos)
-          continue;
-
-        std::string type = line.substr(14, second_space - 14);
-        std::string sender = line.substr(second_space + 1);
-
-        std::stringstream ss;
-        ss << "Type: " << type << " Sender: " << sender;
-        Logger::LogMessage(DEBUG, "ConfigurationManager", ss);
-
-        allowed_messages_[sender] = type;
-      }
-      else if (line.find("logging_severity ") == 0)
-      {
-        std::string severity_str = line.substr(17);
-        if (severity_str == "DEBUG")
-          Logger::SetMinLoggingSeverity(DEBUG);
-        else if (severity_str == "INFO")
-          Logger::SetMinLoggingSeverity(INFO);
-        else
-          Logger::SetMinLoggingSeverity(ERROR);
-      }
-      else if (line.find("post_message_url ") == 0)
-      {
-        post_message_url_ = line.substr(17);
-      }
-      else if (line.find("fetch_message_url ") == 0)
-      {
-        fetch_message_url_ = line.substr(18);
-      }
-      else if (line.find("my_signing_key_name ") == 0)
-      {
-        my_signing_key_name_ = line.substr(20);
-      }
-      else if (line.find("my_encryption_key_name ") == 0)
-      {
-        my_encryption_key_name_ = line.substr(23);
-      }
+      // may just be blank line
+      continue;
     }
 
-    config_file.close();
-    return true; // success
-  }
-  catch (const std::exception& ex)
-  {
-    std::stringstream ss;
-    ss << "Failed to read configuration file (" << ex.what() << ").";
-    Logger::LogMessage(ERROR, "ConfigurationManager", ss);
+    if (line.length() < 17 || line[0] == '#')
+      continue;
+
+    if (line.rfind("\r") == line.length() - 1)
+    {
+      // trim DOS line endings
+      line = line.substr(0, line.length() - 1);
+    }
+
+    if (line.find("allow_message ") == 0)
+    {
+      size_t second_space = line.rfind(" ");
+      if (second_space == line.npos)
+        continue;
+
+      std::string type = line.substr(14, second_space - 14);
+      std::string sender = line.substr(second_space + 1);
+
+      std::stringstream ss;
+      ss << "Type: " << type << " Sender: " << sender;
+      Logger::LogMessage(DEBUG, "ConfigurationManager", ss);
+
+      allowed_messages_[sender] = type;
+    }
+    else if (line.find("logging_severity ") == 0)
+    {
+      std::string severity_str = line.substr(17);
+      if (severity_str == "DEBUG")
+        Logger::SetMinLoggingSeverity(DEBUG);
+      else if (severity_str == "INFO")
+        Logger::SetMinLoggingSeverity(INFO);
+      else if (severity_str == "NONE")
+        Logger::SetMinLoggingSeverity(NONE);
+      else
+        Logger::SetMinLoggingSeverity(ERROR);
+    }
+    else if (line.find("post_message_url ") == 0)
+    {
+      post_message_url_ = line.substr(17);
+    }
+    else if (line.find("fetch_message_url ") == 0)
+    {
+      fetch_message_url_ = line.substr(18);
+    }
+    else if (line.find("my_signing_key_name ") == 0)
+    {
+      my_signing_key_name_ = line.substr(20);
+    }
+    else if (line.find("my_encryption_key_name ") == 0)
+    {
+      my_encryption_key_name_ = line.substr(23);
+    }
   }
 
-  return false; // failure
+  config_file.close();
+  return true; // success
 }
 
 /*static*/ bool ConfigurationManager::IsSenderAllowed(const RSAKey& sender)
