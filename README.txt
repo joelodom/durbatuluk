@@ -1,3 +1,3 @@
-Ubuntu libraries required:
+This file will tell folks how to get started.  For now, please refer to
 
-libprotobuf-dev
+https://code.google.com/p/durbatuluk/wiki/GettingStarted
