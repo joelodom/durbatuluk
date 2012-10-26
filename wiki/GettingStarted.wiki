@@ -40,17 +40,57 @@ Usage:
   durbatuluk --reset-sequence-numbers
 }}}
 
-If you get an error message, let me know.  Next, try the suite of self tests using the --tests parameter.  If any of the tests fail, let me know.  (You may see some ERROR messages during the testing process.  This is normal as the testing process tests for proper functioning under certain error conditions.)
+If you get an error message, let me know.  Next, try the suite of self tests using the --tests parameter.  The testing procedure will end with something like this:
 
-Once you have verified that Durbatulûk passes the self-tests, you need to make key files for your system.  In this example, I will be making key files named commander.signing and client.encryption.  When you use the --generate-keyfiles parameter to generate a key pair, you will get two files, one ending in .public and one ending in .private.  You should obviously keep the .private key files private.  The .public key files will be used by other members of the system and need not be kept secret.
+{{{
+[----------] Global test environment tear-down
+[==========] 27 tests from 9 test cases ran. (11914 ms total)
+[  PASSED  ] 27 tests.
+}}}
+
+If Durbatulûk reports failure of any tests, let me know.  (You may see some ERROR messages during the testing process.  This is normal as the testing process tests for proper functioning under certain error conditions, but the end of the test script should report no failures.)
+
+= Configuring a Durbatulûk Client =
+
+Once you have verified that Durbatulûk passes the self-tests, you need to configure your Durbatulûk client.  This is where you could branch away from these instructions to try different configurations.  This guide will explain how to configure Durbatulûk for a single client and a single commander.
+
+== Generating Key Files ==
+
+In this example, I will be making key files named client.signing and client.encryption.  When you use the --generate-keyfiles parameter to generate a key pair, you will get two files, one ending in .public and one ending in .private.  You should obviously keep the .private key files private.  The .public key files will be used by other members of the system and need not be kept secret.
 
 First, generate your signing key pair:
 
-  ./durbatuluk --generate-keyfiles client.signing
+{{{
+./durbatuluk --generate-keyfiles client.signing
+}}}
 
 Next, generate your encryption key pair:
 
-  ./durbatuluk --generate-keyfiles client.encryption
+{{{
+./durbatuluk --generate-keyfiles client.encryption
+}}}
+
+Just to reinforce the point, let's lock down the private key files:
+
+{{{
+chmod 400 *.private
+}}}
+
+In your folder, you should see something like this:
+
+{{{
+-rw-rw-r--  1 ubuntu ubuntu     264 Oct 26 10:50 client.signing.public
+-r--------  1 ubuntu ubuntu    1178 Oct 26 10:50 client.signing.private
+-rw-rw-r--  1 ubuntu ubuntu     264 Oct 26 10:50 client.encryption.public
+-r--------  1 ubuntu ubuntu    1178 Oct 26 10:50 client.encryption.private
+}}}
+
+
+
+
+
+
+= Under Construction =
 
 Now edit your durbatuluk.conf file as appropriate.  Read the instructions in the file for how to configure each line in the file.  To generate the sender public signing key for an allow_message configuration parameter, use
 
