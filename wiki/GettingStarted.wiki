@@ -40,7 +40,7 @@ Usage:
   durbatuluk --reset-sequence-numbers
 }}}
 
-If you get an error message, let me know.  Next, try the suite of self tests using the --tests parameter.  The testing procedure will end with something like this:
+If you get an error message, let me know.  Next, try the suite of self tests using the `--tests` parameter.  The testing procedure will end with something like this:
 
 {{{
 [----------] Global test environment tear-down
@@ -56,7 +56,7 @@ Once you have verified that Durbatulûk passes the self-tests, you need to confi
 
 == Generating Key Files ==
 
-In this example, I will be making key files named commander.signing and commander.encryption.  When you use the --generate-keyfiles parameter to generate a key pair, you will get two files, one ending in .public and one ending in .private.  You should obviously keep the .private key files private.  The .public key files will be used by other members of the system and need not be kept secret.
+In this example, I will be making key files named `commander.signing` and `commander.encryption`.  When you use the `--generate-keyfiles` parameter to generate a key pair, you will get two files, one ending in .public and one ending in .private.  You should obviously keep the .private key files private.  The .public key files will be used by other members of the system and need not be kept secret.
 
 First, generate your signing key pair:
 
@@ -91,7 +91,7 @@ Now we need to extract a digest of the commander's signing key from the public s
 ./durbatuluk --extract-public-key commander.signing
 }}}
 
-The output from this function is a bit ugly because there is purposefully no whitespace in the output written to std::cout.  Here's what it looks like on my system:
+The output from this function is a bit ugly because there is purposefully no whitespace in the output written to `std::cout`.  Here's what it looks like on my system:
 
 {{{
 joelodom@ubuntu:~/Dropbox/InfoSecLab/durbatuluk$ ./durbatuluk --extract-public-key commander.signing
@@ -113,31 +113,30 @@ my_signing_key_name commander.signing
 my_encryption_key_name commander.encryption
 }}}
 
-(The second allow_message parameter should be the digest of your public signing key that we just generated.  Normally we would not include an allowance for ShellExec in a commander's configuration, but we're going to demonstrate Durbatulûk by having our commander send itself commands.)
+The current configuration file parser is overly strict about whitespace, so make sure that you don't put any extra spaces in the lines above.  The second allow_message parameter should be the digest of your public signing key that we just generated.  Normally we would not include an allowance for `ShellExec` in a commander's configuration, but we're going to demonstrate Durbatulûk by having our commander send itself commands.
 
+== Reset Your Sequence Number File ==
 
+The sequence number file is used by Durbatulûk to prevent busybodies from trying to fool with your clients (and commander) by sending replays of old Durbatulûk messages.  Every time you run Durbatulûk tests, your sequence number file is going to get goofed, so you must reset it as follows:
 
+{{{
+./durbatuluk --reset-sequence-numbers
+}}}
 
+Do this now for your commander.
 
+== Sending Yourself a Command via the Command Line ==
 
-= Under Construction =
+Durbatulûk normally processes by posting and fetching from a web server, but we can also do this via the command line.  This section demonstrates how to send yourself a command over the command line.
 
-Now edit your durbatuluk.conf file as appropriate.  Read the instructions in the file for how to configure each line in the file.  To generate the sender public signing key for an allow_message configuration parameter, use
+First, understand that Durbatulûk uses `std::cin` to read the content of commands.  In Linux, we use a pipe to make this happen.
 
-  ./durbatuluk --extract-public-key <public key of message SENDER>
+{{{
+echo "echo Hello, World" | ./durbatuluk --generate-shell-command commander.encryption >hello_world.message
+}}}
 
-This generates a shortened digest of the sender public key that Durbatulûk uses to make sure that a particular sender is allowed to send the message type in the allow_message parameter.  It will end up looking something like this:
+If you type the above, Durbatulûk does the following:
 
-  allow_message ShellExec lXMyZl/M+oW5Nt4kVSIp9i2sMQg=
-
-If your instance of Durbatulûk is meant to be a client, you will need to reset the sequence numbers file so that new commands from the commander will be processed.
-
-  ./durbatuluk --reset-sequence-numbers
-
-Note that if you ever run the self tests again, you will have to reset the sequence number file.
-
-== Sending Yourself a Command ==
-
-For fun, send yourself a command.  To make this work, you will have to extract your signing key from your signing key files and use the output as the parameter for allow_message in your configuration file.  Once that is set up, try this:
-
-  echo "echo hello" | ./dur
+1. Read the command `echo Hello, World` from std::cin.
+1. Generate a Durbatulûk message intended for `commander.encryption`
+1. Write the message to the file `hello_world.message`
