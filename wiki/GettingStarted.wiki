@@ -189,8 +189,49 @@ Processed 1 commands.
 
 = Configuring a Durbatulûk Client =
 
-Sending yourself commands isn't very interesting.  Configuring a client is much like configuring a commander.  Build Durbatulûk as above and generate keys as above, but let's name them `client.signing` and `client.encryption`.  Reuse the same `durbatuluk.conf` file as you use on your commander and remember to reset your sequence number file.
-
 (As of the writing of this page, clients don't actually send responses back to their commander.  This will be added in the near future.  This means that you really don't need a client signing key at the moment.  This also means that you don't need to modify the commander configuration file until the full-circle of command and response is implemented.)
 
-Now, copy your `client.encryption.public` file over to your commander.
+== Setting up Your Client and Your Commander ==
+
+Sending yourself commands isn't very interesting.  Configuring a client is much like configuring a commander:
+
+ 1. Build Durbatulûk as above.
+ 1. Generate keys as above, but name them `client.signing` and `client.encryption`.
+ 1. Reuse the same `durbatuluk.conf` file as you used on your commander, but change the key names.
+ 1. Reset your sequence number file on your client.
+
+At this point, your client is ready to receive messages from your commander.  Copy your `client.encryption.public` file over to your commander and place it in the same folder as your Durbatulûk binary.  This sets up your commander to send commands to your client.
+
+== Sending a Command from Commander to Client ==
+
+Once you have configure your commander and client, you can start sending commands.  On your commander, enter:
+
+{{{
+echo "echo Hello, client" | ./durbatuluk --post-shell-command client.encryption
+}}}
+
+On your client, enter:
+
+{{{
+./durbatuluk --process-messages-from-url
+}}}
+
+If all works as expected, you will see something like this on your client:
+
+{{{
+Hello, client
+
+Processed 1 commands.
+}}}
+
+For kicks, repeat the `--post-shell-command` on your commander three or four times before you run `--process-messages-from-url`.  You should see your client process each of the messages.
+
+= Where Do You go From Here? =
+
+Durbatulûk is coming along, and I expect to have it in a "less techie" state in the future.  For now, you can try the following.
+
+ * Put Durbatulûk as a cron job in your client until I have running as a service implemented.
+ * Have your cron job e-mail you the output of your client, or perhaps configure your client to use Durbatulûk in a sneaky way to send your output back to your commander.
+ * Try setting up two or three clients with the same encryption key.  Notice how they will all process the commander commands as if the commands were written only for them.
+
+Keep in tune with this project page to stay abreast of Durbatulûk development, which will simplify the bullet ideas above and provide additional features.
