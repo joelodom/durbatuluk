@@ -50,24 +50,24 @@ If you get an error message, let me know.  Next, try the suite of self tests usi
 
 If Durbatulûk reports failure of any tests, let me know.  (You may see some ERROR messages during the testing process.  This is normal as the testing process tests for proper functioning under certain error conditions, but the end of the test script should report no failures.)
 
-= Configuring a Durbatulûk Client =
+= Configuring a Durbatulûk Commander =
 
-Once you have verified that Durbatulûk passes the self-tests, you need to configure your Durbatulûk client.  This is where you could branch away from these instructions to try different configurations.  This guide will explain how to configure Durbatulûk for a single client and a single commander.
+Once you have verified that Durbatulûk passes the self-tests, you need to configure your Durbatulûk commander.  (This is where you could branch away from these instructions to try different configurations.  This guide will explain how to configure Durbatulûk for a single client and a single commander.)
 
 == Generating Key Files ==
 
-In this example, I will be making key files named client.signing and client.encryption.  When you use the --generate-keyfiles parameter to generate a key pair, you will get two files, one ending in .public and one ending in .private.  You should obviously keep the .private key files private.  The .public key files will be used by other members of the system and need not be kept secret.
+In this example, I will be making key files named commander.signing and commander.encryption.  When you use the --generate-keyfiles parameter to generate a key pair, you will get two files, one ending in .public and one ending in .private.  You should obviously keep the .private key files private.  The .public key files will be used by other members of the system and need not be kept secret.
 
 First, generate your signing key pair:
 
 {{{
-./durbatuluk --generate-keyfiles client.signing
+./durbatuluk --generate-keyfiles commander.signing
 }}}
 
 Next, generate your encryption key pair:
 
 {{{
-./durbatuluk --generate-keyfiles client.encryption
+./durbatuluk --generate-keyfiles commander.encryption
 }}}
 
 Just to reinforce the point, let's lock down the private key files:
@@ -79,11 +79,41 @@ chmod 400 *.private
 In your folder, you should see something like this:
 
 {{{
--rw-rw-r--  1 ubuntu ubuntu     264 Oct 26 10:50 client.signing.public
--r--------  1 ubuntu ubuntu    1178 Oct 26 10:50 client.signing.private
--rw-rw-r--  1 ubuntu ubuntu     264 Oct 26 10:50 client.encryption.public
--r--------  1 ubuntu ubuntu    1178 Oct 26 10:50 client.encryption.private
+-rw-rw-r--  1 joelodom joelodom    264 Oct 26 07:03 commander.signing.public
+-r--------  1 joelodom joelodom   1178 Oct 26 07:03 commander.signing.private
+-rw-rw-r--  1 joelodom joelodom    264 Oct 26 07:04 commander.encryption.public
+-r--------  1 joelodom joelodom   1176 Oct 26 07:04 commander.encryption.private
 }}}
+
+Now we need to extract a digest of the commander's signing key from the public signing key.  Use this command:
+
+{{{
+./durbatuluk --extract-public-key commander.signing
+}}}
+
+The output from this function is a bit ugly because there is purposefully no whitespace in the output written to std::cout.  Here's what it looks like on my system:
+
+{{{
+joelodom@ubuntu:~/Dropbox/InfoSecLab/durbatuluk$ ./durbatuluk --extract-public-key commander.signing
+Pa/YE5f3zefx1KunIEhtVPlNZ00=joelodom@ubuntu:~/Dropbox/InfoSecLab/durbatuluk$
+}}}
+
+The part that matters is the hash that, for my commander, came out to `Pa/YE5f3zefx1KunIEhtVPlNZ00=`.  These 28 byte, which will be used in the configuration files of your clients, must be copied _exactly_ as you see them, with no spaces.
+
+== Editing the Commander Configuration File ==
+
+Edit your commander configuration file so that it has lines in it that look something like this:
+
+{{{
+allow_message ShellExec Pa/YE5f3zefx1KunIEhtVPlNZ00=
+logging_severity ERROR
+post_message_url http://durbatuluk-server.appspot.com/post
+fetch_message_url http://durbatuluk-server.appspot.com/fetch
+my_signing_key_name commander.signing
+my_encryption_key_name commander.encryption
+}}}
+
+(The second allow_message parameter should be the digest of your public signing key that we just generated.  Normally we would not include an allowance for ShellExec in a commander's configuration, but we're going to demonstrate Durbatulûk by having our commander send itself commands.)
 
 
 
