@@ -1,0 +1,73 @@
+#summary Getting Started with Durbatulûk
+
+= Introduction =
+
+Durbatulûk is currently in a development phase.  This means that you are welcome to experiment with it -- and it does function now at a very basic level -- but you'll have to know how to build a binary from source code and how to deal with a Linux shell terminal to use it from the command line.
+
+Be on the lookout for packaged installers for Linux and Windows, but Durbatulûk needs some more development spit-and-polish before I feel ready to post a downloadable installer.
+
+= Building Durbatulûk =
+
+The current version of Durbatulûk under development on Ubuntu Linux with portability a primary consideration in the research and development process.  In theory you should be able to build the software on a number of different systems, but this document assumes that you are using Ubuntu.
+
+First, install the prerequisite Ubuntu libraries using your package manager:
+
+ * libprotobuf-dev
+ * libssl-dev
+ * libcurl4-openssl-dev
+
+After installing the above libraries, speak make and enter.
+
+= Testing Durbatulûk Basic Functionality =
+
+After you have a Durbatulûk binary, run the binary with no parameters.  You should get a usage message that looks something like this:
+
+{{{
+ = Durbatuluk 0.0.0 Pre-Alpha =
+
+Durbatuluk is Copyright (c) 2012 Joel Odom, Marietta, GA
+See LEGAL.txt for license details.
+http://durbatuluk.googlecode.com/
+
+Usage:
+  durbatuluk --tests (running this will reset sequence file)
+  durbatuluk --generate-keyfiles <key_name>
+  durbatuluk --extract-public-key <key_name>
+  durbatuluk --generate-shell-command <recipient_encryption_key> (command text read from stdin)
+  durbatuluk --post-shell-command <recipient_encryption_key> (command text read from stdin)
+  durbatuluk --process-message (encoded command read from stdin)
+  durbatuluk --process-messages-from-url
+  durbatuluk --reset-sequence-numbers
+}}}
+
+If you get an error message, let me know.  Next, try the suite of self tests using the --tests parameter.  If any of the tests fail, let me know.  (You may see some ERROR messages during the testing process.  This is normal as the testing process tests for proper functioning under certain error conditions.)
+
+Once you have verified that Durbatulûk passes the self-tests, you need to make key files for your system.  In this example, I will be making key files named commander.signing and client.encryption.  When you use the --generate-keyfiles parameter to generate a key pair, you will get two files, one ending in .public and one ending in .private.  You should obviously keep the .private key files private.  The .public key files will be used by other members of the system and need not be kept secret.
+
+First, generate your signing key pair:
+
+  ./durbatuluk --generate-keyfiles client.signing
+
+Next, generate your encryption key pair:
+
+  ./durbatuluk --generate-keyfiles client.encryption
+
+Now edit your durbatuluk.conf file as appropriate.  Read the instructions in the file for how to configure each line in the file.  To generate the sender public signing key for an allow_message configuration parameter, use
+
+  ./durbatuluk --extract-public-key <public key of message SENDER>
+
+This generates a shortened digest of the sender public key that Durbatulûk uses to make sure that a particular sender is allowed to send the message type in the allow_message parameter.  It will end up looking something like this:
+
+  allow_message ShellExec lXMyZl/M+oW5Nt4kVSIp9i2sMQg=
+
+If your instance of Durbatulûk is meant to be a client, you will need to reset the sequence numbers file so that new commands from the commander will be processed.
+
+  ./durbatuluk --reset-sequence-numbers
+
+Note that if you ever run the self tests again, you will have to reset the sequence number file.
+
+== Sending Yourself a Command ==
+
+For fun, send yourself a command.  To make this work, you will have to extract your signing key from your signing key files and use the output as the parameter for allow_message in your configuration file.  Once that is set up, try this:
+
+  echo "echo hello" | ./dur
