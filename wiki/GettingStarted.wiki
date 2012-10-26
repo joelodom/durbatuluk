@@ -4,7 +4,7 @@
 
 Durbatulûk is currently in a development phase.  This means that you are welcome to experiment with it -- and it does function now at a very basic level -- but you'll have to know how to build a binary from source code and how to deal with a Linux shell terminal to use it from the command line.
 
-The following instructions are pretty techie, and are really meant to be a tutorial on how Durbatulûk works.  Be on the lookout for packaged installers for Linux and Windows with more user-friendly interfaces.  Durbatulûk needs some more development spit-and-polish before I feel ready to post a downloadable installer.
+The following instructions are pretty techie, and are really meant to be a tutorial on how Durbatulûk works.  Be on the lookout for packaged installers for Linux and Windows with more user-friendly interfaces.  Durbatulûk needs some more development spit-and-polish before I feel ready to post a downloadable installer.  For now, use the "Source" link above to fetch the trunk via SVN.
 
 = Building Durbatulûk =
 
@@ -12,9 +12,9 @@ The current version of Durbatulûk under development on Ubuntu Linux with portab
 
 First, install the prerequisite Ubuntu libraries using your package manager:
 
- * libprotobuf-dev
- * libssl-dev
- * libcurl4-openssl-dev
+ * `libprotobuf-dev`
+ * `libssl-dev`
+ * `libcurl4-openssl-dev`
 
 After installing the above libraries, speak make and enter.
 
