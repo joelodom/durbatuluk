@@ -113,7 +113,7 @@ my_signing_key_name commander.signing
 my_encryption_key_name commander.encryption
 }}}
 
-The current configuration file parser is overly strict about whitespace, so make sure that you don't put any extra spaces in the lines above.  The second allow_message parameter should be the digest of your public signing key that we just generated.  Normally we would not include an allowance for `ShellExec` in a commander's configuration, but we're going to demonstrate Durbatulûk by having our commander send itself commands.
+The current configuration file parser is overly strict about whitespace, so make sure that you don't put any extra spaces in the lines above.  The second `allow_message` parameter should be the digest of your public signing key that we just generated.  Normally we would not include an allowance for `ShellExec` in a commander's configuration, but we're going to demonstrate Durbatulûk by having our commander send itself commands.
 
 == Reset Your Sequence Number File ==
 
@@ -127,7 +127,7 @@ Do this now for your commander.
 
 == Sending Yourself a Command via the Command Line ==
 
-Durbatulûk normally processes by posting and fetching from a web server, but we can also do this via the command line.  This section demonstrates how to send yourself a command over the command line.
+Durbatulûk normally processes by posting and fetching from a web server, but we can also do this using the command line.  This section demonstrates how to send yourself a command over the command line.
 
 First, understand that Durbatulûk uses `std::cin` to read the content of commands.  In Linux, we use a pipe to make this happen.
 
@@ -151,7 +151,7 @@ cat hello_world.message | ./durbatuluk --process-message
 
 If all goes as expected, you will see "Hello, world" echoed to your screen.
 
-(Just for kicks, try processing the same command again.  You should get some errors indicating that there is a sequence number problem.  This is expected as it is part of the replay prevention.)
+(Just for kicks, try processing the same command again.  You should get some errors indicating that there is a sequence number problem.  This is expected as it is part of the replay prevention feature.)
 
 Since the Durbatulûk `--generate-shell-command` and `--process-message` commands both use stdio, you can chain your commands as follows (though it does't seem very useful).
 
@@ -161,7 +161,7 @@ echo "echo Hello, World" | ./durbatuluk --generate-shell-command commander.encry
 
 == Sending Yourself a Command via a Server ==
 
-Normally you will want to use a server to send messages between commanders and clients.  For Durbatulûk testing and demonstration purposes, I have established a lightweight server at http://durbatuluk-server.appspot.com/.  If you visit that link you will see a text area where you can paste a Durbatulûk message.  For five minutes after posting the message, the message will persist at http://durbatuluk-server.appspot.com/fetch.
+Normally you will want to use a server to send messages between commanders and clients.  For Durbatulûk testing and demonstration purposes, I have established a lightweight server at http://durbatuluk-server.appspot.com/.  If you visit that link you will see a text area where you can manually paste a Durbatulûk message.  For five minutes after posting the message, the message will persist at http://durbatuluk-server.appspot.com/fetch.
 
 For kicks, enter `<durbatuluk>foo</durbatuluk>` in the text area and then view it on the fetch link (the server is very picky about what you type, so don't include any whitespace).  This message is completely invalid, but it demonstrates what the server does.
 
@@ -173,13 +173,13 @@ echo "echo Hello, World" | ./durbatuluk --post-shell-command commander.encryptio
 
 If all goes well, your message will appear on the fetch link above (take a look!) for about five minutes.  You must process the message within that time window, or it will disappear.
 
-To process the message, use:
+To process the message enter:
 
 {{{
 ./durbatuluk --process-messages-from-url
 }}}
 
-You may see some error messages that go along with this command.  These just indicate that Durbatulûk is skipping commands that it can't process such as your "foo" command above or commands intended for other clients.  You have success if you see "Hello, World" echoed to your terminal along with a message in very poor grammar.  It looks something like this:
+You may see some error messages that go along with this command.  These just indicate that Durbatulûk is skipping commands that it can't process such as your "foo" command above or commands intended for other clients.  You have success if you see "Hello, World" echoed to your terminal along with a message saying how many commands were processed.  It looks something like this:
 
 {{{
 Hello, World
@@ -189,11 +189,11 @@ Processed 1 commands.
 
 = Configuring a Durbatulûk Client =
 
-(As of the writing of this page, clients don't actually send responses back to their commander.  This will be added in the near future.  This means that you really don't need a client signing key at the moment.  This also means that you don't need to modify the commander configuration file until the full-circle of command and response is implemented.)
+(As of the writing of this page, clients don't actually send responses back to their commander.  This will be added in the near future.  This means that you really don't need a client signing key at the moment.  This also means that you don't need to modify the commander configuration file until the full circle of command and response is implemented.)
 
 == Setting up Your Client and Your Commander ==
 
-Sending yourself commands isn't very interesting.  Configuring a client is much like configuring a commander:
+Sending yourself commands isn't very interesting.  Configuring a client is much like configuring a commander.  On your client, do the following:
 
  1. Build Durbatulûk as above.
  1. Generate keys as above, but name them `client.signing` and `client.encryption`.
@@ -204,7 +204,7 @@ At this point, your client is ready to receive messages from your commander.  Co
 
 == Sending a Command from Commander to Client ==
 
-Once you have configure your commander and client, you can start sending commands.  On your commander, enter:
+Once you have configured your commander and your client, you can start sending commands.  On your commander, enter:
 
 {{{
 echo "echo Hello, client" | ./durbatuluk --post-shell-command client.encryption
@@ -224,14 +224,14 @@ Hello, client
 Processed 1 commands.
 }}}
 
-For kicks, repeat the `--post-shell-command` on your commander three or four times before you run `--process-messages-from-url`.  You should see your client process each of the messages.
+For kicks, repeat the `--post-shell-command` on your commander three or four times before you run `--process-messages-from-url`.  You should see your client process each of the messages in turn.
 
 = Where Do You go From Here? =
 
 Durbatulûk is coming along, and I expect to have it in a "less techie" state in the future.  For now, you can try the following.
 
  * Put Durbatulûk as a cron job in your client until I have running as a service implemented.
- * Have your cron job e-mail you the output of your client, or perhaps configure your client to use Durbatulûk in a sneaky way to send your output back to your commander.
+ * Have your cron job e-mail you the output of your client, or perhaps hack your client to use Durbatulûk in a sneaky way to send your output back to your commander as a command to the commander.
  * Try setting up two or three clients with the same encryption key.  Notice how they will all process the commander commands as if the commands were written only for them.
 
-Keep in tune with this project page to stay abreast of Durbatulûk development, which will simplify the bullet ideas above and provide additional features.
+Keep in tune with this project page to stay abreast of Durbatulûk development, which will simplify the bullet ideas above and provide additional features.  If you want to contact me, you will find information at CustomizingDurbatuluk.
