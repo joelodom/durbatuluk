@@ -4,7 +4,7 @@
 
 Durbatulûk is currently in a development phase.  This means that you are welcome to experiment with it -- and it does function now at a very basic level -- but you'll have to know how to build a binary from source code and how to deal with a Linux shell terminal to use it from the command line.
 
-Be on the lookout for packaged installers for Linux and Windows, but Durbatulûk needs some more development spit-and-polish before I feel ready to post a downloadable installer.
+The following instructions are pretty techie, and are really meant to be a tutorial on how Durbatulûk works.  Be on the lookout for packaged installers for Linux and Windows with more user-friendly interfaces.  Durbatulûk needs some more development spit-and-polish before I feel ready to post a downloadable installer.
 
 = Building Durbatulûk =
 
@@ -137,6 +137,26 @@ echo "echo Hello, World" | ./durbatuluk --generate-shell-command commander.encry
 
 If you type the above, Durbatulûk does the following:
 
-1. Read the command `echo Hello, World` from std::cin.
-1. Generate a Durbatulûk message intended for `commander.encryption`
-1. Write the message to the file `hello_world.message`
+ 1. Reads the command `echo Hello, World` from `std::cin`.
+ 1. Generates a Durbatulûk message intended for `commander.encryption`
+ 1. Writes the message to the file `hello_world.message`
+
+Take a peek at the message format by typing `cat hellow_world.message`.  This gibberish is your original command with encapsulation, encryption, signing and encoding.
+
+Now, let's process your command.  Again, Durbatulûk uses `std::cin` for receiving the command, so we will use `cat` to pipe the message to Durbatulûk.
+
+{{{
+cat hello_world.message | ./durbatuluk --process-message
+}}}
+
+If all goes as expected, you will see "Hello, world" echoed to your screen.
+
+(Just for kicks, try processing the same command again.  You should get some errors indicating that there is a sequence number problem.  This is expected as it is part of the replay prevention.)
+
+Since the Durbatulûk `--generate-shell-command` and `--process-message` commands both use stdio, you can chain your commands as follows (though it does't seem very useful).
+
+{{{
+echo "echo Hello, World" | ./durbatuluk --generate-shell-command commander.encryption | ./durbatuluk --process-message
+}}}
+
+== Sending Yourself a Command via a Server ==
