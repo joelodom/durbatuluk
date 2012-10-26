@@ -102,7 +102,7 @@ The part that matters is the hash that, for my commander, came out to `Pa/YE5f3z
 
 == Editing the Commander Configuration File ==
 
-Edit your commander configuration file so that it has lines in it that look something like this:
+Edit your `durbatuluk.conf` file so that it has lines in it that look something like this:
 
 {{{
 allow_message ShellExec Pa/YE5f3zefx1KunIEhtVPlNZ00=
@@ -164,3 +164,33 @@ echo "echo Hello, World" | ./durbatuluk --generate-shell-command commander.encry
 Normally you will want to use a server to send messages between commanders and clients.  For Durbatulûk testing and demonstration purposes, I have established a lightweight server at http://durbatuluk-server.appspot.com/.  If you visit that link you will see a text area where you can paste a Durbatulûk message.  For five minutes after posting the message, the message will persist at http://durbatuluk-server.appspot.com/fetch.
 
 For kicks, enter `<durbatuluk>foo</durbatuluk>` in the text area and then view it on the fetch link (the server is very picky about what you type, so don't include any whitespace).  This message is completely invalid, but it demonstrates what the server does.
+
+Let's send our "Hello, World" message from our commander back to itself via the server.  Enter the following:
+
+{{{
+echo "echo Hello, World" | ./durbatuluk --post-shell-command commander.encryption
+}}}
+
+If all goes well, your message will appear on the fetch link above (take a look!) for about five minutes.  You must process the message within that time window, or it will disappear.
+
+To process the message, use:
+
+{{{
+./durbatuluk --process-messages-from-url
+}}}
+
+You may see some error messages that go along with this command.  These just indicate that Durbatulûk is skipping commands that it can't process such as your "foo" command above or commands intended for other clients.  You have success if you see "Hello, World" echoed to your terminal along with a message in very poor grammar.  It looks something like this:
+
+{{{
+Hello, World
+
+Processed 1 commands.
+}}}
+
+= Configuring a Durbatulûk Client =
+
+Sending yourself commands isn't very interesting.  Configuring a client is much like configuring a commander.  Build Durbatulûk as above and generate keys as above, but let's name them `client.signing` and `client.encryption`.  Reuse the same `durbatuluk.conf` file as you use on your commander and remember to reset your sequence number file.
+
+(As of the writing of this page, clients don't actually send responses back to their commander.  This will be added in the near future.  This means that you really don't need a client signing key at the moment.  This also means that you don't need to modify the commander configuration file until the full-circle of command and response is implemented.)
+
+Now, copy your `client.encryption.public` file over to your commander.
