@@ -16,7 +16,7 @@ First, install the prerequisite Ubuntu libraries using your package manager:
  * `libssl-dev`
  * `libcurl4-openssl-dev`
 
-After installing the above libraries, speak make and enter.
+After installing the above libraries, speak `make` and enter.
 
 = Testing Durbatulûk Basic Functionality =
 
