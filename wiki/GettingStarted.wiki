@@ -160,3 +160,7 @@ echo "echo Hello, World" | ./durbatuluk --generate-shell-command commander.encry
 }}}
 
 == Sending Yourself a Command via a Server ==
+
+Normally you will want to use a server to send messages between commanders and clients.  For Durbatulûk testing and demonstration purposes, I have established a lightweight server at http://durbatuluk-server.appspot.com/.  If you visit that link you will see a text area where you can paste a Durbatulûk message.  For five minutes after posting the message, the message will persist at http://durbatuluk-server.appspot.com/fetch.
+
+For kicks, enter `<durbatuluk>foo</durbatuluk>` in the text area and then view it on the fetch link (the server is very picky about what you type, so don't include any whitespace).  This message is completely invalid, but it demonstrates what the server does.
