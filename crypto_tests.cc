@@ -24,11 +24,34 @@
 #include "openssl_aes.h"
 #include <openssl/engine.h>
 
+TEST(crypto_test, test_rsa_f4)
+{
+  EXPECT_EQ(RSA_F4, 65537);
+}
+
+TEST(crypto_tests, test_rsa_check_key)
+{
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
+  ASSERT_TRUE(rsa != nullptr);
+
+  EXPECT_EQ(RSA_check_key(rsa), 1);
+
+  // flip a bit
+  if (BN_is_bit_set(rsa->n, 3))
+    BN_clear_bit(rsa->n, 3);
+  else
+    BN_set_bit(rsa->n, 3);
+
+  EXPECT_EQ(RSA_check_key(rsa), 0);
+
+  RSA_free(rsa);
+}
+
 TEST(crypto_tests, test_digital_signature_good)
 {
   int i; // for checking return values
 
-  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa != nullptr);
 
   i = RSA_check_key(rsa);
@@ -56,7 +79,7 @@ TEST(crypto_tests, test_digital_signature_bad)
 {
   int i; // for checking return values
 
-  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa != nullptr);
 
   i = RSA_check_key(rsa);
@@ -86,7 +109,7 @@ TEST(crypto_tests, test_encrypt_decrypt_session_key)
 {
   int i; // for checking return values
 
-  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa != nullptr);
 
   i = RSA_check_key(rsa);
@@ -118,7 +141,7 @@ TEST(crypto_tests, test_encrypt_decrypt_session_key)
 
 TEST(crypto_tests, test_bignum_conversion)
 {
-  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa != nullptr);
 
   int len = BN_num_bytes(rsa->n);
@@ -189,7 +212,7 @@ TEST(crypto_tests, test_aes_sample) // thanks Saju Pillai
 TEST(crypto_tests, test_extract_import_public_rsa_key)
 {
   // generate a key
-  RSA* rsa_before = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  RSA* rsa_before = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa_before != nullptr);
 
   // extract the public key
@@ -218,7 +241,7 @@ TEST(crypto_tests, test_extract_import_public_rsa_key)
 TEST(crypto_tests, test_extract_import_private_rsa_key)
 {
   // generate a key
-  RSA* rsa_before = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  RSA* rsa_before = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa_before != nullptr);
 
   // extract the private key
@@ -263,7 +286,7 @@ TEST(crypto_tests, test_create_and_verify_signed_message)
   std::string contents("Arbitrary message contents...");
 
   // generate a key
-  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa != nullptr);
 
   // generate a SignedMessage and throw away the key
@@ -281,7 +304,7 @@ TEST(crypto_tests, test_encrypt_and_decrypt_encrypted_message)
   std::string message("Arbitrary message to encrypt...");
 
   // generate recipient key
-  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa != nullptr);
   RSAKey public_key;
   ASSERT_TRUE(Crypto::ExtractPublicRSAKey(rsa, public_key));

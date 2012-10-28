@@ -50,5 +50,6 @@ TEST(net_fetcher_tests, test_post_message_to_url)
   std::string contents;
   ASSERT_TRUE(NetFetcher::FetchURL("http://durbatuluk-server.appspot.com/fetch",
     contents));
-  EXPECT_TRUE(contents.find(time_str) != contents.npos);
+  EXPECT_TRUE(contents.find(time_str) != contents.npos)
+    << "This can possibly fail if the server is too slow...";
 }

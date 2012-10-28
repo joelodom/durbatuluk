@@ -99,10 +99,18 @@ bool generate_keyfiles(int argc, char **argv)
   }
 
   // generate an RSA key
-  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   if (rsa == nullptr)
   {
     Logger::LogMessage(ERROR, "generate_keyfiles", "RSA_generate_key failed");
+    return true; // handled
+  }
+
+  if (RSA_check_key(rsa) != 1)
+  {
+    Logger::LogMessage(ERROR, "generate_keyfiles",
+      "RSA_check_key indicated problem");
     return true; // handled
   }
 

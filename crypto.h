@@ -26,7 +26,6 @@
 #include <openssl/rsa.h>
 
 #define RSA_BITS 2048
-#define RSA_G 65537
 #define SESSION_KEY_LEN 32
 
 class Crypto
