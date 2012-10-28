@@ -1,0 +1,17 @@
+#summary Prophetic utterances of the past, present, and future...
+
+= Version Scheme =
+
+Generally speaking, _major version numbers_ indicate major milestones.  For example, version 1.0 will indicated that all of the most critically parts of Durbatulûk are complete and stable.
+
+_Minor version numbers_ indicate the introduction of new features, but may not be different enough from the previous release to warrant major version number changes.  Minor versions will generally be compatible within the same major version number.
+
+_Micro version numbers_ indicate maintenance releases.
+
+Some versions of Durbatulûk may indicate a development phase.  _Pre-alpha_ generally indicates that the version is not feature complete.  _Alpha_ means that the version is feature complete, but significant problems may exist.  _Beta_ means that the version is feature complete and is ready for rigorous testing.  _Final_ means that the version has been tested rigorously and is ready for deployment.
+
+= The Spirit of Durbatulûk Past =
+
+= The Spirit of Durbatulûk Present =
+
+= The Spirit of Durbatulûk Future =
