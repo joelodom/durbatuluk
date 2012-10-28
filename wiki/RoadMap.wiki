@@ -50,6 +50,7 @@ Durbatulûk planned features for the foreseeable future are listed below.  This 
 == 0.4 ==
 
  * Ability to establish interactive sessions
+ * Possible switch to OpenSSL .pem certificates
 
 == 1.0 ==
 
