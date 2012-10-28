@@ -85,46 +85,40 @@
   if (rsa->e == nullptr)
     return false; // failure
 
-  if (rsa_key.has_d())
+  if (rsa_key.has_d() && rsa_key.has_p() && rsa_key.has_q()
+    && rsa_key.has_dmp1() && rsa_key.has_dmq1() && rsa_key.has_iqmp())
   {
+    // private keys are currently all or nothing
+
     ExtractBIGNUM(rsa_key.d(), &rsa->d);
     if (rsa->d == nullptr)
       return false; // failure
-  }
 
-  if (rsa_key.has_p())
-  {
     ExtractBIGNUM(rsa_key.p(), &rsa->p);
     if (rsa->p == nullptr)
       return false; // failure
-  }
 
-  if (rsa_key.has_q())
-  {
     ExtractBIGNUM(rsa_key.q(), &rsa->q);
     if (rsa->q == nullptr)
       return false; // failure
-  }
 
-  if (rsa_key.has_dmp1())
-  {
     ExtractBIGNUM(rsa_key.dmp1(), &rsa->dmp1);
     if (rsa->dmp1 == nullptr)
       return false; // failure
-  }
 
-  if (rsa_key.has_dmq1())
-  {
     ExtractBIGNUM(rsa_key.dmq1(), &rsa->dmq1);
     if (rsa->dmq1 == nullptr)
       return false; // failure
-  }
 
-  if (rsa_key.has_iqmp())
-  {
     ExtractBIGNUM(rsa_key.iqmp(), &rsa->iqmp);
     if (rsa->iqmp == nullptr)
       return false; // failure
+
+    if (RSA_check_key(rsa) != 1)
+    {
+      Logger::LogMessage(ERROR, "Crypto", "RSA_check_key indicated problem");
+      return false; // failure
+    }
   }
 
   return true; // success
