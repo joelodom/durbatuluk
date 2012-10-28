@@ -34,12 +34,12 @@ TEST(processing_engine_tests, test_full_circle_of_string_message)
 
   // generate sender key
   RSA* rsa_sender_signing
-    = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+    = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa_sender_signing != nullptr);
 
   // generate recipient key
   RSA* rsa_recipient_encryption
-    = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+    = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa_recipient_encryption != nullptr);
   RSAKey rsa_recipient_encryption_public_key;
   ASSERT_TRUE(Crypto::ExtractPublicRSAKey(
@@ -87,7 +87,7 @@ TEST(processing_engine_tests, test_full_circle_of_shell_command)
 {
   // generate sender key
   RSA* rsa_sender_signing
-    = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+    = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa_sender_signing != nullptr);
 
   // add sender to allowed senders
@@ -96,7 +96,7 @@ TEST(processing_engine_tests, test_full_circle_of_shell_command)
 
   // generate recipient key
   RSA* rsa_recipient_encryption
-    = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+    = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa_recipient_encryption != nullptr);
   RSAKey rsa_recipient_encryption_public_key;
   ASSERT_TRUE(Crypto::ExtractPublicRSAKey(

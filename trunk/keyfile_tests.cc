@@ -26,7 +26,7 @@
 TEST(keyfile_tests, test_keyfiles)
 {
   // generate an RSA key
-  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_G, nullptr, nullptr);
+  RSA* rsa = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa != nullptr);
 
   // generate the key files
