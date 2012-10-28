@@ -228,7 +228,7 @@ For kicks, repeat the `--post-shell-command` on your commander three or four tim
 
 = What Now? =
 
-Durbatulûk is coming along, and I expect to have it in a "less techie" state in the future.  For now, you can try the following.
+Durbatulûk is coming along, and I expect to have it in a "less techie" state in the future.  See the RoadMap. For now, you can try the following.
 
  * Put Durbatulûk as a cron job in your client until I have running as a service implemented.
  * Have your cron job e-mail you the output of your client, or perhaps hack your client to use Durbatulûk in a sneaky way to send your output back to your commander as a command to the commander.
