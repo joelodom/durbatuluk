@@ -1,4 +1,4 @@
-#summary Getting Started with Durbatulûk
+#summary How to start experimenting with Durbatulûk
 
 = Introduction =
 
@@ -226,7 +226,7 @@ Processed 1 commands.
 
 For kicks, repeat the `--post-shell-command` on your commander three or four times before you run `--process-messages-from-url`.  You should see your client process each of the messages in turn.
 
-= Where Do You go From Here? =
+= What Now? =
 
 Durbatulûk is coming along, and I expect to have it in a "less techie" state in the future.  For now, you can try the following.
 
