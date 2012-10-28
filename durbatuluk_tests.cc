@@ -24,6 +24,8 @@
 #include "message_handler.h"
 #include "encoding.h"
 #include "sequence_manager.h"
+#include "configuration_manager.h"
+#include "utils.h"
 
 TEST(durbatuluk_tests, test_gtest)
 {
@@ -59,4 +61,60 @@ TEST(durbatuluk_tests, test_command_from_encoded)
   // check the result
   EXPECT_STREQ(output.type().c_str(), MESSAGE_TYPE_SHELL_EXEC_OUTPUT);
   EXPECT_EQ(output.contents().find("durbatuluk"), (size_t)0);
+}
+
+TEST(durbatuluk_tests, test_usage)
+{
+  std::stringstream ss;
+  usage(ss);
+  EXPECT_GT(ss.str().length(), (size_t)200);
+}
+
+TEST(durbatuluk_tests, test_command_line_processing)
+{
+  std::stringstream ss; // used for key name then as fake for std::cout
+
+  // generate key name
+  ss << time(nullptr);
+  std::string key_name("test_");
+  key_name += ss.str();
+
+  // set a test configuration file name
+
+  std::string conf_file_name("test_");
+  conf_file_name += ss.str();
+  conf_file_name += ".conf";
+  ASSERT_TRUE(ConfigurationManager::SetConfigurationFileName(conf_file_name));
+
+  std::string safety_check;
+  ASSERT_TRUE(ConfigurationManager::GetConfigurationFileName(safety_check));
+  ASSERT_STREQ(conf_file_name.c_str(), safety_check.c_str());
+
+  // generate the keyfiles
+
+  const char* argv0 = "./durbatuluk";
+  const char* argv1 = "--generate-keyfiles";
+
+  const int ARGC = 3;
+  const char* argv[ARGC];
+  argv[0] = argv0;
+  argv[1] = argv1;
+  argv[2] = key_name.c_str();
+
+  ASSERT_TRUE(generate_keyfiles(ARGC, (char**)argv, ss));
+
+  // extract the public key
+
+  // TODO: under construction
+
+  // write the test configuration file
+
+  ASSERT_TRUE(Utils::WriteToFile(
+    conf_file_name, std::string("under construction")));
+
+  // remove the test files
+
+  EXPECT_TRUE(remove((key_name + ".public").c_str()) == 0);
+  EXPECT_TRUE(remove((key_name + ".private").c_str()) == 0);
+  EXPECT_TRUE(remove(conf_file_name.c_str()) == 0);
 }

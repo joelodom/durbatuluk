@@ -36,34 +36,34 @@
 // leave as EXIT_FAILURE until handler function is sure of success
 int final_return_value = EXIT_FAILURE;
 
-void usage()
+void usage(std::ostream& outstream)
 {
-  std::cout << std::endl << " = Durbatuluk " << MAJOR_VERSION << "."
+  outstream << std::endl << " = Durbatuluk " << MAJOR_VERSION << "."
     << MINOR_VERSION << "." << MICRO_VERSION << " " << DEVELOPMENT_PHASE
     << " =" << std::endl << std::endl;
 
-  std::cout << "Durbatuluk is Copyright (c) 2012 Joel Odom, Marietta, GA"
+  outstream << "Durbatuluk is Copyright (c) 2012 Joel Odom, Marietta, GA"
     << std::endl;
-  std::cout << "See LEGAL.txt for license details." << std::endl;
-  std::cout << "http://durbatuluk.googlecode.com/" << std::endl;
-  std::cout << std::endl;
+  outstream << "See LEGAL.txt for license details." << std::endl;
+  outstream << "http://durbatuluk.googlecode.com/" << std::endl;
+  outstream << std::endl;
 
-  std::cout << "Usage:" << std::endl;
-  std::cout << "  durbatuluk --tests (running this will reset sequence file)"
+  outstream << "Usage:" << std::endl;
+  outstream << "  durbatuluk --tests (running this will reset sequence file)"
     << std::endl;
-  std::cout << "  durbatuluk --generate-keyfiles <key_name>" << std::endl;
-  std::cout << "  durbatuluk --extract-public-key <key_name>" << std::endl;
-  std::cout << "  durbatuluk --generate-shell-command "
+  outstream << "  durbatuluk --generate-keyfiles <key_name>" << std::endl;
+  outstream << "  durbatuluk --extract-public-key <key_name>" << std::endl;
+  outstream << "  durbatuluk --generate-shell-command "
     "<recipient_encryption_key> (command text read from stdin)" << std::endl;
-  std::cout << "  durbatuluk --post-shell-command <recipient_encryption_key> "
+  outstream << "  durbatuluk --post-shell-command <recipient_encryption_key> "
     "(command text read from stdin)"
     << std::endl;
-  std::cout << "  durbatuluk --process-message "
+  outstream << "  durbatuluk --process-message "
     "(encoded command read from stdin)" << std::endl;
-  std::cout << "  durbatuluk --process-messages-from-url" << std::endl;
-  std::cout << "  durbatuluk --reset-sequence-numbers" << std::endl;
+  outstream << "  durbatuluk --process-messages-from-url" << std::endl;
+  outstream << "  durbatuluk --reset-sequence-numbers" << std::endl;
 
-  std::cout << std::endl;
+  outstream << std::endl;
 
   final_return_value = EXIT_SUCCESS;
 }
@@ -88,7 +88,7 @@ bool tests(int argc, char **argv)
   return false; // not handled
 }
 
-bool generate_keyfiles(int argc, char **argv)
+bool generate_keyfiles(int argc, char **argv, std::ostream& outstream)
 {
   if (argc != 3 || strcmp(argv[1], "--generate-keyfiles") != 0)
   {
@@ -122,7 +122,7 @@ bool generate_keyfiles(int argc, char **argv)
   }
 
   RSA_free(rsa);
-  std::cout << "Key files generated." << std::endl << std::endl;
+  outstream << "Key files generated." << std::endl << std::endl;
   final_return_value = EXIT_SUCCESS;
   return true; // handled
 }
@@ -516,6 +516,7 @@ int main(int argc, char **argv)
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   std::string config_file_name;
+  std::ostream outstream(std::cout.rdbuf());
 
   if (!ConfigurationManager::GetConfigurationFileName(config_file_name))
   {
@@ -537,7 +538,7 @@ int main(int argc, char **argv)
   }
   else if (!(
     tests(argc, argv) ||
-    generate_keyfiles(argc, argv) ||
+    generate_keyfiles(argc, argv, outstream) ||
     extract_public_key(argc, argv) ||
     generate_shell_command(argc, argv) ||
     post_shell_command(argc, argv) ||
@@ -545,7 +546,7 @@ int main(int argc, char **argv)
     process_messages_from_url(argc, argv) ||
     reset_sequence_numbers(argc, argv)
     ))
-    usage();
+    usage(outstream);
 
   RAND_cleanup();
   google::protobuf::ShutdownProtobufLibrary();

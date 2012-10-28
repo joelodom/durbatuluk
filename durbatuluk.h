@@ -29,4 +29,9 @@
 // "Pre-Alpha", "Alpha", "Beta", "Final", etc...
 #define DEVELOPMENT_PHASE "Pre-Alpha"
 
+#include <iostream>
+
+void usage(std::ostream& outstream);
+bool generate_keyfiles(int argc, char **argv, std::ostream& outstream);
+
 #endif // #ifndef DURBATULUK_H_

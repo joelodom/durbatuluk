@@ -24,6 +24,10 @@
 #include "crypto.h"
 #include <fstream>
 
+// TODO: make configurable at run-time
+/*static*/ std::string
+  ConfigurationManager::configuration_file_name_("durbatuluk.conf");
+
 /*static*/ std::map<std::string, std::string>
   ConfigurationManager::allowed_messages_;
 /*static*/ std::string ConfigurationManager::post_message_url_;

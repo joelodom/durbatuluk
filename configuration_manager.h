@@ -41,8 +41,13 @@ public:
 
   static bool GetConfigurationFileName(std::string& file_name)
   {
-    // TODO: make configurable
-    file_name = "durbatuluk.conf";
+    file_name = configuration_file_name_;
+    return true; // success
+  }
+
+  static bool SetConfigurationFileName(std::string& file_name)
+  {
+    configuration_file_name_ = file_name;
     return true; // success
   }
 
@@ -86,6 +91,7 @@ private:
   static std::map<std::string, std::string> allowed_messages_;
 
   // etc...
+  static std::string configuration_file_name_;
   static std::string post_message_url_;
   static std::string fetch_message_url_;
   static std::string my_signing_key_name_;
