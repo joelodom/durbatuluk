@@ -4,7 +4,7 @@
 
 Durbatulûk is currently in a development phase.  This means that you are welcome to experiment with it -- and it does function now at a very basic level -- but you'll have to know how to build a binary from source code and how to deal with a Linux shell terminal to use it from the command line.
 
-The following instructions are pretty techie, and are really meant to be a tutorial on how Durbatulûk works.  Be on the lookout for packaged installers for Linux and Windows with more user-friendly interfaces.  Durbatulûk needs some more development spit-and-polish before I feel ready to post a downloadable installer.  For now, use the "Source" link above to fetch the trunk via SVN.
+The following instructions are fairly technical, and are really meant to be a tutorial on how Durbatulûk works.  Be on the lookout for packaged installers for Linux and Windows with more user-friendly interfaces.  Durbatulûk needs some more development spit-and-polish before I feel ready to post a downloadable installer.  For now, use the "Source" link above to fetch the trunk via Subversion.
 
 = Building Durbatulûk =
 
@@ -70,7 +70,7 @@ Next, generate your encryption key pair:
 ./durbatuluk --generate-keyfiles commander.encryption
 }}}
 
-Just to reinforce the point, let's lock down the private key files:
+It is possible to use the same key pair for signing and encryption, but not recommended.  Just to reinforce the point, let's lock down the private key files:
 
 {{{
 chmod 400 *.private
@@ -153,7 +153,7 @@ If all goes as expected, you will see "Hello, world" echoed to your screen.
 
 (Just for kicks, try processing the same command again.  You should get some errors indicating that there is a sequence number problem.  This is expected as it is part of the replay prevention feature.)
 
-Since the Durbatulûk `--generate-shell-command` and `--process-message` commands both use stdio, you can chain your commands as follows (though it does't seem very useful).
+Since the Durbatulûk `--generate-shell-command` and `--process-message` commands both use stdio, you can chain your commands as follows (though it doesn't seem very useful).
 
 {{{
 echo "echo Hello, World" | ./durbatuluk --generate-shell-command commander.encryption | ./durbatuluk --process-message
