@@ -1,0 +1,89 @@
+#An overview of the Durbatulûk design
+
+= Protocol Design =
+
+The following diagram depicts how Durbatulûk commands are encapsulated in various layers of overhead used in message handling and to provide security.
+
+'<img width="40%" src="http://durbatuluk.googlecode.com/svn/images/Durbatuluk%20Protocol%20Diagram.png">'
+
+The fundamental unit of the Durbatulûk protocol is the `DurbatulukMessage`, defined as
+
+{{{
+message DurbatulukMessage {
+  required string type = 1;
+  required string contents = 2;
+  required uint64 sequence_number = 3;
+}
+}}}
+
+The only currently implemented message type is `ShellExec`, though future message types are likely.  The contents field of a `DurbatulukMessage` contains the message contents as a string.  In the case of a `ShellExec` message, this is a command to pass to the command interpreter.
+
+The sequence number is used to prevent replay attacks.  Sequence numbers need not be strictly sequential (they could be based on the number of seconds since some epoch).  A Durbatulûk client will drop `ShellExec` messages if the sequence number of the message is not greater than the last sequence number processed.  (Commanders should set their last sequence number processed to `2^64^ - 1` as a safety precaution against accidentally processing `ShellExec` messages.  There is a provision to allow commanders to allow specific sequence numbers in order to process replies from clients, but this feature is under development.)  Sequence number information is saved in a sequence file so that it persists between Durbatulûk executions.
+
+Durbatulûk messages are encapsulated in an `EncryptedMessage`, defined as
+
+{{{
+message EncryptedMessage {
+  required RSAKey recipient = 1;
+  required bytes encrypted_key = 2;
+  required bytes encrypted_contents = 3;
+}
+}}}
+
+The recipient's public RSA key is included in the encrypted message so that recipients can identify messaged intended for them.  The `RSAKey` message type, used in `EncryptedMessage`, will be explained below.
+
+When a Durbatulûk client verifies that an encrypted message is intended for it, the client uses the RSA decryption algorithm to decrypt the encrypted symmetric key, which in turn is used to decrypt the encrypted contents of the encrypted message.  These encrypted contents are the serialized form of the encapsulated `DurbatulukMessage`.
+
+Encrypted messages are encapsulated in a `SignedMessage`, defined as
+
+{{{
+message SignedMessage {
+  required RSAKey sender = 1;
+  required bytes contents = 2;
+  required bytes signature = 3;
+}
+}}}
+
+The sender field of the signed message is the public signing key of the sender of the message.  This allows clients to verify that the contents of the message are authentic.
+
+When a client first receives a message, it verifies that the sender of the message is an authorized sender by checking the sender public key against the allowed senders in the client's Durbatulûk configuration file.  If this is true, signature verification and decryption take place.  After this process, the client verifies that the sender of the message is allowed to send the particular message type in the encapsulated `DurbatulukMessage`.
+
+After a commander generates a signed message, the message is encoded using base64 for convenience.  There is a large amount of overhead after encapsulation of a single command as described above, but most of this is due to the inclusion of public keys in the messages and does not grow faster than the size of the message.  Encryption algorithm randomization notwithstanding, the `ShellExec` command "echo hello" grows to:
+
+{{{
+<durbatuluk>CogCCoAC9bKbkyo+sKhlu5HPHZYpIZVntKY6YesnXDWsjbyMnEYCnqkCjBVAPKYLCGvUln560alF/Ax0DwI24gl0rda8CsdeYkldHbhYIKVJsE3wcKBo04iIjeR/Bco7MkTWI+cEeM8z0zU6MO4YcNm2r2/lOuVHoYO/IPQlt4XYtlodE7xwVduAd3viSN2ZTV2RwDMp39pWju9WxfZVHrFN5ELkCiRQl/CXFzsz8MnCA7sdvk7cRIjYKLpnY9d2wgjWETC3CBBEI6AIjAx6fmF8TPw1v5NXO5WW+fjNOruMvjgqe0syuC56SMpggFaBFNYH3b4bFL9/m2aUA29rUldpMzZElxIDAQABErAECogCCoACwMIeIgNzjr8QILQ+RDVCm8WztSvOOVzN8ULYwqYu/Gm/MqD4HL8A2D8vtd8lNFlklyvO+HHT8gRhldccBh5vQop3aIHIyx0sL4eu8dFDpBqziYPZKis0OUAE61+ahMY+31rKnxUqjn6wbVFcIziSC3fxUp506S9eBD5+ioe7yaecNIsiC+6AB75UT/GUVm+ysa1o1kXZoquBBUf9c3fp9QgRvGhMxWh+q8FaRV8HM8VEmlzr0OHpokgjSqFV8XcgicfQKlxC1kCQ2RzrxDp95cVnXADgSOEzR1566m28fV/tbQ0o1V9BVunJaT6S7Dm9itd2nsL7P6enDhmfs+N2/xIDAQABEoACUWFL5fGphKdwSccZMhHahl+ppTqbO0yaWAmMJ8EdJRY5lkIvcNhtjorJZAJuyYfqGsC/OLpgRFMVL5d9E6tl1na0Db093DBbwtNhknlD1z6ofKoPmY1vqB5Hcne1xmF/6Uo4l2u5HyZm5toygJ7ajN+8XeJ/5RybYy0UsY/VIMZR+SvO7r5A4qFRhKbLoVkASOYdfMcjGvqLgrDeKSNkdHzhOFoklINAfIyC9oC0esVL77no24svpmLt/YFBncyotER3JAUIg6LqENY/lyvMxlWGWTddXUeGmrjvTEtwJDOjjRYxUWfILrDE9Ejx0cKw/bbi0HxT6VGgQS1RvK7OKBogVXpeAo+LRnK/3ZNO9yVgE8Zymamj14nK+YxFdqPPe6wagAJwBZ3HSvVeZ+a60CuV5Gg6A4KBuJ2DieS8LjVFZaMQrRjU7VPeZFbj8h2tpcTefVvaS1+1Zbb0S8wPN4D25YodCsbsoJnrHNwwLZmNFnRKp2SBHk6KFuTze/DG6Wjpynwap1ETqRM/XyExYsVEsi7ZH6J4mp3gK58H3Hoeh+dFgjnVHZVN2WhsHKRAlAFLELVADMHEHRfaqI1GhSqQJULIcuU0mfqxdvhLCgIolGkE8p3E0uIZsX9//yB3qCTVHLdqtIj9Tp+XhQbE9dLKmPdZjfEaYN/vIDP6AIl6GsGGOyca0x8D5xjikn24lZIhGgCrfsdRg2BSpdrfj85W2Wq4</durbatuluk>
+}}}
+
+The inclusion of the XML-like starting and ending tags are for convenience in embedding messages in XML, should the need arise.
+
+The `RSAKey` message, used for storing public and private RSA keys for encryption and signing  is defined as
+
+{{{
+message RSAKey {
+  // public parameters
+  required bytes n = 1;
+  required bytes e = 2;
+
+  // private parameters
+  optional bytes d = 3;
+  optional bytes p = 4;
+  optional bytes q = 5;
+  optional bytes dmp1 = 6;
+  optional bytes dmq1 = 7;
+  optional bytes iqmp = 8;
+}
+}}}
+
+RSA keys in signed messages and in encrypted messages do not include the optional parameters, but these are included when the structure is serialized to private key files.
+
+= Modular Architecture =
+
+_TODO_
+
+= Configuration File =
+
+_TODO_
+
+= Extensibility =
+
+See GettingStarted.
