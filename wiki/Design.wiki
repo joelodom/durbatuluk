@@ -1,4 +1,4 @@
-#An overview of the Durbatulûk design
+#summary An overview of the Durbatulûk design
 
 = Protocol Design =
 
