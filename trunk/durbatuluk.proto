@@ -47,7 +47,7 @@ message SignedMessage {
 
 message EncryptedMessage {
   required RSAKey recipient = 1; // recipient public encryption key
-  required bytes encrypted_key = 2; // encrypted by recipient private key
+  required bytes encrypted_key = 2; // encrypted by recipient encryption key
   required bytes encrypted_contents = 3; // encrypted by symmetric key
 }
 
