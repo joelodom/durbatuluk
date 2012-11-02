@@ -234,4 +234,4 @@ Durbatulûk is coming along, and I expect to have it in a "less techie" state in
  * Have your cron job e-mail you the output of your client, or perhaps hack your client to use Durbatulûk in a sneaky way to send your output back to your commander as a command to the commander.
  * Try setting up two or three clients with the same encryption key.  Notice how they will all process the commander commands as if the commands were written only for them.
 
-Keep in tune with this project page to stay abreast of Durbatulûk development, which will simplify the bullet ideas above and provide additional features.  If you want to contact me, you will find information at CustomizingDurbatuluk.
+Keep in tune with this project page to stay abreast of Durbatulûk development, which will simplify the bullet ideas above and provide additional features.  If you want to contact me, you will find information at CustomizingDurbatuluk.  You may also be interested in DurbatulukDesign.
