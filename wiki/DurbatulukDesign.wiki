@@ -78,7 +78,175 @@ RSA keys in signed messages and in encrypted messages do not include the optiona
 
 = Modular Architecture =
 
-_TODO_
+As of the time of this writing, Durbatulûk is broken into one main file (durbatuluk.cc) and ten modules.  Each module is coded as a separate C++ static class. _The implementations below may have changed slightly since the writing of this document, so please consult the source code for the latest versions._
+
+== Message Handler Module ==
+
+The message handler handles Durbatulûk messages after they have been decrypted.  There is one main function on this module, `HandleMessage`, which processes an incoming message and generates an output message.  An optional callback function allows users of the message handler to process separately the type and contents of a message.  This is the module to change to make simple Durbatulûk customizations.  See CustomizingDurbatuluk.
+
+{{{
+typedef bool (*MessageHandlerCallback)(
+  const std::string& type, const std::string& contents);
+
+static bool HandleMessage(const DurbatulukMessage& input,
+  DurbatulukMessage& output, MessageHandlerCallback callback = nullptr);
+}}}
+
+== Cryptographic Module ==
+
+The cryptographic module is the main module for performing cryptographic functions.  It is used by the main functions and other modules to perform the functions noted in the comments below.
+
+{{{
+// methods to convert between OpenSSL and protocol buffers
+static bool ExtractPublicRSAKey(RSA* rsa, RSAKey& public_key);
+static bool ExtractPrivateRSAKey(RSA* rsa, RSAKey& private_key);
+static bool ImportRSAKey(const RSAKey& rsa_key, RSA* rsa);
+
+// methods to create and to verify a protocol buffers SignedMessage
+static bool CreateSignedMessage(
+  std::string& contents, RSA* rsa, SignedMessage& signed_message);
+static bool VerifySignedMessage(SignedMessage& signed_message);
+
+// methods to encrypt and to decrypt a protocol buffers EncryptedMessage
+static bool EncryptMessage(RSAKey& recipient_public_key,
+  std::string& contents, EncryptedMessage& encrypted_message);
+static bool DecryptMessage(RSA* rsa, EncryptedMessage& encrypted_message,
+  std::string& decrypted);
+
+// method to extract a hash of a public key
+static bool HashRSAKey(const RSAKey& key, std::string& encoded_hash);
+}}}
+
+== Processing Engine ==
+
+The processing engine provides methods to bundle common Durbatulûk patterns into individual methods.
+
+{{{
+// method to generate a DurbatulukMessage
+static bool GenerateEncodedDurbatulukMessage(const std::string& type,
+  const std::string& contents, RSAKey& recipient_public_key,
+  RSA* sender_signing_key, std::string& encoded_message,
+  unsigned long long& sequence_number);
+
+// method to handle an encoded message with message handler
+// (doesn't generate encoded response, but passes on message handler output
+// and callback)
+static bool HandleIncomingEncodedMessage(
+  std::string& encoded_incoming, RSA* recipient_private_encryption_key,
+  DurbatulukMessage& output, MessageHandlerCallback callback = nullptr);
+
+// methods to perform a full Durbatuluk circle of encryption and encoding
+static bool EncryptSignAndEncode(std::string& message,
+  RSAKey& recipient_public_key, RSA* sender_signing_key,
+  std::string& encoded);
+static bool DecodeVerifyAndDecrypt(std::string& encoded,
+  RSA* recipient_private_encryption_key, DurbatulukMessage& message);
+}}}
+
+== Encoding Module ==
+
+The encoding module performs base64 encoding and decoding.
+
+{{{
+static bool EncodeMessage(const std::string& input, std::string& output);
+static bool DecodeMessage(const std::string& input, std::string& output);
+}}}
+
+== Sequence Manager Module ==
+
+The sequence manager encapsulates handling of sequence numbers, which are used to prevent replay attacks.  This module interacts with the sequence number file to persist sequence numbers between Durbatulûk sessions.
+
+{{{
+static unsigned long long GetNextSequenceNumber();
+
+// returns true if allowed, false if disallowed or error
+static bool IsSequenceNumberAllowed(unsigned long long n);
+
+static bool SetMinimumAllowedSequenceNumber(unsigned long long n);
+static bool AddToAllowedSequenceNumbers(unsigned long long n);
+static bool RemoveFromAllowedSequenceNumbers(unsigned long long n);
+
+static bool ResetSequenceNumberFile();
+}}}
+
+== Configuration Manager ==
+
+The configuration manager parses the configuration file and provides an interface to the parameters in the configuration file.
+
+{{{
+static bool ReadConfigurationFile(std::string& config_file_name);
+
+static bool GetSequenceNumberFileName(std::string& file_name);
+
+static bool GetConfigurationFileName(std::string& file_name);
+static bool SetConfigurationFileName(std::string& file_name);
+
+static bool GetPostMessageURL(std::string& url);
+static bool GetFetchMessageURL(std::string& url);
+static bool GetMySigningKeyName(std::string& name);
+static bool GetMyEncryptionKeyName(std::string& name);
+
+// The idea is to allow an initial check of the sender, followed
+// by a check of the sender and message type pair.  This double
+// check reduces attack surface.
+static bool IsSenderAllowed(const RSAKey& sender);
+static bool IsSenderAllowedToSendMessageType(
+  const RSAKey& sender, const std::string& type);
+
+// AllowSender is mostly for testing purposes
+static bool AllowSender(RSA* rsa, const std::string& type);
+}}}
+
+== !KeyFile Module ==
+
+The key file module reads and writes Durbatulûk key files.
+
+{{{
+static bool WriteKeyFiles(const std::string& key_name, RSA* rsa);
+static bool ReadPublicKeyFile(const std::string& key_name, RSAKey& key);
+static bool ReadPrivateKeyFile(const std::string& key_name, RSAKey& key);
+}}}
+
+== !NetFetcher Module ==
+
+The net fetcher module wraps `libcurl` to allow for easy HTTP gets and puts so that Durbatulûk clients and commanders can interact with Durbatulûk servers.
+
+{{{
+static bool FetchURL(const std::string& url, std::string& contents);
+
+// Input command should not be escaped.  For example,
+// <durbatuluk>Cog/5+8/sFo==</durbatuluk> as input command
+// will be posted as
+// message=%3Cdurbatuluk%3ECog%2F5%2B8%2FsFo%3D%3D%3C%2Fdurbatuluk%3E
+static bool PostMessageToURL(
+  const std::string& url, const std::string& message);
+}}}
+
+== Logger Module ==
+
+The logger module is for logging different types messages.  The minimum severity of log messages may be set via the configuration file.
+
+{{{
+enum LoggerSeverity { DEBUG, INFO, ERROR, NONE };
+
+static void LogMessage(LoggerSeverity severity,
+  const std::string& component, const std::string& message);
+
+// this version empties the stringstream so that it can be reused
+static void LogMessage(LoggerSeverity severity,
+  const std::string& component, std::stringstream& message);
+
+static void SetMinLoggingSeverity(LoggerSeverity severity);
+}}}
+
+== Utility Module ==
+
+Miscellaneous utility methods should be placed here.
+
+{{{
+static bool WriteToFile(
+  const std::string& file_name, const std::string& data);
+}}}
 
 = Configuration File =
 
