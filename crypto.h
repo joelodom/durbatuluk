@@ -41,7 +41,7 @@ public:
     std::string& contents, RSA* rsa, SignedMessage& signed_message);
   static bool VerifySignedMessage(SignedMessage& signed_message);
 
-  // methods to encrypt and to decrypte a protocol buffers EncryptedMessage
+  // methods to encrypt and to decrypt a protocol buffers EncryptedMessage
   static bool EncryptMessage(RSAKey& recipient_public_key,
     std::string& contents, EncryptedMessage& encrypted_message);
   static bool DecryptMessage(RSA* rsa, EncryptedMessage& encrypted_message,
