@@ -76,6 +76,8 @@ message RSAKey {
 
 RSA keys in signed messages and in encrypted messages do not include the optional parameters, but these are included when the structure is serialized to private key files.
 
+For more information on Durbatulûk security, see SecurityFeatures.
+
 = Modular Architecture =
 
 As of the time of this writing, Durbatulûk is broken into one main file (durbatuluk.cc) and ten modules.  Each module is coded as a separate C++ static class. _The implementations below may have changed slightly since the writing of this document, so please consult the source code for the latest versions._
