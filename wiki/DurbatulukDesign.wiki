@@ -248,9 +248,13 @@ static bool WriteToFile(
   const std::string& file_name, const std::string& data);
 }}}
 
-= Configuration File =
+= Command Line Parameters & Configuration File =
 
-_TODO_
+In the current implementation of Durbatulûk, commanders use a combination of command line parameters and `stdio` to specify inputs to the system that are likely to change for each run of Durbatulûk.  Parameters that are static for a particular commander or client are stored in a configuration file, which is currently always named `durbatuluk.conf`.
+
+For details of the command line parameters and configuration file, see GettingStarted.  The [http://durbatuluk.googlecode.com/svn/trunk/durbatuluk.conf default configuration file that ships with Durbatulûk] also contains comments that explain the configuration options.  Running Durbatulûk with no command line parameters will list the available parameters and their usage.
+
+The configuration file, which may contain comments, is always read by Durbatulûk at startup.  If reading or parsing the configuration file fails, Durbatulûk will exit with an error.
 
 = Extensibility =
 
