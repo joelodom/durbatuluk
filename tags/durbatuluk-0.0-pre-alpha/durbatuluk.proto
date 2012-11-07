@@ -1,0 +1,63 @@
+//
+// Durbatuluk is Copyright (c) 2012 Joel Odom
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+//
+// Sample command to generate C++ code based on this .proto file:
+//
+// protoc --cpp_out=. durbatuluk.proto
+//
+
+message RSAKey {
+  // public parameters
+  required bytes n = 1;
+  required bytes e = 2;
+
+  // private parameters (see http://www.openssl.org/docs/crypto/rsa.html)
+  optional bytes d = 3;
+  optional bytes p = 4;
+  optional bytes q = 5;
+  optional bytes dmp1 = 6;
+  optional bytes dmq1 = 7;
+  optional bytes iqmp = 8;
+}
+
+message SignedMessage {
+  required RSAKey sender = 1; // public signing key
+  required bytes contents = 2; // usually a serialized EncryptedMessage
+  required bytes signature = 3;
+}
+
+message EncryptedMessage {
+  required RSAKey recipient = 1; // recipient public encryption key
+  required bytes encrypted_key = 2; // encrypted by recipient encryption key
+  required bytes encrypted_contents = 3; // encrypted by symmetric key
+}
+
+message DurbatulukMessage { // usually encapsulated in an EncryptedMessage
+  required string type = 1;
+  required string contents = 2;
+  required uint64 sequence_number = 3;
+}
+
+message AllowedSequenceNumbers {
+  optional uint64 minimum = 1; // defaults to SEQUENCE_NUMBER_MAX
+  repeated uint64 allowed = 2;
+}
