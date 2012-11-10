@@ -44,19 +44,19 @@ public:
   static unsigned long long GetNextSequenceNumber();
 
   // returns true if allowed, false if disallowed or error
-  static bool IsSequenceNumberAllowed(unsigned long long n);
+  static bool IsSequenceNumberAllowed(const unsigned long long n);
 
-  static bool SetMinimumAllowedSequenceNumber(unsigned long long n);
-  static bool AddToAllowedSequenceNumbers(unsigned long long n);
-  static bool RemoveFromAllowedSequenceNumbers(unsigned long long n);
+  static bool SetMinimumAllowedSequenceNumber(const unsigned long long n);
+  static bool AddToAllowedSequenceNumbers(const unsigned long long n);
+  static bool RemoveFromAllowedSequenceNumbers(const unsigned long long n);
 
   static bool ResetSequenceNumberFile();
 
 private:
-  static bool ReadSequenceNumberFile(unsigned long long& minimum,
-    std::set<unsigned long long>& allowed_numbers);
-  static bool WriteSequenceNumberFile(unsigned long long minimum,
-    std::set<unsigned long long>& allowed_numbers);
+  static bool ReadSequenceNumberFile(unsigned long long* minimum,
+    std::set<unsigned long long>* allowed_numbers);
+  static bool WriteSequenceNumberFile(const unsigned long long minimum,
+    const std::set<unsigned long long>& allowed_numbers);
 };
 
 #endif // #ifndef SEQUENCE_MANAGER_H_

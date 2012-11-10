@@ -26,7 +26,7 @@
 TEST(message_handler_tests, test_shell_exec)
 {
   std::string input("echo durbatuluk"), output;
-  bool rv = MessageHandler::ShellExec(input, output);
+  bool rv = MessageHandler::ShellExec(input, &output);
   ASSERT_TRUE(rv) << "ShellExec failed";
   EXPECT_EQ(output.find("durbatuluk"), (size_t)0);
 }
@@ -34,7 +34,7 @@ TEST(message_handler_tests, test_shell_exec)
 TEST(message_handler_tests, test_handle_message_bad_message)
 {
   DurbatulukMessage input, output;
-  bool rv = MessageHandler::HandleMessage(input, output);
+  bool rv = MessageHandler::HandleMessage(input, &output);
   EXPECT_FALSE(rv);
 }
 
@@ -47,7 +47,7 @@ TEST(message_handler_tests, test_shell_command_message)
   input.set_sequence_number(SequenceManager::GetNextSequenceNumber());
 
   // send the message to the message handler
-  bool rv = MessageHandler::HandleMessage(input, output);
+  bool rv = MessageHandler::HandleMessage(input, &output);
   ASSERT_TRUE(rv) << "HandleMessage failed";
 
   // check the result
@@ -63,7 +63,7 @@ TEST(message_handler_tests, test_shell_command_message_missing_sequence_number)
   input.set_contents("echo durbatuluk");
 
   // send the message to the message handler
-  bool rv = MessageHandler::HandleMessage(input, output);
+  bool rv = MessageHandler::HandleMessage(input, &output);
   EXPECT_FALSE(rv) << "HandleMessage should have failed";
 }
 
@@ -78,6 +78,6 @@ TEST(message_handler_tests, test_shell_command_message_low_sequence_number)
   input.set_sequence_number(31);
 
   // send the message to the message handler
-  bool rv = MessageHandler::HandleMessage(input, output);
+  bool rv = MessageHandler::HandleMessage(input, &output);
   EXPECT_FALSE(rv) << "HandleMessage should have failed";
 }

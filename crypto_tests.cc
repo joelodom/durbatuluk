@@ -217,7 +217,7 @@ TEST(crypto_tests, test_extract_import_public_rsa_key)
 
   // extract the public key
   RSAKey extracted;
-  ASSERT_TRUE(Crypto::ExtractPublicRSAKey(rsa_before, extracted));
+  ASSERT_TRUE(Crypto::ExtractPublicRSAKey(rsa_before, &extracted));
 
   // import the public key
   RSA* rsa_after = RSA_new();
@@ -246,7 +246,7 @@ TEST(crypto_tests, test_extract_import_private_rsa_key)
 
   // extract the private key
   RSAKey extracted;
-  ASSERT_TRUE(Crypto::ExtractPrivateRSAKey(rsa_before, extracted));
+  ASSERT_TRUE(Crypto::ExtractPrivateRSAKey(rsa_before, &extracted));
 
   // import the public key
   RSA* rsa_after = RSA_new();
@@ -291,7 +291,7 @@ TEST(crypto_tests, test_create_and_verify_signed_message)
 
   // generate a SignedMessage and throw away the key
   SignedMessage signed_message;
-  ASSERT_TRUE(Crypto::CreateSignedMessage(contents, rsa, signed_message));
+  ASSERT_TRUE(Crypto::CreateSignedMessage(contents, rsa, &signed_message));
   RSA_free(rsa); // cleans the key from memory
 
   // verify the SignedMessage
@@ -307,15 +307,15 @@ TEST(crypto_tests, test_encrypt_and_decrypt_encrypted_message)
   RSA* rsa = RSA_generate_key(RSA_BITS, RSA_F4, nullptr, nullptr);
   ASSERT_TRUE(rsa != nullptr);
   RSAKey public_key;
-  ASSERT_TRUE(Crypto::ExtractPublicRSAKey(rsa, public_key));
+  ASSERT_TRUE(Crypto::ExtractPublicRSAKey(rsa, &public_key));
 
   // encrypt the message
   EncryptedMessage encrypted_message;
-  ASSERT_TRUE(Crypto::EncryptMessage(public_key, message, encrypted_message));
+  ASSERT_TRUE(Crypto::EncryptMessage(public_key, message, &encrypted_message));
 
   // decrypt the message
   std::string decrypted;
-  ASSERT_TRUE(Crypto::DecryptMessage(rsa, encrypted_message, decrypted));
+  ASSERT_TRUE(Crypto::DecryptMessage(rsa, encrypted_message, &decrypted));
   RSA_free(rsa);
 
   EXPECT_TRUE(

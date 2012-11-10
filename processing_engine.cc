@@ -28,16 +28,16 @@
 
 /*static*/ bool ProcessingEngine::GenerateEncodedDurbatulukMessage(
   const std::string& type, const std::string& contents,
-  RSAKey& recipient_public_key,
-  RSA* sender_signing_key, std::string& encoded_message,
-  unsigned long long& sequence_number)
+  const RSAKey& recipient_public_key,
+  RSA* sender_signing_key, std::string* encoded_message,
+  unsigned long long* sequence_number)
 {
-  sequence_number = SequenceManager::GetNextSequenceNumber();
+  *sequence_number = SequenceManager::GetNextSequenceNumber();
 
   DurbatulukMessage durbatuluk_message;
   durbatuluk_message.set_type(type);
   durbatuluk_message.set_contents(contents);
-  durbatuluk_message.set_sequence_number(sequence_number);
+  durbatuluk_message.set_sequence_number(*sequence_number);
 
   std::string serialized;
   if (!durbatuluk_message.SerializeToString(&serialized))
@@ -48,13 +48,14 @@
 }
 
 /*static*/ bool ProcessingEngine::HandleIncomingEncodedMessage(
-  std::string& encoded_incoming, RSA* recipient_private_encryption_key,
-  DurbatulukMessage& output, MessageHandlerCallback callback /*= nullptr*/)
+  const std::string& encoded_incoming,
+  RSA* recipient_private_encryption_key,
+  DurbatulukMessage* output, MessageHandlerCallback callback /*= nullptr*/)
 {
   // decode, verify and decrypt
   DurbatulukMessage input;
   if (!DecodeVerifyAndDecrypt(
-    encoded_incoming, recipient_private_encryption_key, input))
+    encoded_incoming, recipient_private_encryption_key, &input))
   {
     Logger::LogMessage(ERROR, "ProcessingEngine",
       "DecodeVerifyAndDecrypt failed");
@@ -72,13 +73,15 @@
   return true; // success
 }
 
-/*static*/ bool ProcessingEngine::EncryptSignAndEncode(std::string& message,
-    RSAKey& recipient_public_key, RSA* sender_signing_key,
-    std::string& encoded)
+/*static*/ bool ProcessingEngine::EncryptSignAndEncode(
+  const std::string& message,
+  const RSAKey& recipient_public_key, RSA* sender_signing_key,
+  std::string* encoded)
 {
   // generate the encrypted message
   EncryptedMessage encrypted_message;
-  if (!Crypto::EncryptMessage(recipient_public_key, message, encrypted_message))
+  if (!Crypto::EncryptMessage(
+    recipient_public_key, message, &encrypted_message))
     return false; // failure
   std::string encrypted_str;
   if (!encrypted_message.SerializeToString(&encrypted_str))
@@ -87,7 +90,7 @@
   // generate the signed message
   SignedMessage signed_message;
   if (!Crypto::CreateSignedMessage(
-    encrypted_str, sender_signing_key, signed_message))
+    encrypted_str, sender_signing_key, &signed_message))
     return false; // failure
   std::string signed_str;
   if (!signed_message.SerializeToString(&signed_str))
@@ -100,13 +103,14 @@
   return true; // success
 }
 
-/*static*/ bool ProcessingEngine::DecodeVerifyAndDecrypt(std::string& encoded,
-    RSA* recipient_private_encryption_key, DurbatulukMessage& message)
+/*static*/ bool ProcessingEngine::DecodeVerifyAndDecrypt(
+  const std::string& encoded,
+  RSA* recipient_private_encryption_key, DurbatulukMessage* message)
 {
   // decode the message
 
   std::string decoded;
-  if (!Encoding::DecodeMessage(encoded, decoded))
+  if (!Encoding::DecodeMessage(encoded, &decoded))
   {
     Logger::LogMessage(ERROR, "ProcessingEngine", "DecodeMessage failed");
     return false; // failure
@@ -146,21 +150,21 @@
   // decrypt the message
   std::string decrypted;
   if (!Crypto::DecryptMessage(
-    recipient_private_encryption_key, encrypted_message, decrypted))
+    recipient_private_encryption_key, encrypted_message, &decrypted))
   {
     Logger::LogMessage(ERROR, "ProcessingEngine", "DecryptMessage failed");
     return false; // failure
   }
 
   // verify that the sender may send this type of message
-  if (!message.ParseFromString(decrypted))
+  if (!message->ParseFromString(decrypted))
   {
     Logger::LogMessage(ERROR, "ProcessingEngine", "ParseFromString failed");
     return false; // failure
   }
 
   if (!ConfigurationManager::IsSenderAllowedToSendMessageType(
-    signed_message.sender(), message.type()))
+    signed_message.sender(), message->type()))
   {
     Logger::LogMessage(INFO, "ProcessingEngine",
       "sender not allowed to send message type");

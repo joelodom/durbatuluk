@@ -30,14 +30,14 @@ enum LoggerSeverity { DEBUG, INFO, ERROR, NONE };
 class Logger
 {
 public:
-  static void LogMessage(LoggerSeverity severity,
+  static void LogMessage(const LoggerSeverity severity,
     const std::string& component, const std::string& message);
 
   // this version empties the stringstream so that it can be reused
-  static void LogMessage(LoggerSeverity severity,
-    const std::string& component, std::stringstream& message);
+  static void LogMessage(const LoggerSeverity severity,
+    const std::string& component, std::stringstream* message);
 
-  static void SetMinLoggingSeverity(LoggerSeverity severity)
+  static void SetMinLoggingSeverity(const LoggerSeverity severity)
   {
     min_logging_severity_ = severity;
   }

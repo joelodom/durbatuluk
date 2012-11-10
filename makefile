@@ -1,6 +1,6 @@
 GTEST_DIR = gtest-1.6.0
 
-CC = g++
+CC = g++ -Wfatal-errors
 LINK = g++
 
 INCLUDES = -I.

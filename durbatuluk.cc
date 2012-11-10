@@ -94,7 +94,7 @@ bool generate_keyfiles(int argc, char **argv, std::ostream& outstream)
   {
     std::stringstream ss;
     ss << "argc: " << argc << " argv[1]: " << argv[1];
-    Logger::LogMessage(DEBUG, "generate_keyfiles", ss);
+    Logger::LogMessage(DEBUG, "generate_keyfiles", &ss);
     return false; // not handled
   }
 
@@ -134,7 +134,7 @@ bool extract_public_key(int argc, char **argv)
 
   // read the key
   RSAKey public_key;
-  if (!KeyFile::ReadPublicKeyFile(argv[2], public_key))
+  if (!KeyFile::ReadPublicKeyFile(argv[2], &public_key))
   {
     Logger::LogMessage(ERROR, "extract_public_key", "ReadPublicKeyFile failed");
     return true; // handled
@@ -142,7 +142,7 @@ bool extract_public_key(int argc, char **argv)
 
   // hash and encode
   std::string encoded;
-  if (!Crypto::HashRSAKey(public_key, encoded))
+  if (!Crypto::HashRSAKey(public_key, &encoded))
   {
     Logger::LogMessage(ERROR, "extract_public_key", "HashRSAKey failed");
     return true; // handled
@@ -165,11 +165,11 @@ bool generate_shell_command(int argc, char **argv)
 
   std::stringstream ss;
   ss << "command: " << command;
-  Logger::LogMessage(DEBUG, "generate_shell_command", ss);
+  Logger::LogMessage(DEBUG, "generate_shell_command", &ss);
 
   // read the recipient encryption key
   RSAKey recipient_public_key;
-  if (!KeyFile::ReadPublicKeyFile(argv[2], recipient_public_key))
+  if (!KeyFile::ReadPublicKeyFile(argv[2], &recipient_public_key))
   {
     Logger::LogMessage(ERROR, "generate_shell_command",
       "ReadPublicKeyFile failed");
@@ -179,7 +179,7 @@ bool generate_shell_command(int argc, char **argv)
   // read the sender signing key
 
   std::string signing_key_name;
-  if (!ConfigurationManager::GetMySigningKeyName(signing_key_name))
+  if (!ConfigurationManager::GetMySigningKeyName(&signing_key_name))
   {
     Logger::LogMessage(
       ERROR, "post_shell_command", "GetMySigningKeyName failed");
@@ -187,7 +187,7 @@ bool generate_shell_command(int argc, char **argv)
   }
 
   RSAKey sender_signing_rsa;
-  if (!KeyFile::ReadPrivateKeyFile(signing_key_name, sender_signing_rsa))
+  if (!KeyFile::ReadPrivateKeyFile(signing_key_name, &sender_signing_rsa))
   {
     Logger::LogMessage(ERROR, "generate_shell_command",
       "ReadPrivateKeyFile failed");
@@ -214,7 +214,7 @@ bool generate_shell_command(int argc, char **argv)
   unsigned long long sequence_number;
   bool rv = ProcessingEngine::GenerateEncodedDurbatulukMessage(
     MESSAGE_TYPE_SHELL_EXEC, command,
-    recipient_public_key, rsa, encoded_message, sequence_number);
+    recipient_public_key, rsa, &encoded_message, &sequence_number);
   RSA_free(rsa);
 
   if (!rv)
@@ -249,11 +249,11 @@ bool post_shell_command(int argc, char **argv)
 
   std::stringstream ss;
   ss << "command: " << command;
-  Logger::LogMessage(DEBUG, "post_shell_command", ss);
+  Logger::LogMessage(DEBUG, "post_shell_command", &ss);
 
   // read the recipient encryption key
   RSAKey recipient_public_key;
-  if (!KeyFile::ReadPublicKeyFile(argv[2], recipient_public_key))
+  if (!KeyFile::ReadPublicKeyFile(argv[2], &recipient_public_key))
   {
     Logger::LogMessage(ERROR, "post_shell_command", "ReadPublicKeyFile failed");
     return true; // handled
@@ -262,7 +262,7 @@ bool post_shell_command(int argc, char **argv)
   // read the sender signing key
 
   std::string signing_key_name;
-  if (!ConfigurationManager::GetMySigningKeyName(signing_key_name))
+  if (!ConfigurationManager::GetMySigningKeyName(&signing_key_name))
   {
     Logger::LogMessage(
       ERROR, "post_shell_command", "GetMySigningKeyName failed");
@@ -270,7 +270,7 @@ bool post_shell_command(int argc, char **argv)
   }
 
   RSAKey sender_signing_rsa;
-  if (!KeyFile::ReadPrivateKeyFile(signing_key_name, sender_signing_rsa))
+  if (!KeyFile::ReadPrivateKeyFile(signing_key_name, &sender_signing_rsa))
   {
     Logger::LogMessage(
       ERROR, "post_shell_command", "ReadPrivateKeyFile failed");
@@ -297,7 +297,7 @@ bool post_shell_command(int argc, char **argv)
   unsigned long long sequence_number;
   bool rv = ProcessingEngine::GenerateEncodedDurbatulukMessage(
     MESSAGE_TYPE_SHELL_EXEC, command,
-    recipient_public_key, rsa, encoded_message, sequence_number);
+    recipient_public_key, rsa, &encoded_message, &sequence_number);
   RSA_free(rsa);
 
   if (!rv)
@@ -310,7 +310,7 @@ bool post_shell_command(int argc, char **argv)
   // post
 
   std::string url;
-  if (!ConfigurationManager::GetPostMessageURL(url))
+  if (!ConfigurationManager::GetPostMessageURL(&url))
   {
     Logger::LogMessage(ERROR, "post_shell_command", "GetPostMessageURL failed");
     return true; // handled
@@ -347,7 +347,7 @@ bool process_message(int argc, char **argv)
   // read the recipient encryption key
 
   std::string encryption_key_name;
-  if (!ConfigurationManager::GetMyEncryptionKeyName(encryption_key_name))
+  if (!ConfigurationManager::GetMyEncryptionKeyName(&encryption_key_name))
   {
     Logger::LogMessage(
       ERROR, "process_message", "GetMyEncryptionKeyName failed");
@@ -355,7 +355,7 @@ bool process_message(int argc, char **argv)
   }
 
   RSAKey recipient_private_key;
-  if (!KeyFile::ReadPrivateKeyFile(encryption_key_name, recipient_private_key))
+  if (!KeyFile::ReadPrivateKeyFile(encryption_key_name, &recipient_private_key))
   {
     Logger::LogMessage(ERROR, "process_message", "ReadPrivateKeyFile failed");
     return true; // handled
@@ -377,7 +377,7 @@ bool process_message(int argc, char **argv)
 
   // handle the message
   DurbatulukMessage output;
-  if (!ProcessingEngine::HandleIncomingEncodedMessage(encoded, rsa, output))
+  if (!ProcessingEngine::HandleIncomingEncodedMessage(encoded, rsa, &output))
   {
     Logger::LogMessage(ERROR, "process_message",
       "HandleIncomingEncodedMessage failed");
@@ -399,7 +399,7 @@ bool process_messages_from_url(int argc, char **argv)
   // read the recipient encryption key
 
   std::string encryption_key_name;
-  if (!ConfigurationManager::GetMyEncryptionKeyName(encryption_key_name))
+  if (!ConfigurationManager::GetMyEncryptionKeyName(&encryption_key_name))
   {
     Logger::LogMessage(
       ERROR, "process_messages_from_url", "GetMyEncryptionKeyName failed");
@@ -407,7 +407,7 @@ bool process_messages_from_url(int argc, char **argv)
   }
 
   RSAKey recipient_private_key;
-  if (!KeyFile::ReadPrivateKeyFile(encryption_key_name, recipient_private_key))
+  if (!KeyFile::ReadPrivateKeyFile(encryption_key_name, &recipient_private_key))
   {
     Logger::LogMessage(ERROR, "process_messages_from_url",
       "ReadPrivateKeyFile failed");
@@ -432,7 +432,7 @@ bool process_messages_from_url(int argc, char **argv)
   // fetch the URL
 
   std::string url;
-  if (!ConfigurationManager::GetFetchMessageURL(url))
+  if (!ConfigurationManager::GetFetchMessageURL(&url))
   {
     Logger::LogMessage(
       ERROR, "process_messages_from_url", "GetFetchMessageURL failed");
@@ -440,7 +440,7 @@ bool process_messages_from_url(int argc, char **argv)
   }
 
   std::string url_contents;
-  if (!NetFetcher::FetchURL(url, url_contents))
+  if (!NetFetcher::FetchURL(url, &url_contents))
   {
     Logger::LogMessage(ERROR, "process_messages_from_url", "FetchURL failed");
     RSA_free(rsa);
@@ -469,16 +469,16 @@ bool process_messages_from_url(int argc, char **argv)
     std::string encoded(url_contents, start_tag_pos, len);
     DurbatulukMessage output;
 
-    if (ProcessingEngine::HandleIncomingEncodedMessage(encoded, rsa, output))
+    if (ProcessingEngine::HandleIncomingEncodedMessage(encoded, rsa, &output))
     {
       messages_successfully_processed++;
       ss << "message #" << message_num << " processed successfully";
-      Logger::LogMessage(INFO, "process_messages_from_url", ss);
+      Logger::LogMessage(INFO, "process_messages_from_url", &ss);
     }
     else
     {
       ss << "could not process message #" << message_num;
-      Logger::LogMessage(INFO, "process_messages_from_url", ss);
+      Logger::LogMessage(INFO, "process_messages_from_url", &ss);
     }
 
     std::cout << output.contents() << std::endl;
@@ -488,7 +488,7 @@ bool process_messages_from_url(int argc, char **argv)
 
   ss << messages_successfully_processed << " of " << message_num
     << " messages processed successfully";
-  Logger::LogMessage(INFO, "process_messages_from_url", ss);
+  Logger::LogMessage(INFO, "process_messages_from_url", &ss);
 
   RSA_free(rsa);
   std::cout << "Processed " << messages_successfully_processed << " commands."
@@ -518,7 +518,7 @@ int main(int argc, char **argv)
   std::string config_file_name;
   std::ostream outstream(std::cout.rdbuf());
 
-  if (!ConfigurationManager::GetConfigurationFileName(config_file_name))
+  if (!ConfigurationManager::GetConfigurationFileName(&config_file_name))
   {
     Logger::LogMessage(ERROR, "main", "GetConfigurationFileName failed");
   }
@@ -526,7 +526,7 @@ int main(int argc, char **argv)
   {
     std::stringstream ss;
     ss << "Failed to read " << config_file_name;
-    Logger::LogMessage(ERROR, "main", ss);
+    Logger::LogMessage(ERROR, "main", &ss);
   }
   else if (RAND_status() != 1)
   {

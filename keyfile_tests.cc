@@ -36,7 +36,7 @@ TEST(keyfile_tests, test_keyfiles)
   // check and delete the public key file
 
   RSAKey public_key;
-  ASSERT_TRUE(KeyFile::ReadPublicKeyFile(key_name, public_key));
+  ASSERT_TRUE(KeyFile::ReadPublicKeyFile(key_name, &public_key));
 
   RSA* rsa_public_after = RSA_new();
   ASSERT_TRUE(rsa_public_after != nullptr);
@@ -58,7 +58,7 @@ TEST(keyfile_tests, test_keyfiles)
   // check and delete the private key file
 
   RSAKey private_key;
-  ASSERT_TRUE(KeyFile::ReadPrivateKeyFile(key_name, private_key));
+  ASSERT_TRUE(KeyFile::ReadPrivateKeyFile(key_name, &private_key));
 
   RSA* rsa_private_after = RSA_new();
   ASSERT_TRUE(rsa_private_after != nullptr);

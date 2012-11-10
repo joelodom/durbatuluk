@@ -36,7 +36,7 @@
 /*static*/ std::string ConfigurationManager::my_encryption_key_name_;
 
 /*static*/ bool ConfigurationManager::ReadConfigurationFile(
-  std::string& config_file_name)
+  const std::string& config_file_name)
 {
   // amateurish parsing algorithm will do for now
   // need to add error checking and lots more...
@@ -79,7 +79,7 @@
 
       std::stringstream ss;
       ss << "Type: " << type << " Sender: " << sender;
-      Logger::LogMessage(DEBUG, "ConfigurationManager", ss);
+      Logger::LogMessage(DEBUG, "ConfigurationManager", &ss);
 
       allowed_messages_[sender] = type;
     }
@@ -120,7 +120,7 @@
 /*static*/ bool ConfigurationManager::IsSenderAllowed(const RSAKey& sender)
 {
   std::string hashed;
-  if (!Crypto::HashRSAKey(sender, hashed))
+  if (!Crypto::HashRSAKey(sender, &hashed))
   {
     Logger::LogMessage(ERROR, "ConfigurationManager", "HashRSAKey failed");
     return false;
@@ -133,7 +133,7 @@
   const RSAKey& sender, const std::string& type)
 {
   std::string hashed;
-  if (!Crypto::HashRSAKey(sender, hashed))
+  if (!Crypto::HashRSAKey(sender, &hashed))
   {
     Logger::LogMessage(ERROR, "ConfigurationManager", "HashRSAKey failed");
     return false;
@@ -144,11 +144,11 @@
 }
 
 /*static*/ bool ConfigurationManager::AllowSender(
-  RSA* rsa, const std::string& type)
+  const RSA* rsa, const std::string& type)
 {
   // extract the public key from
   RSAKey public_key;
-  if (!Crypto::ExtractPublicRSAKey(rsa, public_key))
+  if (!Crypto::ExtractPublicRSAKey(rsa, &public_key))
   {
     Logger::LogMessage(ERROR, "ConfigurationManager",
       "ExtractPublicRSAKey failed");
@@ -157,7 +157,7 @@
 
   // hash the key
   std::string hashed;
-  if (!Crypto::HashRSAKey(public_key, hashed))
+  if (!Crypto::HashRSAKey(public_key, &hashed))
   {
     Logger::LogMessage(ERROR, "ConfigurationManager", "HashRSAKey failed");
     return false;

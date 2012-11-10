@@ -27,11 +27,11 @@ TEST(encoding_tests, test_encode_decode)
   std::string message("This is an arbitrary binary string.");
   std::string encoded, decoded;
 
-  ASSERT_TRUE(Encoding::EncodeMessage(message, encoded));
+  ASSERT_TRUE(Encoding::EncodeMessage(message, &encoded));
   ASSERT_GT(encoded.length(), ENCODING_OVERHEAD + message.length());
   encoded.insert(15, "  "); // make sure that we can insert whitespace
 
-  ASSERT_TRUE(Encoding::DecodeMessage(encoded, decoded));
+  ASSERT_TRUE(Encoding::DecodeMessage(encoded, &decoded));
 
   EXPECT_STREQ(message.c_str(), decoded.c_str());
 }

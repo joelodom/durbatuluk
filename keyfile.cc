@@ -31,7 +31,7 @@
 
   // extract the public key
 
-  if (!Crypto::ExtractPublicRSAKey(rsa, public_key))
+  if (!Crypto::ExtractPublicRSAKey(rsa, &public_key))
   {
     Logger::LogMessage(ERROR, "KeyFile", "ExtractPublicRSAKey failed");
     return false; // failure
@@ -45,7 +45,7 @@
 
   // extract the private key
 
-  if (!Crypto::ExtractPrivateRSAKey(rsa, private_key))
+  if (!Crypto::ExtractPrivateRSAKey(rsa, &private_key))
   {
     Logger::LogMessage(ERROR, "KeyFile", "ExtractPrivateRSAKey failed");
     return false; // failure
@@ -77,7 +77,7 @@
 }
 
 /*static*/ bool KeyFile::ReadPublicKeyFile(
-  const std::string& key_name, RSAKey& key)
+  const std::string& key_name, RSAKey* key)
 {
   if (!ReadKeyFile(key_name + ".public", key))
   {
@@ -85,8 +85,8 @@
     return false; // failure
   }
 
-  if (key.has_d() || key.has_p() || key.has_q() || key.has_dmp1()
-    || key.has_dmq1() || key.has_iqmp())
+  if (key->has_d() || key->has_p() || key->has_q() || key->has_dmp1()
+    || key->has_dmq1() || key->has_iqmp())
   {
     Logger::LogMessage(ERROR, "KeyFile", "private data in public key");
     return false; // failure
@@ -96,12 +96,12 @@
 }
 
 /*static*/ bool KeyFile::ReadPrivateKeyFile(
-  const std::string& key_name, RSAKey& key)
+  const std::string& key_name, RSAKey* key)
 {
   return ReadKeyFile(key_name + ".private", key);
 }
 
-/*static*/ bool KeyFile::ReadKeyFile(const std::string& file_name, RSAKey& key)
+/*static*/ bool KeyFile::ReadKeyFile(const std::string& file_name, RSAKey* key)
 {
   std::ifstream in_file;
 
@@ -112,7 +112,7 @@
     return false; // failure
   }
 
-  if (key.ParseFromIstream(&in_file))
+  if (key->ParseFromIstream(&in_file))
   {
     Logger::LogMessage(DEBUG, "KeyFile", "ParseFromIstream succeeded");
   }

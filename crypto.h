@@ -32,26 +32,26 @@ class Crypto
 {
 public:
   // methods to convert between OpenSSL and protocol buffers
-  static bool ExtractPublicRSAKey(RSA* rsa, RSAKey& public_key);
-  static bool ExtractPrivateRSAKey(RSA* rsa, RSAKey& private_key);
+  static bool ExtractPublicRSAKey(const RSA* rsa, RSAKey* public_key);
+  static bool ExtractPrivateRSAKey(const RSA* rsa, RSAKey* private_key);
   static bool ImportRSAKey(const RSAKey& rsa_key, RSA* rsa);
 
   // methods to create and to verify a protocol buffers SignedMessage
   static bool CreateSignedMessage(
-    std::string& contents, RSA* rsa, SignedMessage& signed_message);
-  static bool VerifySignedMessage(SignedMessage& signed_message);
+    const std::string& contents, RSA* rsa, SignedMessage* signed_message);
+  static bool VerifySignedMessage(const SignedMessage& signed_message);
 
   // methods to encrypt and to decrypt a protocol buffers EncryptedMessage
-  static bool EncryptMessage(RSAKey& recipient_public_key,
-    std::string& contents, EncryptedMessage& encrypted_message);
-  static bool DecryptMessage(RSA* rsa, EncryptedMessage& encrypted_message,
-    std::string& decrypted);
+  static bool EncryptMessage(const RSAKey& recipient_public_key,
+    const std::string& contents, EncryptedMessage* encrypted_message);
+  static bool DecryptMessage(RSA* rsa,
+    const EncryptedMessage& encrypted_message, std::string* decrypted);
 
   // method to extract a hash of a public key
-  static bool HashRSAKey(const RSAKey& key, std::string& encoded_hash);
+  static bool HashRSAKey(const RSAKey& key, std::string* encoded_hash);
 private:
-  static unsigned char* AllocateForRSAExtraction(RSA* rsa);
-  static void ExtractBIGNUM(std::string s, BIGNUM** bn);
+  static unsigned char* AllocateForRSAExtraction(const RSA* rsa);
+  static void ExtractBIGNUM(const std::string s, BIGNUM** bn);
 };
 
 #endif // #ifndef CRYPTO_H_

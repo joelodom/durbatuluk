@@ -35,8 +35,8 @@
 class Encoding
 {
 public:
-  static bool EncodeMessage(const std::string& input, std::string& output);
-  static bool DecodeMessage(const std::string& input, std::string& output);
+  static bool EncodeMessage(const std::string& input, std::string* output);
+  static bool DecodeMessage(const std::string& input, std::string* output);
 };
 
 #endif // #ifndef ENCODING_H_

@@ -23,21 +23,21 @@
 #include "base64.h"
 
 /*static*/ bool Encoding::EncodeMessage(
-  const std::string& input, std::string& output)
+  const std::string& input, std::string* output)
 {
   std::string encoded = base64_encode(
     reinterpret_cast<const unsigned char*>(
     input.c_str()), input.length());
 
-  output = "<durbatuluk>";
-  output.append(encoded);
-  output.append("</durbatuluk>");
+  *output = "<durbatuluk>";
+  output->append(encoded);
+  output->append("</durbatuluk>");
 
   return true; // success
 }
 
 /*static*/ bool Encoding::DecodeMessage(
-  const std::string& input, std::string& output)
+  const std::string& input, std::string* output)
 {
   if (input.length() < ENCODING_OVERHEAD + 1)
     return false; // failure
@@ -46,7 +46,7 @@
   if (input.find("</durbatuluk>") != input.length() - 13)
     return false; // failure
 
-  output = base64_decode(input.substr(12, input.length() - ENCODING_OVERHEAD));
+  *output = base64_decode(input.substr(12, input.length() - ENCODING_OVERHEAD));
 
   return true; // success
 }

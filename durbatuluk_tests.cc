@@ -48,14 +48,14 @@ TEST(durbatuluk_tests, test_command_from_encoded)
 
   // encode the message
   input.SerializeToString(&serialized);
-  ASSERT_TRUE(Encoding::EncodeMessage(serialized, encoded));
+  ASSERT_TRUE(Encoding::EncodeMessage(serialized, &encoded));
 
   // decode & parse the message
-  ASSERT_TRUE(Encoding::DecodeMessage(encoded, decoded));
+  ASSERT_TRUE(Encoding::DecodeMessage(encoded, &decoded));
   ASSERT_TRUE(parsed.ParseFromString(decoded));
 
   // send the message to the message handler
-  bool rv = MessageHandler::HandleMessage(parsed, output);
+  bool rv = MessageHandler::HandleMessage(parsed, &output);
   ASSERT_TRUE(rv) << "HandleMessage failed";
 
   // check the result
@@ -87,7 +87,7 @@ TEST(durbatuluk_tests, test_command_line_processing)
   ASSERT_TRUE(ConfigurationManager::SetConfigurationFileName(conf_file_name));
 
   std::string safety_check;
-  ASSERT_TRUE(ConfigurationManager::GetConfigurationFileName(safety_check));
+  ASSERT_TRUE(ConfigurationManager::GetConfigurationFileName(&safety_check));
   ASSERT_STREQ(conf_file_name.c_str(), safety_check.c_str());
 
   // generate the keyfiles

@@ -25,51 +25,52 @@
 #include "base64.h"
 #include <openssl/engine.h>
 
-/*static*/ bool Crypto::ExtractPublicRSAKey(RSA* rsa, RSAKey& public_key)
+/*static*/ bool Crypto::ExtractPublicRSAKey(const RSA* rsa, RSAKey* public_key)
 {
   unsigned char* buf = AllocateForRSAExtraction(rsa);
   if (buf == nullptr)
     return false; // failure
 
   int len = BN_bn2bin(rsa->n, buf);
-  public_key.set_n(buf, len);
+  public_key->set_n(buf, len);
 
   len = BN_bn2bin(rsa->e, buf);
-  public_key.set_e(buf, len);
+  public_key->set_e(buf, len);
 
   delete[] buf;
   return true; // success
 }
 
-/*static*/ bool Crypto::ExtractPrivateRSAKey(RSA* rsa, RSAKey& private_key)
+/*static*/ bool Crypto::ExtractPrivateRSAKey(
+  const RSA* rsa, RSAKey* private_key)
 {
   unsigned char* buf = AllocateForRSAExtraction(rsa);
   if (buf == nullptr)
     return false; // failure
 
   int len = BN_bn2bin(rsa->n, buf);
-  private_key.set_n(buf, len);
+  private_key->set_n(buf, len);
 
   len = BN_bn2bin(rsa->e, buf);
-  private_key.set_e(buf, len);
+  private_key->set_e(buf, len);
 
   len = BN_bn2bin(rsa->d, buf);
-  private_key.set_d(buf, len);
+  private_key->set_d(buf, len);
 
   len = BN_bn2bin(rsa->p, buf);
-  private_key.set_p(buf, len);
+  private_key->set_p(buf, len);
 
   len = BN_bn2bin(rsa->q, buf);
-  private_key.set_q(buf, len);
+  private_key->set_q(buf, len);
 
   len = BN_bn2bin(rsa->dmp1, buf);
-  private_key.set_dmp1(buf, len);
+  private_key->set_dmp1(buf, len);
 
   len = BN_bn2bin(rsa->dmq1, buf);
-  private_key.set_dmq1(buf, len);
+  private_key->set_dmq1(buf, len);
 
   len = BN_bn2bin(rsa->iqmp, buf);
-  private_key.set_iqmp(buf, len);
+  private_key->set_iqmp(buf, len);
 
   delete[] buf;
   return true; // success
@@ -124,7 +125,7 @@
   return true; // success
 }
 
-/*static*/ unsigned char* Crypto::AllocateForRSAExtraction(RSA* rsa)
+/*static*/ unsigned char* Crypto::AllocateForRSAExtraction(const RSA* rsa)
 {
   if (rsa->n == nullptr || rsa->e == nullptr)
     return nullptr;
@@ -185,7 +186,7 @@
 }
 
 /*static*/ bool Crypto::CreateSignedMessage(
-    std::string& contents, RSA* rsa, SignedMessage& signed_message)
+  const std::string& contents, RSA* rsa, SignedMessage* signed_message)
 {
   // set up variables and buffers
 
@@ -194,7 +195,7 @@
   unsigned int siglen;
 
   RSAKey public_key;
-  if (!ExtractPublicRSAKey(rsa, public_key))
+  if (!ExtractPublicRSAKey(rsa, &public_key))
     return false; // failure
 
   // sign the contents
@@ -204,15 +205,15 @@
     return false; // failure
 
   // build the SignedMessage
-  signed_message.mutable_sender()->set_n(public_key.n());
-  signed_message.mutable_sender()->set_e(public_key.e());
-  signed_message.set_contents(contents.c_str(), contents.length());
-  signed_message.set_signature(sigret, siglen);
+  signed_message->mutable_sender()->set_n(public_key.n());
+  signed_message->mutable_sender()->set_e(public_key.e());
+  signed_message->set_contents(contents.c_str(), contents.length());
+  signed_message->set_signature(sigret, siglen);
 
   return true; // failure
 }
 
-/*static*/ bool Crypto::VerifySignedMessage(SignedMessage& signed_message)
+/*static*/ bool Crypto::VerifySignedMessage(const SignedMessage& signed_message)
 {
   // import the public signing key
 
@@ -238,8 +239,8 @@
   return signature_passed;
 }
 
-/*static*/ bool Crypto::EncryptMessage(RSAKey& recipient_public_key,
-    std::string& contents, EncryptedMessage& encrypted_message)
+/*static*/ bool Crypto::EncryptMessage(const RSAKey& recipient_public_key,
+    const std::string& contents, EncryptedMessage* encrypted_message)
 {
   // import the public key
 
@@ -294,10 +295,10 @@
   if (ciphertext != nullptr)
   {
     // populate the encrypted message
-    encrypted_message.mutable_recipient()->set_n(recipient_public_key.n());
-    encrypted_message.mutable_recipient()->set_e(recipient_public_key.e());
-    encrypted_message.set_encrypted_key(encrypted_session_key, rsa_size);
-    encrypted_message.set_encrypted_contents(ciphertext, len);
+    encrypted_message->mutable_recipient()->set_n(recipient_public_key.n());
+    encrypted_message->mutable_recipient()->set_e(recipient_public_key.e());
+    encrypted_message->set_encrypted_key(encrypted_session_key, rsa_size);
+    encrypted_message->set_encrypted_contents(ciphertext, len);
 
     free(ciphertext); // (safe to free nullptr)
     success = true;
@@ -307,12 +308,12 @@
 }
 
 /*static*/ bool Crypto::DecryptMessage(RSA* rsa,
-  EncryptedMessage& encrypted_message, std::string& decrypted)
+  const EncryptedMessage& encrypted_message, std::string* decrypted)
 {
   // verify that RSA key parameter is that of recipient of message
 
   RSAKey private_key;
-  if (!ExtractPrivateRSAKey(rsa, private_key))
+  if (!ExtractPrivateRSAKey(rsa, &private_key))
   {
     Logger::LogMessage(ERROR, "Crypto", "ExtractPrivateRSAKey failed");
     return false; // failure
@@ -327,7 +328,7 @@
 
   // decrypt the message contents
 
-  decrypted.erase(); // for good measure
+  decrypted->erase(); // for good measure
   int rsa_size = RSA_size(rsa);
   unsigned char session_key[rsa_size];
   EVP_CIPHER_CTX en, de;
@@ -356,11 +357,11 @@
       break; // something went wrong with encryption
 
     // place the contents in the decrypted string
-    if ((size_t)len > decrypted.max_size())
+    if ((size_t)len > decrypted->max_size())
       break; // message too long
-    decrypted.reserve(len);
+    decrypted->reserve(len);
     for (i = 0; i < len; i++)
-      decrypted.push_back(plaintext[i]);
+      decrypted->push_back(plaintext[i]);
 
     free(plaintext);
     break;
@@ -371,7 +372,7 @@
   EVP_CIPHER_CTX_cleanup(&en);
   EVP_CIPHER_CTX_cleanup(&de);
 
-  if (decrypted.length() <= 0)
+  if (decrypted->length() <= 0)
   {
     Logger::LogMessage(INFO, "Crypto", "Decryption failure");
     return false; // failure
@@ -380,7 +381,7 @@
   return true; // success
 }
 
-/*static*/ bool Crypto::HashRSAKey(const RSAKey& key, std::string& encoded_hash)
+/*static*/ bool Crypto::HashRSAKey(const RSAKey& key, std::string* encoded_hash)
 {
   // serialize the key
   std::string serialized;
@@ -395,7 +396,7 @@
   SHA1((const unsigned char*)serialized.c_str(), serialized.length(), digest);
 
   // encode the hash
-  encoded_hash = base64_encode(digest, SHA_DIGEST_LENGTH);
+  *encoded_hash = base64_encode(digest, SHA_DIGEST_LENGTH);
 
   return true; // success
 }

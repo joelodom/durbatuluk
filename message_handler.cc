@@ -24,12 +24,12 @@
 #include "sequence_manager.h"
 
 /*static*/ bool MessageHandler::HandleMessage(
-  const DurbatulukMessage& input, DurbatulukMessage& output,
+  const DurbatulukMessage& input, DurbatulukMessage* output,
   MessageHandlerCallback callback /*= nullptr*/)
 {
   std::stringstream ss;
   ss << "Entering HandleMessage (type " << input.type() << ")";
-  Logger::LogMessage(INFO, "MessageHandler", ss);
+  Logger::LogMessage(INFO, "MessageHandler", &ss);
 
   // check the sequence number
   if (!SequenceManager::IsSequenceNumberAllowed(input.sequence_number()))
@@ -62,17 +62,17 @@
   if (input.type() == MESSAGE_TYPE_SHELL_EXEC)
   {
     ss << "ShellExec contents: " << input.contents();
-    Logger::LogMessage(INFO, "MessageHandler", ss);
+    Logger::LogMessage(INFO, "MessageHandler", &ss);
 
     std::string shell_exec_output;
-    if (ShellExec(input.contents(), shell_exec_output))
+    if (ShellExec(input.contents(), &shell_exec_output))
     {
       ss << "ShellExec output begins " << shell_exec_output.substr(0, 20);
-      Logger::LogMessage(DEBUG, "MessageHandler", ss);
+      Logger::LogMessage(DEBUG, "MessageHandler", &ss);
 
-      output.set_type(MESSAGE_TYPE_SHELL_EXEC_OUTPUT);
-      output.set_contents(shell_exec_output);
-      output.set_sequence_number(input.sequence_number());
+      output->set_type(MESSAGE_TYPE_SHELL_EXEC_OUTPUT);
+      output->set_contents(shell_exec_output);
+      output->set_sequence_number(input.sequence_number());
       return true; // success
     }
 
@@ -83,11 +83,11 @@
   {
     ss << MESSAGE_TYPE_SHELL_EXEC_OUTPUT << " contents begins "
       << input.contents().substr(0, 20);
-    Logger::LogMessage(DEBUG, "MessageHandler", ss);
+    Logger::LogMessage(DEBUG, "MessageHandler", &ss);
 
     ss << "Attempting to callback (callback IS "
       << (callback != nullptr ? "NOT " : "") << "NULL)";
-    Logger::LogMessage(DEBUG, "MessageHandler", ss);
+    Logger::LogMessage(DEBUG, "MessageHandler", &ss);
 
     // kick back to caller
 
@@ -95,7 +95,7 @@
       : callback(input.type(), input.contents());
 
     ss << "Callback returned " << rv;
-    Logger::LogMessage(DEBUG, "MessageHandler", ss);
+    Logger::LogMessage(DEBUG, "MessageHandler", &ss);
 
     return rv;
   }
@@ -104,7 +104,7 @@
 }
 
 /*static*/ bool MessageHandler::ShellExec(
-  const std::string& input, std::string& output)
+  const std::string& input, std::string* output)
 {
   FILE* fp = popen(input.c_str(), "r");
   if (fp == NULL)
@@ -112,7 +112,7 @@
 
   char buf[1024];
   while (fgets(buf, sizeof(buf), fp) != nullptr)
-    output.append(buf);
+    output->append(buf);
 
   pclose(fp);
 

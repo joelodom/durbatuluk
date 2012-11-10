@@ -30,48 +30,48 @@
 class ConfigurationManager
 {
 public:
-  static bool ReadConfigurationFile(std::string& config_file_name);
+  static bool ReadConfigurationFile(const std::string& config_file_name);
 
-  static bool GetSequenceNumberFileName(std::string& file_name)
+  static bool GetSequenceNumberFileName(std::string* file_name)
   {
     // TODO: make configurable
-    file_name = "sequence_file";
+    *file_name = "sequence_file";
     return true; // success
   }
 
-  static bool GetConfigurationFileName(std::string& file_name)
+  static bool GetConfigurationFileName(std::string* file_name)
   {
-    file_name = configuration_file_name_;
+    *file_name = configuration_file_name_;
     return true; // success
   }
 
-  static bool SetConfigurationFileName(std::string& file_name)
+  static bool SetConfigurationFileName(const std::string& file_name)
   {
     configuration_file_name_ = file_name;
     return true; // success
   }
 
-  static bool GetPostMessageURL(std::string& url)
+  static bool GetPostMessageURL(std::string* url)
   {
-    url = post_message_url_;
+    *url = post_message_url_;
     return true; // success
   }
 
-  static bool GetFetchMessageURL(std::string& url)
+  static bool GetFetchMessageURL(std::string* url)
   {
-    url = fetch_message_url_;
+    *url = fetch_message_url_;
     return true; // success
   }
 
-  static bool GetMySigningKeyName(std::string& name)
+  static bool GetMySigningKeyName(std::string* name)
   {
-    name = my_signing_key_name_;
+    *name = my_signing_key_name_;
     return true; // success
   }
 
-  static bool GetMyEncryptionKeyName(std::string& name)
+  static bool GetMyEncryptionKeyName(std::string* name)
   {
-    name = my_encryption_key_name_;
+    *name = my_encryption_key_name_;
     return true; // success
   }
 
@@ -83,7 +83,7 @@ public:
     const RSAKey& sender, const std::string& type);
 
   // AllowSender is mostly for testing purposes
-  static bool AllowSender(RSA* rsa, const std::string& type);
+  static bool AllowSender(const RSA* rsa, const std::string& type);
 
 private:
   // The map key is the hash of the sender public key.  The map value
