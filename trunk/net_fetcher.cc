@@ -24,7 +24,7 @@
 #include <curl/curl.h>
 
 /*static*/ bool NetFetcher::FetchURL(
-  const std::string& url, std::string& contents)
+  const std::string& url, std::string* contents)
 {
   CURLcode error;
   std::stringstream ss;
@@ -42,7 +42,7 @@
   if (error != CURLE_OK)
   {
     ss << "curl_easy_setopt returned " << error << " setting URL";
-    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    Logger::LogMessage(ERROR, "NetFetcher", &ss);
     return false; // failure
   }
 
@@ -50,15 +50,15 @@
   if (error != CURLE_OK)
   {
     ss << "curl_easy_setopt returned " << error << " setting callback";
-    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    Logger::LogMessage(ERROR, "NetFetcher", &ss);
     return false; // failure
   }
 
-  error = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &contents);
+  error = curl_easy_setopt(curl, CURLOPT_WRITEDATA, contents);
   if (error != CURLE_OK)
   {
     ss << "curl_easy_setopt returned " << error << " setting user data";
-    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    Logger::LogMessage(ERROR, "NetFetcher", &ss);
     return false; // failure
   }
 
@@ -67,7 +67,7 @@
   if (error != CURLE_OK)
   {
     ss << "curl_easy_perform returned " << error;
-    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    Logger::LogMessage(ERROR, "NetFetcher", &ss);
     return false; // failure
   }
 
@@ -94,7 +94,7 @@
   if (error != CURLE_OK)
   {
     ss << "curl_easy_setopt returned " << error << " setting URL";
-    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    Logger::LogMessage(ERROR, "NetFetcher", &ss);
     return false; // failure
   }
 
@@ -102,7 +102,7 @@
   if (error != CURLE_OK)
   {
     ss << "curl_easy_setopt returned " << error << " setting callback";
-    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    Logger::LogMessage(ERROR, "NetFetcher", &ss);
     return false; // failure
   }
 
@@ -110,7 +110,7 @@
   if (error != CURLE_OK)
   {
     ss << "curl_easy_setopt returned " << error << " setting callback";
-    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    Logger::LogMessage(ERROR, "NetFetcher", &ss);
     return false; // failure
   }
 
@@ -129,7 +129,7 @@
   if (error != CURLE_OK)
   {
     ss << "curl_easy_setopt returned " << error << " setting user data";
-    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    Logger::LogMessage(ERROR, "NetFetcher", &ss);
     return false; // failure
   }
 
@@ -138,7 +138,7 @@
   if (error != CURLE_OK)
   {
     ss << "curl_easy_setopt returned " << error << " setting user data";
-    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    Logger::LogMessage(ERROR, "NetFetcher", &ss);
     return false; // failure
   }
 
@@ -147,7 +147,7 @@
   if (error != CURLE_OK)
   {
     ss << "curl_easy_perform returned " << error;
-    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    Logger::LogMessage(ERROR, "NetFetcher", &ss);
     return false; // failure
   }
 
@@ -156,7 +156,7 @@
   if (error != CURLE_OK)
   {
     ss << "curl_easy_getinfo returned " << error;
-    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    Logger::LogMessage(ERROR, "NetFetcher", &ss);
     return false; // failure
   }
 
@@ -165,7 +165,7 @@
   if (http_code != 200)
   {
     ss << "curl status code: " << http_code;
-    Logger::LogMessage(ERROR, "NetFetcher", ss);
+    Logger::LogMessage(ERROR, "NetFetcher", &ss);
   }
 
   return true; // success

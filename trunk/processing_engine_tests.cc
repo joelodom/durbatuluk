@@ -43,7 +43,7 @@ TEST(processing_engine_tests, test_full_circle_of_string_message)
   ASSERT_TRUE(rsa_recipient_encryption != nullptr);
   RSAKey rsa_recipient_encryption_public_key;
   ASSERT_TRUE(Crypto::ExtractPublicRSAKey(
-    rsa_recipient_encryption, rsa_recipient_encryption_public_key));
+    rsa_recipient_encryption, &rsa_recipient_encryption_public_key));
 
   // serialize the message
   std::string serialized;
@@ -53,12 +53,12 @@ TEST(processing_engine_tests, test_full_circle_of_string_message)
   std::string encoded;
   ASSERT_TRUE(ProcessingEngine::EncryptSignAndEncode(
     serialized, rsa_recipient_encryption_public_key,
-    rsa_sender_signing, encoded));
+    rsa_sender_signing, &encoded));
 
   // decode, verify and decrypt the encoded message
   DurbatulukMessage message2;
   EXPECT_FALSE(ProcessingEngine::DecodeVerifyAndDecrypt(
-    encoded, rsa_recipient_encryption, message2))
+    encoded, rsa_recipient_encryption, &message2))
     << "expected to fail because sender not yet allowed";
 
   // add sender to allowed senders
@@ -67,7 +67,7 @@ TEST(processing_engine_tests, test_full_circle_of_string_message)
 
   // decode, verify and decrypt the encoded message
   EXPECT_FALSE(ProcessingEngine::DecodeVerifyAndDecrypt(
-    encoded, rsa_recipient_encryption, message2))
+    encoded, rsa_recipient_encryption, &message2))
     << "expected to fail because sender not yet allowed to send type";
 
   // add sender to allowed senders
@@ -77,7 +77,7 @@ TEST(processing_engine_tests, test_full_circle_of_string_message)
 
   // decode, verify and decrypt the encoded message
   ASSERT_TRUE(ProcessingEngine::DecodeVerifyAndDecrypt(
-    encoded, rsa_recipient_encryption, message2));
+    encoded, rsa_recipient_encryption, &message2));
   RSA_free(rsa_recipient_encryption);
 
   EXPECT_STREQ(message.contents().c_str(), message2.contents().c_str());
@@ -100,20 +100,20 @@ TEST(processing_engine_tests, test_full_circle_of_shell_command)
   ASSERT_TRUE(rsa_recipient_encryption != nullptr);
   RSAKey rsa_recipient_encryption_public_key;
   ASSERT_TRUE(Crypto::ExtractPublicRSAKey(
-    rsa_recipient_encryption, rsa_recipient_encryption_public_key));
+    rsa_recipient_encryption, &rsa_recipient_encryption_public_key));
 
   // generate the message as if I am a commander
   std::string encoded_message;
   unsigned long long sequence_number;
   ASSERT_TRUE(ProcessingEngine::GenerateEncodedDurbatulukMessage(
     MESSAGE_TYPE_SHELL_EXEC, "echo durbatuluk",
-    rsa_recipient_encryption_public_key, rsa_sender_signing, encoded_message,
-    sequence_number));
+    rsa_recipient_encryption_public_key, rsa_sender_signing, &encoded_message,
+    &sequence_number));
 
   // process the message as if I am a client
   DurbatulukMessage output;
   ASSERT_TRUE(ProcessingEngine::HandleIncomingEncodedMessage(
-    encoded_message, rsa_recipient_encryption, output));
+    encoded_message, rsa_recipient_encryption, &output));
 
   // Save the sequence number so that we can process the response.  We would
   // normally save the sequence number right after
@@ -130,7 +130,7 @@ TEST(processing_engine_tests, test_full_circle_of_shell_command)
   std::string output_str;
   ASSERT_TRUE(output.SerializeToString(&output_str));
   ASSERT_TRUE(ProcessingEngine::EncryptSignAndEncode(output_str,
-    rsa_recipient_encryption_public_key, rsa_sender_signing, encoded_message));
+    rsa_recipient_encryption_public_key, rsa_sender_signing, &encoded_message));
 
   // add sender to allowed senders (changing type)
   ASSERT_TRUE(ConfigurationManager::AllowSender(
@@ -147,6 +147,6 @@ TEST(processing_engine_tests, test_full_circle_of_shell_command)
 
   // process the response as if I am the commander getting the response
   ASSERT_TRUE(ProcessingEngine::HandleIncomingEncodedMessage(
-    encoded_message, rsa_recipient_encryption, output, callback));
+    encoded_message, rsa_recipient_encryption, &output, callback));
   RSA_free(rsa_recipient_encryption);
 }

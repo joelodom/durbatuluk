@@ -26,7 +26,7 @@
 TEST(net_fetcher_tests, test_fetch_url)
 {
   std::string url("http://durbatuluk-server.appspot.com/"), contents;
-  ASSERT_TRUE(NetFetcher::FetchURL(url, contents));
+  ASSERT_TRUE(NetFetcher::FetchURL(url, &contents));
   EXPECT_TRUE(contents.find("<html>") != contents.npos);
 }
 
@@ -49,7 +49,7 @@ TEST(net_fetcher_tests, test_post_message_to_url)
   // check log that post went through
   std::string contents;
   ASSERT_TRUE(NetFetcher::FetchURL("http://durbatuluk-server.appspot.com/fetch",
-    contents));
+    &contents));
   EXPECT_TRUE(contents.find(time_str) != contents.npos)
     << "This can possibly fail if the server is too slow...";
 }

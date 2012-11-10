@@ -27,7 +27,7 @@
 class NetFetcher
 {
 public:
-  static bool FetchURL(const std::string& url, std::string& contents);
+  static bool FetchURL(const std::string& url, std::string* contents);
 
   // Input command should not be escaped.  For example,
   // <durbatuluk>Cog/5+8/sFo==</durbatuluk> as input command

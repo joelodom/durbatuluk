@@ -42,29 +42,29 @@ class RSAKey : public ::google::protobuf::Message {
  public:
   RSAKey();
   virtual ~RSAKey();
-  
+
   RSAKey(const RSAKey& from);
-  
+
   inline RSAKey& operator=(const RSAKey& from) {
     CopyFrom(from);
     return *this;
   }
-  
+
   inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
     return _unknown_fields_;
   }
-  
+
   inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
     return &_unknown_fields_;
   }
-  
+
   static const ::google::protobuf::Descriptor* descriptor();
   static const RSAKey& default_instance();
-  
+
   void Swap(RSAKey* other);
-  
+
   // implements Message ----------------------------------------------
-  
+
   RSAKey* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
@@ -72,7 +72,7 @@ class RSAKey : public ::google::protobuf::Message {
   void MergeFrom(const RSAKey& from);
   void Clear();
   bool IsInitialized() const;
-  
+
   int ByteSize() const;
   bool MergePartialFromCodedStream(
       ::google::protobuf::io::CodedInputStream* input);
@@ -85,13 +85,13 @@ class RSAKey : public ::google::protobuf::Message {
   void SharedDtor();
   void SetCachedSize(int size) const;
   public:
-  
+
   ::google::protobuf::Metadata GetMetadata() const;
-  
+
   // nested types ----------------------------------------------------
-  
+
   // accessors -------------------------------------------------------
-  
+
   // required bytes n = 1;
   inline bool has_n() const;
   inline void clear_n();
@@ -102,7 +102,7 @@ class RSAKey : public ::google::protobuf::Message {
   inline void set_n(const void* value, size_t size);
   inline ::std::string* mutable_n();
   inline ::std::string* release_n();
-  
+
   // required bytes e = 2;
   inline bool has_e() const;
   inline void clear_e();
@@ -113,7 +113,7 @@ class RSAKey : public ::google::protobuf::Message {
   inline void set_e(const void* value, size_t size);
   inline ::std::string* mutable_e();
   inline ::std::string* release_e();
-  
+
   // optional bytes d = 3;
   inline bool has_d() const;
   inline void clear_d();
@@ -124,7 +124,7 @@ class RSAKey : public ::google::protobuf::Message {
   inline void set_d(const void* value, size_t size);
   inline ::std::string* mutable_d();
   inline ::std::string* release_d();
-  
+
   // optional bytes p = 4;
   inline bool has_p() const;
   inline void clear_p();
@@ -135,7 +135,7 @@ class RSAKey : public ::google::protobuf::Message {
   inline void set_p(const void* value, size_t size);
   inline ::std::string* mutable_p();
   inline ::std::string* release_p();
-  
+
   // optional bytes q = 5;
   inline bool has_q() const;
   inline void clear_q();
@@ -146,7 +146,7 @@ class RSAKey : public ::google::protobuf::Message {
   inline void set_q(const void* value, size_t size);
   inline ::std::string* mutable_q();
   inline ::std::string* release_q();
-  
+
   // optional bytes dmp1 = 6;
   inline bool has_dmp1() const;
   inline void clear_dmp1();
@@ -157,7 +157,7 @@ class RSAKey : public ::google::protobuf::Message {
   inline void set_dmp1(const void* value, size_t size);
   inline ::std::string* mutable_dmp1();
   inline ::std::string* release_dmp1();
-  
+
   // optional bytes dmq1 = 7;
   inline bool has_dmq1() const;
   inline void clear_dmq1();
@@ -168,7 +168,7 @@ class RSAKey : public ::google::protobuf::Message {
   inline void set_dmq1(const void* value, size_t size);
   inline ::std::string* mutable_dmq1();
   inline ::std::string* release_dmq1();
-  
+
   // optional bytes iqmp = 8;
   inline bool has_iqmp() const;
   inline void clear_iqmp();
@@ -179,7 +179,7 @@ class RSAKey : public ::google::protobuf::Message {
   inline void set_iqmp(const void* value, size_t size);
   inline ::std::string* mutable_iqmp();
   inline ::std::string* release_iqmp();
-  
+
   // @@protoc_insertion_point(class_scope:RSAKey)
  private:
   inline void set_has_n();
@@ -198,9 +198,9 @@ class RSAKey : public ::google::protobuf::Message {
   inline void clear_has_dmq1();
   inline void set_has_iqmp();
   inline void clear_has_iqmp();
-  
+
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
+
   ::std::string* n_;
   ::std::string* e_;
   ::std::string* d_;
@@ -209,14 +209,14 @@ class RSAKey : public ::google::protobuf::Message {
   ::std::string* dmp1_;
   ::std::string* dmq1_;
   ::std::string* iqmp_;
-  
+
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
-  
+
   friend void  protobuf_AddDesc_durbatuluk_2eproto();
   friend void protobuf_AssignDesc_durbatuluk_2eproto();
   friend void protobuf_ShutdownFile_durbatuluk_2eproto();
-  
+
   void InitAsDefaultInstance();
   static RSAKey* default_instance_;
 };
@@ -226,29 +226,29 @@ class SignedMessage : public ::google::protobuf::Message {
  public:
   SignedMessage();
   virtual ~SignedMessage();
-  
+
   SignedMessage(const SignedMessage& from);
-  
+
   inline SignedMessage& operator=(const SignedMessage& from) {
     CopyFrom(from);
     return *this;
   }
-  
+
   inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
     return _unknown_fields_;
   }
-  
+
   inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
     return &_unknown_fields_;
   }
-  
+
   static const ::google::protobuf::Descriptor* descriptor();
   static const SignedMessage& default_instance();
-  
+
   void Swap(SignedMessage* other);
-  
+
   // implements Message ----------------------------------------------
-  
+
   SignedMessage* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
@@ -256,7 +256,7 @@ class SignedMessage : public ::google::protobuf::Message {
   void MergeFrom(const SignedMessage& from);
   void Clear();
   bool IsInitialized() const;
-  
+
   int ByteSize() const;
   bool MergePartialFromCodedStream(
       ::google::protobuf::io::CodedInputStream* input);
@@ -269,13 +269,13 @@ class SignedMessage : public ::google::protobuf::Message {
   void SharedDtor();
   void SetCachedSize(int size) const;
   public:
-  
+
   ::google::protobuf::Metadata GetMetadata() const;
-  
+
   // nested types ----------------------------------------------------
-  
+
   // accessors -------------------------------------------------------
-  
+
   // required .RSAKey sender = 1;
   inline bool has_sender() const;
   inline void clear_sender();
@@ -283,7 +283,7 @@ class SignedMessage : public ::google::protobuf::Message {
   inline const ::RSAKey& sender() const;
   inline ::RSAKey* mutable_sender();
   inline ::RSAKey* release_sender();
-  
+
   // required bytes contents = 2;
   inline bool has_contents() const;
   inline void clear_contents();
@@ -294,7 +294,7 @@ class SignedMessage : public ::google::protobuf::Message {
   inline void set_contents(const void* value, size_t size);
   inline ::std::string* mutable_contents();
   inline ::std::string* release_contents();
-  
+
   // required bytes signature = 3;
   inline bool has_signature() const;
   inline void clear_signature();
@@ -305,7 +305,7 @@ class SignedMessage : public ::google::protobuf::Message {
   inline void set_signature(const void* value, size_t size);
   inline ::std::string* mutable_signature();
   inline ::std::string* release_signature();
-  
+
   // @@protoc_insertion_point(class_scope:SignedMessage)
  private:
   inline void set_has_sender();
@@ -314,20 +314,20 @@ class SignedMessage : public ::google::protobuf::Message {
   inline void clear_has_contents();
   inline void set_has_signature();
   inline void clear_has_signature();
-  
+
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
+
   ::RSAKey* sender_;
   ::std::string* contents_;
   ::std::string* signature_;
-  
+
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
-  
+
   friend void  protobuf_AddDesc_durbatuluk_2eproto();
   friend void protobuf_AssignDesc_durbatuluk_2eproto();
   friend void protobuf_ShutdownFile_durbatuluk_2eproto();
-  
+
   void InitAsDefaultInstance();
   static SignedMessage* default_instance_;
 };
@@ -337,29 +337,29 @@ class EncryptedMessage : public ::google::protobuf::Message {
  public:
   EncryptedMessage();
   virtual ~EncryptedMessage();
-  
+
   EncryptedMessage(const EncryptedMessage& from);
-  
+
   inline EncryptedMessage& operator=(const EncryptedMessage& from) {
     CopyFrom(from);
     return *this;
   }
-  
+
   inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
     return _unknown_fields_;
   }
-  
+
   inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
     return &_unknown_fields_;
   }
-  
+
   static const ::google::protobuf::Descriptor* descriptor();
   static const EncryptedMessage& default_instance();
-  
+
   void Swap(EncryptedMessage* other);
-  
+
   // implements Message ----------------------------------------------
-  
+
   EncryptedMessage* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
@@ -367,7 +367,7 @@ class EncryptedMessage : public ::google::protobuf::Message {
   void MergeFrom(const EncryptedMessage& from);
   void Clear();
   bool IsInitialized() const;
-  
+
   int ByteSize() const;
   bool MergePartialFromCodedStream(
       ::google::protobuf::io::CodedInputStream* input);
@@ -380,13 +380,13 @@ class EncryptedMessage : public ::google::protobuf::Message {
   void SharedDtor();
   void SetCachedSize(int size) const;
   public:
-  
+
   ::google::protobuf::Metadata GetMetadata() const;
-  
+
   // nested types ----------------------------------------------------
-  
+
   // accessors -------------------------------------------------------
-  
+
   // required .RSAKey recipient = 1;
   inline bool has_recipient() const;
   inline void clear_recipient();
@@ -394,7 +394,7 @@ class EncryptedMessage : public ::google::protobuf::Message {
   inline const ::RSAKey& recipient() const;
   inline ::RSAKey* mutable_recipient();
   inline ::RSAKey* release_recipient();
-  
+
   // required bytes encrypted_key = 2;
   inline bool has_encrypted_key() const;
   inline void clear_encrypted_key();
@@ -405,7 +405,7 @@ class EncryptedMessage : public ::google::protobuf::Message {
   inline void set_encrypted_key(const void* value, size_t size);
   inline ::std::string* mutable_encrypted_key();
   inline ::std::string* release_encrypted_key();
-  
+
   // required bytes encrypted_contents = 3;
   inline bool has_encrypted_contents() const;
   inline void clear_encrypted_contents();
@@ -416,7 +416,7 @@ class EncryptedMessage : public ::google::protobuf::Message {
   inline void set_encrypted_contents(const void* value, size_t size);
   inline ::std::string* mutable_encrypted_contents();
   inline ::std::string* release_encrypted_contents();
-  
+
   // @@protoc_insertion_point(class_scope:EncryptedMessage)
  private:
   inline void set_has_recipient();
@@ -425,20 +425,20 @@ class EncryptedMessage : public ::google::protobuf::Message {
   inline void clear_has_encrypted_key();
   inline void set_has_encrypted_contents();
   inline void clear_has_encrypted_contents();
-  
+
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
+
   ::RSAKey* recipient_;
   ::std::string* encrypted_key_;
   ::std::string* encrypted_contents_;
-  
+
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
-  
+
   friend void  protobuf_AddDesc_durbatuluk_2eproto();
   friend void protobuf_AssignDesc_durbatuluk_2eproto();
   friend void protobuf_ShutdownFile_durbatuluk_2eproto();
-  
+
   void InitAsDefaultInstance();
   static EncryptedMessage* default_instance_;
 };
@@ -448,29 +448,29 @@ class DurbatulukMessage : public ::google::protobuf::Message {
  public:
   DurbatulukMessage();
   virtual ~DurbatulukMessage();
-  
+
   DurbatulukMessage(const DurbatulukMessage& from);
-  
+
   inline DurbatulukMessage& operator=(const DurbatulukMessage& from) {
     CopyFrom(from);
     return *this;
   }
-  
+
   inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
     return _unknown_fields_;
   }
-  
+
   inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
     return &_unknown_fields_;
   }
-  
+
   static const ::google::protobuf::Descriptor* descriptor();
   static const DurbatulukMessage& default_instance();
-  
+
   void Swap(DurbatulukMessage* other);
-  
+
   // implements Message ----------------------------------------------
-  
+
   DurbatulukMessage* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
@@ -478,7 +478,7 @@ class DurbatulukMessage : public ::google::protobuf::Message {
   void MergeFrom(const DurbatulukMessage& from);
   void Clear();
   bool IsInitialized() const;
-  
+
   int ByteSize() const;
   bool MergePartialFromCodedStream(
       ::google::protobuf::io::CodedInputStream* input);
@@ -491,13 +491,13 @@ class DurbatulukMessage : public ::google::protobuf::Message {
   void SharedDtor();
   void SetCachedSize(int size) const;
   public:
-  
+
   ::google::protobuf::Metadata GetMetadata() const;
-  
+
   // nested types ----------------------------------------------------
-  
+
   // accessors -------------------------------------------------------
-  
+
   // required string type = 1;
   inline bool has_type() const;
   inline void clear_type();
@@ -508,7 +508,7 @@ class DurbatulukMessage : public ::google::protobuf::Message {
   inline void set_type(const char* value, size_t size);
   inline ::std::string* mutable_type();
   inline ::std::string* release_type();
-  
+
   // required string contents = 2;
   inline bool has_contents() const;
   inline void clear_contents();
@@ -519,14 +519,14 @@ class DurbatulukMessage : public ::google::protobuf::Message {
   inline void set_contents(const char* value, size_t size);
   inline ::std::string* mutable_contents();
   inline ::std::string* release_contents();
-  
+
   // required uint64 sequence_number = 3;
   inline bool has_sequence_number() const;
   inline void clear_sequence_number();
   static const int kSequenceNumberFieldNumber = 3;
   inline ::google::protobuf::uint64 sequence_number() const;
   inline void set_sequence_number(::google::protobuf::uint64 value);
-  
+
   // @@protoc_insertion_point(class_scope:DurbatulukMessage)
  private:
   inline void set_has_type();
@@ -535,20 +535,20 @@ class DurbatulukMessage : public ::google::protobuf::Message {
   inline void clear_has_contents();
   inline void set_has_sequence_number();
   inline void clear_has_sequence_number();
-  
+
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
+
   ::std::string* type_;
   ::std::string* contents_;
   ::google::protobuf::uint64 sequence_number_;
-  
+
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
-  
+
   friend void  protobuf_AddDesc_durbatuluk_2eproto();
   friend void protobuf_AssignDesc_durbatuluk_2eproto();
   friend void protobuf_ShutdownFile_durbatuluk_2eproto();
-  
+
   void InitAsDefaultInstance();
   static DurbatulukMessage* default_instance_;
 };
@@ -558,29 +558,29 @@ class AllowedSequenceNumbers : public ::google::protobuf::Message {
  public:
   AllowedSequenceNumbers();
   virtual ~AllowedSequenceNumbers();
-  
+
   AllowedSequenceNumbers(const AllowedSequenceNumbers& from);
-  
+
   inline AllowedSequenceNumbers& operator=(const AllowedSequenceNumbers& from) {
     CopyFrom(from);
     return *this;
   }
-  
+
   inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
     return _unknown_fields_;
   }
-  
+
   inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
     return &_unknown_fields_;
   }
-  
+
   static const ::google::protobuf::Descriptor* descriptor();
   static const AllowedSequenceNumbers& default_instance();
-  
+
   void Swap(AllowedSequenceNumbers* other);
-  
+
   // implements Message ----------------------------------------------
-  
+
   AllowedSequenceNumbers* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
@@ -588,7 +588,7 @@ class AllowedSequenceNumbers : public ::google::protobuf::Message {
   void MergeFrom(const AllowedSequenceNumbers& from);
   void Clear();
   bool IsInitialized() const;
-  
+
   int ByteSize() const;
   bool MergePartialFromCodedStream(
       ::google::protobuf::io::CodedInputStream* input);
@@ -601,20 +601,20 @@ class AllowedSequenceNumbers : public ::google::protobuf::Message {
   void SharedDtor();
   void SetCachedSize(int size) const;
   public:
-  
+
   ::google::protobuf::Metadata GetMetadata() const;
-  
+
   // nested types ----------------------------------------------------
-  
+
   // accessors -------------------------------------------------------
-  
+
   // optional uint64 minimum = 1;
   inline bool has_minimum() const;
   inline void clear_minimum();
   static const int kMinimumFieldNumber = 1;
   inline ::google::protobuf::uint64 minimum() const;
   inline void set_minimum(::google::protobuf::uint64 value);
-  
+
   // repeated uint64 allowed = 2;
   inline int allowed_size() const;
   inline void clear_allowed();
@@ -626,24 +626,24 @@ class AllowedSequenceNumbers : public ::google::protobuf::Message {
       allowed() const;
   inline ::google::protobuf::RepeatedField< ::google::protobuf::uint64 >*
       mutable_allowed();
-  
+
   // @@protoc_insertion_point(class_scope:AllowedSequenceNumbers)
  private:
   inline void set_has_minimum();
   inline void clear_has_minimum();
-  
+
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
+
   ::google::protobuf::uint64 minimum_;
   ::google::protobuf::RepeatedField< ::google::protobuf::uint64 > allowed_;
-  
+
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-  
+
   friend void  protobuf_AddDesc_durbatuluk_2eproto();
   friend void protobuf_AssignDesc_durbatuluk_2eproto();
   friend void protobuf_ShutdownFile_durbatuluk_2eproto();
-  
+
   void InitAsDefaultInstance();
   static AllowedSequenceNumbers* default_instance_;
 };

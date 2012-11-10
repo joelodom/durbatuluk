@@ -40,13 +40,14 @@
   return (unsigned long long)time(nullptr);
 }
 
-/*static*/ bool SequenceManager::IsSequenceNumberAllowed(unsigned long long n)
+/*static*/ bool SequenceManager::IsSequenceNumberAllowed(
+  const unsigned long long n)
 {
   unsigned long long minimum;
   std::set<unsigned long long> allowed_numbers;
 
   // read the sequence number file
-  if (!ReadSequenceNumberFile(minimum, allowed_numbers))
+  if (!ReadSequenceNumberFile(&minimum, &allowed_numbers))
   {
     Logger::LogMessage(ERROR,
       "SequenceManager", "ReadSequenceNumberFile failed");
@@ -56,7 +57,7 @@
   // logging
   std::stringstream ss;
   ss << "N: " << n << "  minimum: " << minimum;
-  Logger::LogMessage(DEBUG, "SequenceManager", ss);
+  Logger::LogMessage(DEBUG, "SequenceManager", &ss);
 
   // check the set of explicitly allowed numbers
   if (allowed_numbers.find(n) != allowed_numbers.end())
@@ -66,13 +67,13 @@
 }
 
 /*static*/ bool SequenceManager::SetMinimumAllowedSequenceNumber(
-  unsigned long long n)
+  const unsigned long long n)
 {
   unsigned long long minimum;
   std::set<unsigned long long> allowed_numbers;
 
   // read the sequence number file
-  if (!ReadSequenceNumberFile(minimum, allowed_numbers))
+  if (!ReadSequenceNumberFile(&minimum, &allowed_numbers))
   {
     Logger::LogMessage(ERROR,
       "SequenceManager", "ReadSequenceNumberFile failed");
@@ -91,13 +92,13 @@
 }
 
 /*static*/ bool SequenceManager::AddToAllowedSequenceNumbers(
-  unsigned long long n)
+  const unsigned long long n)
 {
   unsigned long long minimum;
   std::set<unsigned long long> allowed_numbers;
 
   // read the sequence number file
-  if (!ReadSequenceNumberFile(minimum, allowed_numbers))
+  if (!ReadSequenceNumberFile(&minimum, &allowed_numbers))
   {
     Logger::LogMessage(ERROR,
       "SequenceManager", "ReadSequenceNumberFile failed");
@@ -123,13 +124,13 @@
 }
 
 /*static*/ bool SequenceManager::RemoveFromAllowedSequenceNumbers(
-  unsigned long long n)
+  const unsigned long long n)
 {
   unsigned long long minimum;
   std::set<unsigned long long> allowed_numbers;
 
   // read the sequence number file
-  if (!ReadSequenceNumberFile(minimum, allowed_numbers))
+  if (!ReadSequenceNumberFile(&minimum, &allowed_numbers))
   {
     Logger::LogMessage(ERROR,
       "SequenceManager", "ReadSequenceNumberFile failed");
@@ -167,16 +168,16 @@
 }
 
 /*static*/ bool SequenceManager::ReadSequenceNumberFile(
-    unsigned long long& minimum,
-    std::set<unsigned long long>& allowed_numbers)
+    unsigned long long* minimum,
+    std::set<unsigned long long>* allowed_numbers)
 {
   // defaults for failure or for writing new file
-  minimum = SEQUENCE_NUMBER_MAX;
-  allowed_numbers.clear();
+  *minimum = SEQUENCE_NUMBER_MAX;
+  allowed_numbers->clear();
 
   // get the sequence file name
   std::string sequence_file_name;
-  if (!ConfigurationManager::GetSequenceNumberFileName(sequence_file_name))
+  if (!ConfigurationManager::GetSequenceNumberFileName(&sequence_file_name))
   {
     Logger::LogMessage(ERROR,
       "SequenceManager", "GetSequenceNumberFileName failed");
@@ -200,11 +201,11 @@
     std::stringstream ss;
     ss << "Failed to open sequence number file (message " << ex.what()
       << ").  Creating new file.";
-    Logger::LogMessage(INFO, "SequenceManager", ss);
+    Logger::LogMessage(INFO, "SequenceManager", &ss);
 
     // writes using defaults
     if (!SequenceManager::WriteSequenceNumberFile(
-      minimum, allowed_numbers))
+      *minimum, *allowed_numbers))
     {
       Logger::LogMessage(ERROR,
         "SequenceManager", "WriteSequenceNumberFile failed");
@@ -229,22 +230,22 @@
 
   // set returns
 
-  minimum = allowed_numbers_message.has_minimum()
+  *minimum = allowed_numbers_message.has_minimum()
     ? allowed_numbers_message.minimum() : SEQUENCE_NUMBER_MAX;
 
   for (int i = 0; i < allowed_numbers_message.allowed_size(); i++)
-    allowed_numbers.insert(allowed_numbers_message.allowed(i));
+    allowed_numbers->insert(allowed_numbers_message.allowed(i));
 
   return true; // success
 }
 
 /*static*/ bool SequenceManager::WriteSequenceNumberFile(
-    unsigned long long minimum,
-    std::set<unsigned long long>& allowed_numbers)
+    const unsigned long long minimum,
+    const std::set<unsigned long long>& allowed_numbers)
 {
   // get the sequence file name
   std::string sequence_file_name;
-  if (!ConfigurationManager::GetSequenceNumberFileName(sequence_file_name))
+  if (!ConfigurationManager::GetSequenceNumberFileName(&sequence_file_name))
   {
     Logger::LogMessage(ERROR,
       "SequenceManager", "GetSequenceNumberFileName failed");

@@ -40,8 +40,8 @@ class MessageHandler
 {
 public:
   static bool HandleMessage(const DurbatulukMessage& input,
-    DurbatulukMessage& output, MessageHandlerCallback callback = nullptr);
-  static bool ShellExec(const std::string& input, std::string& output);
+    DurbatulukMessage* output, MessageHandlerCallback callback = nullptr);
+  static bool ShellExec(const std::string& input, std::string* output);
 };
 
 #endif // #ifndef MESSAGE_HANDLER_H_

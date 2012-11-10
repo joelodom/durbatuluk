@@ -30,23 +30,23 @@ class ProcessingEngine
 public:
   // method to generate a DurbatulukMessage
   static bool GenerateEncodedDurbatulukMessage(const std::string& type,
-    const std::string& contents, RSAKey& recipient_public_key,
-    RSA* sender_signing_key, std::string& encoded_message,
-    unsigned long long& sequence_number);
+    const std::string& contents, const RSAKey& recipient_public_key,
+    RSA* sender_signing_key, std::string* encoded_message,
+    unsigned long long* sequence_number);
 
   // method to handle an encoded message with message handler
   // (doesn't generate encoded response, but passes on message handler output
   // and callback)
-  static bool HandleIncomingEncodedMessage(
-    std::string& encoded_incoming, RSA* recipient_private_encryption_key,
-    DurbatulukMessage& output, MessageHandlerCallback callback = nullptr);
+  static bool HandleIncomingEncodedMessage(const std::string& encoded_incoming,
+    RSA* recipient_private_encryption_key,
+    DurbatulukMessage* output, MessageHandlerCallback callback = nullptr);
 
   // methods to perform a full Durbatuluk circle of encryption and encoding
-  static bool EncryptSignAndEncode(std::string& message,
-    RSAKey& recipient_public_key, RSA* sender_signing_key,
-    std::string& encoded);
-  static bool DecodeVerifyAndDecrypt(std::string& encoded,
-    RSA* recipient_private_encryption_key, DurbatulukMessage& message);
+  static bool EncryptSignAndEncode(const std::string& message,
+    const RSAKey& recipient_public_key, RSA* sender_signing_key,
+    std::string* encoded);
+  static bool DecodeVerifyAndDecrypt(const std::string& encoded,
+    RSA* recipient_private_encryption_key, DurbatulukMessage* message);
 };
 
 #endif // #ifndef PROCESSING_ENGINE_H_

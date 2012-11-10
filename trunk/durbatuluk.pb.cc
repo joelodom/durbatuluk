@@ -368,7 +368,7 @@ bool RSAKey::MergePartialFromCodedStream(
         if (input->ExpectTag(18)) goto parse_e;
         break;
       }
-      
+
       // required bytes e = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -382,7 +382,7 @@ bool RSAKey::MergePartialFromCodedStream(
         if (input->ExpectTag(26)) goto parse_d;
         break;
       }
-      
+
       // optional bytes d = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -396,7 +396,7 @@ bool RSAKey::MergePartialFromCodedStream(
         if (input->ExpectTag(34)) goto parse_p;
         break;
       }
-      
+
       // optional bytes p = 4;
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -410,7 +410,7 @@ bool RSAKey::MergePartialFromCodedStream(
         if (input->ExpectTag(42)) goto parse_q;
         break;
       }
-      
+
       // optional bytes q = 5;
       case 5: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -424,7 +424,7 @@ bool RSAKey::MergePartialFromCodedStream(
         if (input->ExpectTag(50)) goto parse_dmp1;
         break;
       }
-      
+
       // optional bytes dmp1 = 6;
       case 6: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -438,7 +438,7 @@ bool RSAKey::MergePartialFromCodedStream(
         if (input->ExpectTag(58)) goto parse_dmq1;
         break;
       }
-      
+
       // optional bytes dmq1 = 7;
       case 7: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -452,7 +452,7 @@ bool RSAKey::MergePartialFromCodedStream(
         if (input->ExpectTag(66)) goto parse_iqmp;
         break;
       }
-      
+
       // optional bytes iqmp = 8;
       case 8: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -466,7 +466,7 @@ bool RSAKey::MergePartialFromCodedStream(
         if (input->ExpectAtEnd()) return true;
         break;
       }
-      
+
       default: {
       handle_uninterpreted:
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -490,49 +490,49 @@ void RSAKey::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       1, this->n(), output);
   }
-  
+
   // required bytes e = 2;
   if (has_e()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       2, this->e(), output);
   }
-  
+
   // optional bytes d = 3;
   if (has_d()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       3, this->d(), output);
   }
-  
+
   // optional bytes p = 4;
   if (has_p()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       4, this->p(), output);
   }
-  
+
   // optional bytes q = 5;
   if (has_q()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       5, this->q(), output);
   }
-  
+
   // optional bytes dmp1 = 6;
   if (has_dmp1()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       6, this->dmp1(), output);
   }
-  
+
   // optional bytes dmq1 = 7;
   if (has_dmq1()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       7, this->dmq1(), output);
   }
-  
+
   // optional bytes iqmp = 8;
   if (has_iqmp()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       8, this->iqmp(), output);
   }
-  
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -547,56 +547,56 @@ void RSAKey::SerializeWithCachedSizes(
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         1, this->n(), target);
   }
-  
+
   // required bytes e = 2;
   if (has_e()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         2, this->e(), target);
   }
-  
+
   // optional bytes d = 3;
   if (has_d()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         3, this->d(), target);
   }
-  
+
   // optional bytes p = 4;
   if (has_p()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         4, this->p(), target);
   }
-  
+
   // optional bytes q = 5;
   if (has_q()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         5, this->q(), target);
   }
-  
+
   // optional bytes dmp1 = 6;
   if (has_dmp1()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         6, this->dmp1(), target);
   }
-  
+
   // optional bytes dmq1 = 7;
   if (has_dmq1()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         7, this->dmq1(), target);
   }
-  
+
   // optional bytes iqmp = 8;
   if (has_iqmp()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         8, this->iqmp(), target);
   }
-  
+
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -606,7 +606,7 @@ void RSAKey::SerializeWithCachedSizes(
 
 int RSAKey::ByteSize() const {
   int total_size = 0;
-  
+
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     // required bytes n = 1;
     if (has_n()) {
@@ -614,56 +614,56 @@ int RSAKey::ByteSize() const {
         ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->n());
     }
-    
+
     // required bytes e = 2;
     if (has_e()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->e());
     }
-    
+
     // optional bytes d = 3;
     if (has_d()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->d());
     }
-    
+
     // optional bytes p = 4;
     if (has_p()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->p());
     }
-    
+
     // optional bytes q = 5;
     if (has_q()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->q());
     }
-    
+
     // optional bytes dmp1 = 6;
     if (has_dmp1()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->dmp1());
     }
-    
+
     // optional bytes dmq1 = 7;
     if (has_dmq1()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->dmq1());
     }
-    
+
     // optional bytes iqmp = 8;
     if (has_iqmp()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->iqmp());
     }
-    
+
   }
   if (!unknown_fields().empty()) {
     total_size +=
@@ -733,7 +733,7 @@ void RSAKey::CopyFrom(const RSAKey& from) {
 
 bool RSAKey::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
-  
+
   return true;
 }
 
@@ -867,7 +867,7 @@ bool SignedMessage::MergePartialFromCodedStream(
         if (input->ExpectTag(18)) goto parse_contents;
         break;
       }
-      
+
       // required bytes contents = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -881,7 +881,7 @@ bool SignedMessage::MergePartialFromCodedStream(
         if (input->ExpectTag(26)) goto parse_signature;
         break;
       }
-      
+
       // required bytes signature = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -895,7 +895,7 @@ bool SignedMessage::MergePartialFromCodedStream(
         if (input->ExpectAtEnd()) return true;
         break;
       }
-      
+
       default: {
       handle_uninterpreted:
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -919,19 +919,19 @@ void SignedMessage::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->sender(), output);
   }
-  
+
   // required bytes contents = 2;
   if (has_contents()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       2, this->contents(), output);
   }
-  
+
   // required bytes signature = 3;
   if (has_signature()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       3, this->signature(), output);
   }
-  
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -946,21 +946,21 @@ void SignedMessage::SerializeWithCachedSizes(
       WriteMessageNoVirtualToArray(
         1, this->sender(), target);
   }
-  
+
   // required bytes contents = 2;
   if (has_contents()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         2, this->contents(), target);
   }
-  
+
   // required bytes signature = 3;
   if (has_signature()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         3, this->signature(), target);
   }
-  
+
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -970,7 +970,7 @@ void SignedMessage::SerializeWithCachedSizes(
 
 int SignedMessage::ByteSize() const {
   int total_size = 0;
-  
+
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     // required .RSAKey sender = 1;
     if (has_sender()) {
@@ -978,21 +978,21 @@ int SignedMessage::ByteSize() const {
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->sender());
     }
-    
+
     // required bytes contents = 2;
     if (has_contents()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->contents());
     }
-    
+
     // required bytes signature = 3;
     if (has_signature()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->signature());
     }
-    
+
   }
   if (!unknown_fields().empty()) {
     total_size +=
@@ -1047,7 +1047,7 @@ void SignedMessage::CopyFrom(const SignedMessage& from) {
 
 bool SignedMessage::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
-  
+
   if (has_sender()) {
     if (!this->sender().IsInitialized()) return false;
   }
@@ -1179,7 +1179,7 @@ bool EncryptedMessage::MergePartialFromCodedStream(
         if (input->ExpectTag(18)) goto parse_encrypted_key;
         break;
       }
-      
+
       // required bytes encrypted_key = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -1193,7 +1193,7 @@ bool EncryptedMessage::MergePartialFromCodedStream(
         if (input->ExpectTag(26)) goto parse_encrypted_contents;
         break;
       }
-      
+
       // required bytes encrypted_contents = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -1207,7 +1207,7 @@ bool EncryptedMessage::MergePartialFromCodedStream(
         if (input->ExpectAtEnd()) return true;
         break;
       }
-      
+
       default: {
       handle_uninterpreted:
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -1231,19 +1231,19 @@ void EncryptedMessage::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->recipient(), output);
   }
-  
+
   // required bytes encrypted_key = 2;
   if (has_encrypted_key()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       2, this->encrypted_key(), output);
   }
-  
+
   // required bytes encrypted_contents = 3;
   if (has_encrypted_contents()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       3, this->encrypted_contents(), output);
   }
-  
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -1258,21 +1258,21 @@ void EncryptedMessage::SerializeWithCachedSizes(
       WriteMessageNoVirtualToArray(
         1, this->recipient(), target);
   }
-  
+
   // required bytes encrypted_key = 2;
   if (has_encrypted_key()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         2, this->encrypted_key(), target);
   }
-  
+
   // required bytes encrypted_contents = 3;
   if (has_encrypted_contents()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         3, this->encrypted_contents(), target);
   }
-  
+
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -1282,7 +1282,7 @@ void EncryptedMessage::SerializeWithCachedSizes(
 
 int EncryptedMessage::ByteSize() const {
   int total_size = 0;
-  
+
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     // required .RSAKey recipient = 1;
     if (has_recipient()) {
@@ -1290,21 +1290,21 @@ int EncryptedMessage::ByteSize() const {
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->recipient());
     }
-    
+
     // required bytes encrypted_key = 2;
     if (has_encrypted_key()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->encrypted_key());
     }
-    
+
     // required bytes encrypted_contents = 3;
     if (has_encrypted_contents()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->encrypted_contents());
     }
-    
+
   }
   if (!unknown_fields().empty()) {
     total_size +=
@@ -1359,7 +1359,7 @@ void EncryptedMessage::CopyFrom(const EncryptedMessage& from) {
 
 bool EncryptedMessage::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
-  
+
   if (has_recipient()) {
     if (!this->recipient().IsInitialized()) return false;
   }
@@ -1490,7 +1490,7 @@ bool DurbatulukMessage::MergePartialFromCodedStream(
         if (input->ExpectTag(18)) goto parse_contents;
         break;
       }
-      
+
       // required string contents = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -1507,7 +1507,7 @@ bool DurbatulukMessage::MergePartialFromCodedStream(
         if (input->ExpectTag(24)) goto parse_sequence_number;
         break;
       }
-      
+
       // required uint64 sequence_number = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -1523,7 +1523,7 @@ bool DurbatulukMessage::MergePartialFromCodedStream(
         if (input->ExpectAtEnd()) return true;
         break;
       }
-      
+
       default: {
       handle_uninterpreted:
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -1550,7 +1550,7 @@ void DurbatulukMessage::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteString(
       1, this->type(), output);
   }
-  
+
   // required string contents = 2;
   if (has_contents()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
@@ -1559,12 +1559,12 @@ void DurbatulukMessage::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteString(
       2, this->contents(), output);
   }
-  
+
   // required uint64 sequence_number = 3;
   if (has_sequence_number()) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt64(3, this->sequence_number(), output);
   }
-  
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -1582,7 +1582,7 @@ void DurbatulukMessage::SerializeWithCachedSizes(
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         1, this->type(), target);
   }
-  
+
   // required string contents = 2;
   if (has_contents()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
@@ -1592,12 +1592,12 @@ void DurbatulukMessage::SerializeWithCachedSizes(
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         2, this->contents(), target);
   }
-  
+
   // required uint64 sequence_number = 3;
   if (has_sequence_number()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(3, this->sequence_number(), target);
   }
-  
+
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -1607,7 +1607,7 @@ void DurbatulukMessage::SerializeWithCachedSizes(
 
 int DurbatulukMessage::ByteSize() const {
   int total_size = 0;
-  
+
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     // required string type = 1;
     if (has_type()) {
@@ -1615,21 +1615,21 @@ int DurbatulukMessage::ByteSize() const {
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->type());
     }
-    
+
     // required string contents = 2;
     if (has_contents()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->contents());
     }
-    
+
     // required uint64 sequence_number = 3;
     if (has_sequence_number()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::UInt64Size(
           this->sequence_number());
     }
-    
+
   }
   if (!unknown_fields().empty()) {
     total_size +=
@@ -1684,7 +1684,7 @@ void DurbatulukMessage::CopyFrom(const DurbatulukMessage& from) {
 
 bool DurbatulukMessage::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
-  
+
   return true;
 }
 
@@ -1793,7 +1793,7 @@ bool AllowedSequenceNumbers::MergePartialFromCodedStream(
         if (input->ExpectTag(16)) goto parse_allowed;
         break;
       }
-      
+
       // repeated uint64 allowed = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -1815,7 +1815,7 @@ bool AllowedSequenceNumbers::MergePartialFromCodedStream(
         if (input->ExpectAtEnd()) return true;
         break;
       }
-      
+
       default: {
       handle_uninterpreted:
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -1838,13 +1838,13 @@ void AllowedSequenceNumbers::SerializeWithCachedSizes(
   if (has_minimum()) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt64(1, this->minimum(), output);
   }
-  
+
   // repeated uint64 allowed = 2;
   for (int i = 0; i < this->allowed_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt64(
       2, this->allowed(i), output);
   }
-  
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -1857,13 +1857,13 @@ void AllowedSequenceNumbers::SerializeWithCachedSizes(
   if (has_minimum()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(1, this->minimum(), target);
   }
-  
+
   // repeated uint64 allowed = 2;
   for (int i = 0; i < this->allowed_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteUInt64ToArray(2, this->allowed(i), target);
   }
-  
+
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -1873,7 +1873,7 @@ void AllowedSequenceNumbers::SerializeWithCachedSizes(
 
 int AllowedSequenceNumbers::ByteSize() const {
   int total_size = 0;
-  
+
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     // optional uint64 minimum = 1;
     if (has_minimum()) {
@@ -1881,7 +1881,7 @@ int AllowedSequenceNumbers::ByteSize() const {
         ::google::protobuf::internal::WireFormatLite::UInt64Size(
           this->minimum());
     }
-    
+
   }
   // repeated uint64 allowed = 2;
   {
@@ -1892,7 +1892,7 @@ int AllowedSequenceNumbers::ByteSize() const {
     }
     total_size += 1 * this->allowed_size() + data_size;
   }
-  
+
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -1940,7 +1940,7 @@ void AllowedSequenceNumbers::CopyFrom(const AllowedSequenceNumbers& from) {
 }
 
 bool AllowedSequenceNumbers::IsInitialized() const {
-  
+
   return true;
 }
 
